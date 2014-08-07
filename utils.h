@@ -12,11 +12,12 @@ public:
     };
 
     static double degreesToRadians(double);
-    static double flatDistanceSpherical(const GPSPoint&, const GPSPoint&);
-    static double flatDistanceEllipsoidal(const GPSPoint&, const GPSPoint&);
-    static double tunnelDistance(const GPSPoint&, const GPSPoint&);
+    static double distance(const GPSPoint&, const GPSPoint&, Utils::DistanceType type = FlatSpherical);
 
 private:
+    static double flatDistanceSpherical(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
+    static double flatDistanceEllipsoidal(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
+    static double tunnelDistance(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
     static double m_earthRadius;
 };
 

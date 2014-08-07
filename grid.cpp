@@ -8,22 +8,9 @@ void Grid::addPoint(GPSPoint* point)
 std::vector<GPSPoint*> Grid::closePointsTo(const GPSPoint& refPoint, double minDistance,
     Utils::DistanceType type) const
 {
-    double (*distanceFunction)(const GPSPoint&, const GPSPoint&);
-    switch(type) {
-    case Utils::FlatEllipsoidal:
-        distanceFunction = Utils::flatDistanceEllipsoidal;
-        break;
-    case Utils::TunnelDistance:
-        distanceFunction = Utils::tunnelDistance;
-        break;
-    default:
-        distanceFunction = Utils::flatDistanceSpherical;
-        break;
-    }
-
     std::vector<GPSPoint*> closePoints;
     for (auto gpsPoint : m_points) {
-        if (distanceFunction(refPoint, *gpsPoint) <= minDistance)
+        if (Utils::distance(refPoint, *gpsPoint, type) <= minDistance)
             closePoints.push_back(gpsPoint);
     }
 

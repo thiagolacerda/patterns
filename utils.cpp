@@ -10,23 +10,35 @@ double Utils::degreesToRadians(double degrees)
     return (degrees * M_PI) / 180.0;
 }
 
-double Utils::flatDistanceSpherical(const GPSPoint& point1, const GPSPoint& point2)
+double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::DistanceType type)
 {
-    double p1LatRad = Utils::degreesToRadians(point1.latitude());
-    double p1LongRad = Utils::degreesToRadians(point1.longitude());
-    double p2LatRad = Utils::degreesToRadians(point2.latitude());
-    double p2LongRad = Utils::degreesToRadians(point2.longitude());
+    double (*distanceFunction)(double, double, double, double);
+    switch(type) {
+    case Utils::FlatEllipsoidal:
+        distanceFunction = Utils::flatDistanceEllipsoidal;
+        break;
+    case Utils::TunnelDistance:
+        distanceFunction = Utils::tunnelDistance;
+        break;
+    default:
+        distanceFunction = Utils::flatDistanceSpherical;
+        break;
+    }
 
+    return distanceFunction(Utils::degreesToRadians(point1.latitude()),
+        Utils::degreesToRadians(point1.longitude()),
+        Utils::degreesToRadians(point2.latitude()),
+        Utils::degreesToRadians(point2.longitude()));
+}
+
+double Utils::flatDistanceSpherical(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad)
+{
     return Utils::m_earthRadius * sqrt(pow(p2LatRad - p1LatRad, 2.0) +
         pow(cos((p2LatRad + p1LatRad) / 2.0) * (p2LongRad - p1LongRad), 2.0));
 }
 
-double Utils::flatDistanceEllipsoidal(const GPSPoint& point1, const GPSPoint& point2)
+double Utils::flatDistanceEllipsoidal(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad)
 {
-    double p1LatRad = Utils::degreesToRadians(point1.latitude());
-    double p1LongRad = Utils::degreesToRadians(point1.longitude());
-    double p2LatRad = Utils::degreesToRadians(point2.latitude());
-    double p2LongRad = Utils::degreesToRadians(point2.longitude());
     double meanLat = (p2LatRad + p1LatRad) / 2.0;
 
     // K1 = kilometers per degree of latitude difference
@@ -37,13 +49,8 @@ double Utils::flatDistanceEllipsoidal(const GPSPoint& point1, const GPSPoint& po
     return sqrt(pow(k1 * (p2LatRad - p1LatRad), 2.0) + pow(k2 * (p2LongRad - p1LongRad), 2.0));
 }
 
-double Utils::tunnelDistance(const GPSPoint& point1, const GPSPoint& point2)
+double Utils::tunnelDistance(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad)
 {
-    double p1LatRad = Utils::degreesToRadians(point1.latitude());
-    double p1LongRad = Utils::degreesToRadians(point1.longitude());
-    double p2LatRad = Utils::degreesToRadians(point2.latitude());
-    double p2LongRad = Utils::degreesToRadians(point2.longitude());
-
     double deltaX = cos(p2LatRad) * cos(p2LongRad) - cos(p1LatRad) * cos(p1LongRad);
     double deltaY = cos(p2LatRad) * sin(p2LongRad) - cos(p1LatRad) * sin(p1LongRad);
     double deltaZ = sin(p2LatRad) - sin(p1LatRad);

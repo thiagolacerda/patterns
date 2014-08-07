@@ -21,21 +21,10 @@ public:
     double longitude() const { return m_longitude; }
     void setLongitude(double longitude) { m_longitude = longitude; }
 
-    double flatDistanceSphericalToPoint(const GPSPoint& point) const
+    double distanceToPoint(const GPSPoint& point, Utils::DistanceType type = Utils::FlatSpherical)
     {
-        return Utils::flatDistanceSpherical(*this, point);
+        return Utils::distance(*this, point, type);
     }
-
-    double flatDistanceEllipsoidalToPoint(const GPSPoint& point) const
-    {
-        return Utils::flatDistanceEllipsoidal(*this, point);
-    }
-
-    double tunnelDistanceToPoint(const GPSPoint& point) const
-    {
-        return Utils::tunnelDistance(*this, point);
-    }
-
 private:
     double m_latitude;
     double m_longitude;
