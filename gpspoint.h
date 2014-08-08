@@ -30,6 +30,12 @@ public:
     {
         return Utils::distance(*this, point, type);
     }
+
+    bool operator<(GPSPoint* other) const
+    {
+        return m_timestamp < other->timestamp();
+    }
+
 private:
     double m_latitude;
     double m_longitude;
