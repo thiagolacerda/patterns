@@ -14,8 +14,10 @@ endif()
 
 set(PATTERNS_SOURCES
     grid.cpp
+    gridmanager.cpp
     main.cpp
     trajectory.cpp
+    trajectorymanager.cpp
     utils.cpp
 )
 
