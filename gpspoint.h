@@ -3,18 +3,22 @@
 
 #include "utils.h"
 
+class Trajectory;
+
 class GPSPoint {
 public:
     GPSPoint()
         : m_latitude(0)
         , m_longitude(0)
         , m_timestamp(0)
+        , m_trajectory(nullptr)
     { }
 
-    GPSPoint(double latitude, double longitude, double timestamp)
+    GPSPoint(double latitude, double longitude, double timestamp, Trajectory* trajectory)
         : m_latitude(latitude)
         , m_longitude(longitude)
         , m_timestamp(timestamp)
+        , m_trajectory(trajectory)
     { }
 
     double latitude() const { return m_latitude; }
@@ -25,6 +29,9 @@ public:
 
     double timestamp() const { return m_timestamp; }
     void setTimestamp(double timestamp) { m_timestamp = timestamp; }
+
+    Trajectory* trajectory() const { return m_trajectory; }
+    void setTrajectory(Trajectory* trajectory) { m_trajectory = trajectory; }
 
     double distanceToPoint(const GPSPoint& point, Utils::DistanceType type = Utils::FlatSpherical)
     {
@@ -40,6 +47,7 @@ private:
     double m_latitude;
     double m_longitude;
     double m_timestamp;
+    Trajectory* m_trajectory;
 };
 
 #endif // GPSPoint_h
