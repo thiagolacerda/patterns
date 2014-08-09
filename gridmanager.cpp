@@ -1,5 +1,6 @@
 #include "gridmanager.h"
 
+#include <iostream>
 #include <sstream>
 #include <string>
 #include "gpspoint.h"
@@ -26,4 +27,13 @@ void GridManager::addPointToGrid(GPSPoint* point)
         grid = iter->second;
 
     grid->addPoint(point);
+}
+
+void GridManager::dump()
+{
+    std::cout << "Number of grids: " << m_grids.size() << std::endl;
+    for (auto iter = m_grids.begin(); iter != m_grids.end(); ++iter) {
+        std::cout << "Grid: " << iter->first << std::endl << "\t";
+        iter->second->dump();
+    }
 }

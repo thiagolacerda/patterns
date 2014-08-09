@@ -1,6 +1,7 @@
 #include "trajectory.h"
 
 #include <algorithm>
+#include <iostream>
 #include "gpspoint.h"
 
 void Trajectory::addPoint(GPSPoint* point)
@@ -17,5 +18,15 @@ void Trajectory::mergePoints(const Trajectory& trajectory)
             continue;
 
         m_points.insert(iter, point);
+    }
+}
+
+void Trajectory::dump()
+{
+    std::cout << "Number of points: " << m_points.size() << std::endl;
+    std::cout.precision(15);
+    for (auto iter = m_points.begin(); iter != m_points.end(); ++iter) {
+        std::cout << "\t";
+        (*iter)->dump();
     }
 }

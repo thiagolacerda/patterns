@@ -1,5 +1,6 @@
 #include "trajectorymanager.h"
 
+#include <iostream>
 #include "trajectory.h"
 
 void TrajectoryManager::addTrajectory(Trajectory* trajectory)
@@ -18,4 +19,13 @@ Trajectory* TrajectoryManager::trajectoryById(long id)
         return iter->second;
 
     return nullptr;
+}
+
+void TrajectoryManager::dump()
+{
+    std::cout << "Number of trajectories: " << m_trajectories.size() << std::endl;
+    for (auto iter = m_trajectories.begin(); iter != m_trajectories.end(); ++iter) {
+        std::cout << "trajectory: " << iter->first << std::endl;
+        iter->second->dump();
+    }
 }

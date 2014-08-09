@@ -27,6 +27,7 @@ public:
 
     bool operator<(GPSPoint*) const;
 
+    void dump();
 
 private:
     double m_latitude;

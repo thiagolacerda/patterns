@@ -11,6 +11,7 @@ public:
 
     void addTrajectory(Trajectory*);
     Trajectory* trajectoryById(long);
+    void dump();
 
 private:
     std::unordered_map<long, Trajectory*> m_trajectories;

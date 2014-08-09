@@ -22,6 +22,7 @@ public:
     void mergePoints(const Trajectory&);
 
     long id() const { return m_id; }
+    void dump();
 
 private:
     long m_id;

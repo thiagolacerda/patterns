@@ -1,5 +1,6 @@
 #include "manager.h"
 
+#include <iostream>
 #include "databasedecoder.h"
 #include "factory.h"
 #include "gpspoint.h"

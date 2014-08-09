@@ -17,6 +17,7 @@ public:
     { }
 
     void addPointToGrid(GPSPoint*);
+    void dump();
 
 private:
     double m_gridSize;

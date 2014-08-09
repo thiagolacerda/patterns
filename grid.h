@@ -17,6 +17,8 @@ public:
     std::vector<GPSPoint*> closePointsTo(const GPSPoint&, double minDistance,
         Utils::DistanceType type = Utils::FlatSpherical) const;
 
+    void dump();
+
 private:
     std::vector<GPSPoint*> m_points;
 };
