@@ -2,6 +2,7 @@
 
 Config::DBDecoder Config::m_decoderInUse = Config::LifeMap;
 std::vector<std::string> Config::m_decoderParameters;
+double Config::m_gridSize = 0;
 
 void Config::setDecoder(char* decoderName)
 {
