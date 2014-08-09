@@ -7,19 +7,9 @@ class Trajectory;
 
 class GPSPoint {
 public:
-    GPSPoint()
-        : m_latitude(0)
-        , m_longitude(0)
-        , m_timestamp(0)
-        , m_trajectory(nullptr)
-    { }
+    GPSPoint();
 
-    GPSPoint(double latitude, double longitude, unsigned long timestamp, Trajectory* trajectory)
-        : m_latitude(latitude)
-        , m_longitude(longitude)
-        , m_timestamp(timestamp)
-        , m_trajectory(trajectory)
-    { }
+    GPSPoint(double latitude, double longitude, unsigned long timestamp, Trajectory* trajectory);
 
     double latitude() const { return m_latitude; }
     void setLatitude(double latitude) { m_latitude = latitude; }
@@ -33,15 +23,10 @@ public:
     Trajectory* trajectory() const { return m_trajectory; }
     void setTrajectory(Trajectory* trajectory) { m_trajectory = trajectory; }
 
-    double distanceToPoint(const GPSPoint& point, Utils::DistanceType type = Utils::FlatSpherical)
-    {
-        return Utils::distance(*this, point, type);
-    }
+    double distanceToPoint(const GPSPoint&, Utils::DistanceType type = Utils::FlatSpherical);
 
-    bool operator<(GPSPoint* other) const
-    {
-        return m_timestamp < other->timestamp();
-    }
+    bool operator<(GPSPoint*) const;
+
 
 private:
     double m_latitude;

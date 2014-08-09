@@ -23,6 +23,7 @@ include_directories(
 set(PATTERNS_SOURCES
     config.cpp
     factory.cpp
+    gpspoint.cpp
     grid.cpp
     gridmanager.cpp
     lifemapdbdecoder.cpp
