@@ -8,6 +8,10 @@ class Grid;
 
 class GridManager {
 public:
+    GridManager()
+        : m_gridSize(0)
+    { }
+
     GridManager(double gridSize)
         : m_gridSize(gridSize)
     { }

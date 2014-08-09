@@ -19,9 +19,10 @@ void GridManager::addPointToGrid(GPSPoint* point)
     std::string key = oss.str();
     Grid* grid = nullptr;
     std::unordered_map<std::string, Grid*>::const_iterator iter = m_grids.find(key);
-    if (iter == m_grids.end())
+    if (iter == m_grids.end()) {
         grid = new Grid();
-    else
+        m_grids[key] = grid;
+    } else
         grid = iter->second;
 
     grid->addPoint(point);
