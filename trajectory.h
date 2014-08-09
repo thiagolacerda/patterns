@@ -24,7 +24,7 @@ public:
     long id() const { return m_id; }
 
 private:
-    int m_id;
+    long m_id;
     std::vector<GPSPoint*> m_points;
 };
 
