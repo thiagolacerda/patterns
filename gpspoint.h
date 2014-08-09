@@ -14,7 +14,7 @@ public:
         , m_trajectory(nullptr)
     { }
 
-    GPSPoint(double latitude, double longitude, double timestamp, Trajectory* trajectory)
+    GPSPoint(double latitude, double longitude, unsigned long timestamp, Trajectory* trajectory)
         : m_latitude(latitude)
         , m_longitude(longitude)
         , m_timestamp(timestamp)
@@ -27,8 +27,8 @@ public:
     double longitude() const { return m_longitude; }
     void setLongitude(double longitude) { m_longitude = longitude; }
 
-    double timestamp() const { return m_timestamp; }
-    void setTimestamp(double timestamp) { m_timestamp = timestamp; }
+    unsigned long timestamp() const { return m_timestamp; }
+    void setTimestamp(unsigned long timestamp) { m_timestamp = timestamp; }
 
     Trajectory* trajectory() const { return m_trajectory; }
     void setTrajectory(Trajectory* trajectory) { m_trajectory = trajectory; }
@@ -46,7 +46,7 @@ public:
 private:
     double m_latitude;
     double m_longitude;
-    double m_timestamp;
+    unsigned long m_timestamp;
     Trajectory* m_trajectory;
 };
 
