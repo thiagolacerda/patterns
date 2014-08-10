@@ -13,6 +13,11 @@ public:
     virtual void retrievePoints() = 0;
     virtual void decodeRow(void* row) = 0;
 
+    virtual void insertTupleInResults(const std::tuple<long, double, double, unsigned long>& tuple)
+    {
+        results.push_back(tuple);
+    }
+
     std::vector<std::tuple<long, double, double, unsigned long>> results;
 
     virtual ~DatabaseDecoder()
