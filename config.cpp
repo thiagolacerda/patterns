@@ -9,6 +9,7 @@ unsigned Config::m_timeSlotSize = 0;
 
 void Config::setDecoder(char* decoderName)
 {
-    UNUSED(decoderName);
-    // Do nothing for now, sine we only have one decoder
+    std::string decoder(decoderName);
+    if (decoder.compare("trucks") == 0)
+        Config::m_decoderInUse = Config::Trucks;
 }

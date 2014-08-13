@@ -34,6 +34,7 @@ set(PATTERNS_SOURCES
     sqlitedbmanager.cpp
     trajectory.cpp
     trajectorymanager.cpp
+    trucksdbdecoder.cpp
     utils.cpp
 )
 

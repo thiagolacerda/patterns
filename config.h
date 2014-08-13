@@ -7,7 +7,8 @@
 class Config {
 public:
     enum DBDecoder {
-        LifeMap
+        LifeMap,
+        Trucks
     };
 
     static void setDecoderParameters(const std::vector<std::string>& parameters) { m_decoderParameters = parameters; }
