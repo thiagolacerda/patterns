@@ -30,7 +30,7 @@ void SQLiteDBManager::disconnect()
     m_db = nullptr;
 }
 
-void SQLiteDBManager::executeSQLSelect(const std::string& query)
+void SQLiteDBManager::retrievePoints(const std::string& query)
 {
     sqlite3_stmt* selectStmt;
     if (sqlite3_prepare_v2(m_db, query.c_str(), -1, &selectStmt, NULL) != SQLITE_OK) {

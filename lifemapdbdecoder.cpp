@@ -69,7 +69,7 @@ void LifeMapDBDecoder::retrievePoints()
             m_currentId = atoi(fileName.substr(dbPrefixLen, periodPos - dbPrefixLen).c_str());
             std::string selectQuery = "SELECT _latitude, _longitude, _time_location FROM locationTable;";
             m_manager->connect(fullFileName, "", "");
-            m_manager->executeSQLSelect(selectQuery);
+            m_manager->retrievePoints(selectQuery);
             m_manager->disconnect();
         }
     }

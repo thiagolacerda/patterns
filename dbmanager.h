@@ -16,7 +16,7 @@ public:
     void setDecoder(DatabaseDecoder* decoder) { m_decoder = decoder; }
     virtual bool connect(const std::string& address, const std::string& user, const std::string& password) = 0;
     virtual void disconnect() = 0;
-    virtual void executeSQLSelect(const std::string& query) = 0;
+    virtual void retrievePoints(const std::string& query = "") = 0;
     virtual double getColumnAsDouble(void* row, int colIndex) = 0;
     virtual std::string getColumnAsString(void* row, int colIndex) = 0;
 
