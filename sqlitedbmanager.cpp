@@ -5,9 +5,13 @@
 #include <tuple>
 #include <vector>
 #include "databasedecoder.h"
+#include "patterns.h"
 
 bool SQLiteDBManager::connect(const std::string& address, const std::string& user, const std::string& password)
 {
+    UNUSED(user);
+    UNUSED(password);
+
     if (m_db)
         disconnect();
 

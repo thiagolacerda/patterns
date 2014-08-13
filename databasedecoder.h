@@ -21,7 +21,7 @@ public:
     }
 
 protected:
-    DatabaseDecoder(const std::vector<std::string>& parameters, DBManager* manager)
+    DatabaseDecoder(DBManager* manager)
         : m_manager(manager)
     { }
     DBManager* m_manager;

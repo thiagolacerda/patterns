@@ -11,7 +11,7 @@
 #include "sqlitedbmanager.h"
 
 LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
-    : DatabaseDecoder(parameters, new SQLiteDBManager())
+    : DatabaseDecoder(new SQLiteDBManager())
     , m_path(parameters.at(0))
     , m_dbFilesPrefix(parameters.at(1))
     , m_currentId(0)
