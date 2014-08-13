@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
+#include "gpstuplelistener.h"
 #include "sqlitedbmanager.h"
 
 LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
@@ -16,15 +17,6 @@ LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
     , m_currentId(0)
 {
     m_manager->setDecoder(this);
-}
-
-void LifeMapDBDecoder::insertTupleInResults(const std::tuple<long, double, double, unsigned long>& tuple)
-{
-    auto iter = std::lower_bound(results.begin(), results.end(), tuple,
-        [](const std::tuple<long, double, double, unsigned long>& tuple1,
-        const std::tuple<long, double, double, unsigned long>& tuple2) ->
-        bool { return std::get<3>(tuple1) < std::get<3>(tuple2); });
-    results.insert(iter, tuple);
 }
 
 void LifeMapDBDecoder::decodeRow(void* row)
@@ -52,7 +44,7 @@ void LifeMapDBDecoder::decodeRow(void* row)
     tm.tm_sec = atoi(timestampStr.substr(12, 2).c_str());
     timestamp = mktime(&tm);
 
-    insertTupleInResults(std::make_tuple(m_currentId, latitude, longitude, timestamp));
+    m_listener->processGPSTuple(std::make_tuple(m_currentId, latitude, longitude, timestamp));
 }
 
 void LifeMapDBDecoder::retrievePoints()

@@ -3,22 +3,16 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
 #include "dbmanager.h"
 
 class DBManager;
+class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
     virtual void retrievePoints() = 0;
     virtual void decodeRow(void* row) = 0;
-
-    virtual void insertTupleInResults(const std::tuple<long, double, double, unsigned long>& tuple)
-    {
-        results.push_back(tuple);
-    }
-
-    std::vector<std::tuple<long, double, double, unsigned long>> results;
+    void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
 
     virtual ~DatabaseDecoder()
     {
@@ -31,6 +25,7 @@ protected:
         : m_manager(manager)
     { }
     DBManager* m_manager;
+    GPSTupleListener* m_listener;
 };
 
 #endif // DatabaseDecoder_h

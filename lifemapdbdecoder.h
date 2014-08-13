@@ -7,7 +7,6 @@ class LifeMapDBDecoder : public DatabaseDecoder {
 public:
     void decodeRow(void* row) override;
     void retrievePoints() override;
-    void insertTupleInResults(const std::tuple<long, double, double, unsigned long>&) override;
 
 private:
     friend class Factory;
