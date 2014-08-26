@@ -25,6 +25,9 @@ void Manager::processGPSTuple(const std::tuple<long, double, double, unsigned lo
     std::tie(tID, latitude, longitude, timestamp) = tuple;
     unsigned index = timestamp / Config::timeSlotSize();
 
+    if (Config::coordinateSystem() == Config::Cartesian)
+        Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
+
     Trajectory* trajectory = m_trajectoryManager.trajectoryById(tID);
     if (!trajectory) {
         trajectory = new Trajectory(tID);

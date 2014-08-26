@@ -1,17 +1,45 @@
 #include "utils.h"
 
 #include <math.h>
+#include "config.h"
 #include "gpspoint.h"
 
 double Utils::m_earthRadius = 6371.009;
+double Utils::m1 = 111132.92;
+double Utils::m2 = -559.82;
+double Utils::m3 = 1.175;
+double Utils::m4 = -0.0023;
+double Utils::p1 = 111412.84;
+double Utils::p2 = -93.5;
+double Utils::p3 = 0.118;
 
 double Utils::degreesToRadians(double degrees)
 {
     return (degrees * M_PI) / 180.0;
 }
 
+void Utils::latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters)
+{
+    // This is the algorithm used by the National Geospatial-Intelligence Agency
+    // check: http://msi.nga.mil/NGAPortal/MSI.portal
+    // and: http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&_st=&_pageLabel=msi_portal_page_145&calcCode=03
+
+    double latRad = Utils::degreesToRadians(latitude);
+
+    // Calculate the length of a degree of latitude and longitude in meters
+    double latLen = Utils::m1 + (Utils::m2 * cos(2 * latRad)) + (Utils::m3 * cos(4 * latRad)) +
+        (Utils::m4 * cos(6 * latRad));
+    double longLen = (Utils::p1 * cos(latRad)) + (Utils::p2 * cos(3 * latRad)) + (Utils::p3 * cos(5 * latRad));
+    *latMeters = latitude * latLen;
+    *longMeters = longitude * longLen;
+
+}
+
 double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::DistanceType type)
 {
+    if (Config::coordinateSystem() == Config::Cartesian)
+        return Utils::euclidianDistance(point1.latitude(), point1.longitude(), point2.latitude(), point2.longitude());
+
     double (*distanceFunction)(double, double, double, double);
     switch(type) {
     case Utils::FlatEllipsoidal:
@@ -29,6 +57,11 @@ double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::Di
         Utils::degreesToRadians(point1.longitude()),
         Utils::degreesToRadians(point2.latitude()),
         Utils::degreesToRadians(point2.longitude()));
+}
+
+double Utils::euclidianDistance(double p1X, double p1Y, double p2X, double p2Y)
+{
+    return sqrt(pow(p1X - p2X, 2.0) + pow(p1Y - p2Y, 2.0));
 }
 
 double Utils::flatDistanceSpherical(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad)
