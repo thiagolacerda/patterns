@@ -35,10 +35,10 @@ void Utils::latLongToMeters(double latitude, double longitude, double* latMeters
 
 }
 
-double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::DistanceType type)
+double Utils::distance(double lat1, double long1, double lat2, double long2, Utils::DistanceType type)
 {
     if (Config::coordinateSystem() == Config::Cartesian)
-        return Utils::euclidianDistance(point1.latitude(), point1.longitude(), point2.latitude(), point2.longitude());
+        return Utils::euclidianDistance(lat1, long1, lat2, long2);
 
     double (*distanceFunction)(double, double, double, double);
     switch(type) {
@@ -53,10 +53,13 @@ double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::Di
         break;
     }
 
-    return distanceFunction(Utils::degreesToRadians(point1.latitude()),
-        Utils::degreesToRadians(point1.longitude()),
-        Utils::degreesToRadians(point2.latitude()),
-        Utils::degreesToRadians(point2.longitude()));
+    return distanceFunction(Utils::degreesToRadians(lat1), Utils::degreesToRadians(long1),
+        Utils::degreesToRadians(lat2), Utils::degreesToRadians(long2));
+}
+
+double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::DistanceType type)
+{
+    return Utils::distance(point1.latitude(), point1.longitude(), point2.latitude(), point2.longitude(), type);
 }
 
 double Utils::euclidianDistance(double p1X, double p1Y, double p2X, double p2Y)

@@ -5,14 +5,17 @@
 #include <string>
 #include "gpspoint.h"
 #include "grid.h"
+#include "utils.h"
 
 void GridManager::addPointToGrid(GPSPoint* point)
 {
-    int xIndex = (point->distanceToPoint(GPSPoint(0, point->longitude(), 0, nullptr)) / m_gridSize) + 1;
-    int yIndex = (point->distanceToPoint(GPSPoint(point->latitude(), 0, 0, nullptr)) / m_gridSize) + 1;
-    if (point->latitude() < 0)
+    double latitude = point->latitude();
+    double longitude = point->longitude();
+    int xIndex = (Utils::distance(latitude, longitude, 0, longitude) / m_gridSize) + 1;
+    int yIndex = (Utils::distance(latitude, longitude, latitude, 0) / m_gridSize) + 1;
+    if (latitude < 0)
         xIndex = -xIndex;
-    if (point->longitude() < 0)
+    if (longitude < 0)
         yIndex = -yIndex;
 
     std::ostringstream oss;

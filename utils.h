@@ -12,6 +12,8 @@ public:
     };
 
     static double degreesToRadians(double);
+    static double distance(double lat1, double long1, double lat2, double long2,
+        Utils::DistanceType type = FlatSpherical);
     static double distance(const GPSPoint&, const GPSPoint&, Utils::DistanceType type = FlatSpherical);
     static void latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters);
 
