@@ -18,6 +18,30 @@ double Utils::degreesToRadians(double degrees)
     return (degrees * M_PI) / 180.0;
 }
 
+void Utils::midPoint(double x1, double y1, double x2, double y2, double* midX, double* midY)
+{
+    *midX = (x1 + x2) / 2.0;
+    *midY = (y1 + y2) / 2.0;
+}
+
+void Utils::toVector(double x1, double y1, double x2, double y2, double* vectorX, double* vectorY)
+{
+    *vectorX = x2 - x1;
+    *vectorY = y2 - y1;
+}
+
+double Utils::vectorLength(double vectorX, double vectorY)
+{
+    return sqrt(pow(vectorX, 2.0) + pow(vectorY, 2.0));
+}
+
+void Utils::normalizedVector(double vectorX, double vectorY, double* normX, double* normY)
+{
+    double length = Utils::vectorLength(vectorX, vectorY);
+    *normX = vectorX / length;
+    *normY = vectorY / length;
+}
+
 void Utils::latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters)
 {
     // This is the algorithm used by the National Geospatial-Intelligence Agency

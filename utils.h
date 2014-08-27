@@ -16,6 +16,10 @@ public:
         Utils::DistanceType type = FlatSpherical);
     static double distance(const GPSPoint&, const GPSPoint&, Utils::DistanceType type = FlatSpherical);
     static void latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters);
+    static void midPoint(double x1, double y1, double x2, double y2, double* midX, double* midY);
+    static void toVector(double x1, double y1, double x2, double y2, double* vectorX, double* vectorY);
+    static double vectorLength(double vectorX, double vectorY);
+    static void normalizedVector(double vectorX, double vectorY, double* normX, double* normY);
 
 private:
     static double euclidianDistance(double p1X, double p1Y, double p2X, double p2Y);
