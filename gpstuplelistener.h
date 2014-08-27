@@ -5,7 +5,7 @@
 
 class GPSTupleListener {
 public:
-    virtual void processGPSTuple(const std::tuple<long, double, double, unsigned long>&) = 0;
+    virtual void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) = 0;
 };
 
 #endif // GPSTupleListener_h

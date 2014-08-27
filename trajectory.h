@@ -9,11 +9,11 @@ class Trajectory {
 public:
     Trajectory() { }
 
-    Trajectory(long id)
+    Trajectory(unsigned long id)
         : m_id(id)
     { }
 
-    Trajectory(long id, const std::vector<GPSPoint*>& points)
+    Trajectory(unsigned long id, const std::vector<GPSPoint*>& points)
         : m_id(id)
         , m_points(points)
     { }
@@ -21,11 +21,11 @@ public:
     void addPoint(GPSPoint*);
     void mergePoints(const Trajectory&);
 
-    long id() const { return m_id; }
+    unsigned long id() const { return m_id; }
     void dump();
 
 private:
-    long m_id;
+    unsigned long m_id;
     std::vector<GPSPoint*> m_points;
 };
 

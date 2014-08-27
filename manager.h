@@ -17,7 +17,7 @@ public:
     { }
 
     void start();
-    void processGPSTuple(const std::tuple<long, double, double, unsigned long>&) override;
+    void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
 
 private:
     void retrieveData();

@@ -16,9 +16,9 @@ void Manager::start()
     retrieveData();
 }
 
-void Manager::processGPSTuple(const std::tuple<long, double, double, unsigned long>& tuple)
+void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
 {
-    long tID;
+    unsigned long tID;
     double latitude;
     double longitude;
     unsigned long timestamp;

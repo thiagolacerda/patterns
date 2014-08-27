@@ -10,11 +10,11 @@ public:
     TrajectoryManager() { }
 
     void addTrajectory(Trajectory*);
-    Trajectory* trajectoryById(long);
+    Trajectory* trajectoryById(unsigned long);
     void dump();
 
 private:
-    std::unordered_map<long, Trajectory*> m_trajectories;
+    std::unordered_map<unsigned long, Trajectory*> m_trajectories;
 };
 
 #endif // TrajectoryManager_h

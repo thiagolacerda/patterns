@@ -14,7 +14,7 @@ private:
 
     std::string m_path;
     std::string m_dbFilesPrefix;
-    long m_currentId;
+    unsigned long m_currentId;
 };
 
 #endif // LifeMapDBDecoder_h
