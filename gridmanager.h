@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 class GPSPoint;
 class Grid;
@@ -19,6 +20,9 @@ public:
 
     void addPointToGrid(const std::shared_ptr<GPSPoint>&);
     void dump();
+    const std::unordered_map<std::string, std::shared_ptr<Grid>> grids() { return m_grids; }
+    void neighborGridsAndPoints(const std::string& key, std::vector<std::shared_ptr<Grid>>& grids,
+        std::vector<std::shared_ptr<GPSPoint>>& points);
     std::shared_ptr<Grid> gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point);
     void clear();
 
