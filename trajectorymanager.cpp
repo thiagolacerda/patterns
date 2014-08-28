@@ -5,11 +5,7 @@
 
 void TrajectoryManager::addTrajectory(Trajectory* trajectory)
 {
-    auto iter = m_trajectories.find(trajectory->id());
-    if (iter == m_trajectories.end())
-        m_trajectories[trajectory->id()] = trajectory;
-    else
-        iter->second->mergePoints(*trajectory);
+    m_trajectories[trajectory->id()] = trajectory;
 }
 
 Trajectory* TrajectoryManager::trajectoryById(unsigned long id)

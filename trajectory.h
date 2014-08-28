@@ -19,7 +19,6 @@ public:
     { }
 
     void addPoint(GPSPoint*);
-    void mergePoints(const Trajectory&);
 
     unsigned long id() const { return m_id; }
     void dump();
