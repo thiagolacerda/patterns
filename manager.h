@@ -2,6 +2,7 @@
 #define Manager_h
 
 #include <map>
+#include <memory>
 #include "config.h"
 #include "gpstuplelistener.h"
 #include "gridmanager.h"
@@ -24,7 +25,7 @@ private:
     DatabaseDecoder* m_dbDecoder;
     GridManager m_gridManager;
     TrajectoryManager m_trajectoryManager;
-    std::map<unsigned, std::vector<GPSPoint*>> m_pointsPerTimeSlot;
+    std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
 };
 
 #endif // Manager_h

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "gpspoint.h"
 
-void Trajectory::addPoint(GPSPoint* point)
+void Trajectory::addPoint(const std::shared_ptr<GPSPoint>& point)
 {
     m_points.push_back(point);
 }

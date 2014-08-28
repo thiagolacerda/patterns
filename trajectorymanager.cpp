@@ -3,12 +3,12 @@
 #include <iostream>
 #include "trajectory.h"
 
-void TrajectoryManager::addTrajectory(Trajectory* trajectory)
+void TrajectoryManager::addTrajectory(const std::shared_ptr<Trajectory>& trajectory)
 {
     m_trajectories[trajectory->id()] = trajectory;
 }
 
-Trajectory* TrajectoryManager::trajectoryById(unsigned long id)
+std::shared_ptr<Trajectory> TrajectoryManager::trajectoryById(unsigned long id)
 {
     auto iter = m_trajectories.find(id);
     if (iter != m_trajectories.end())

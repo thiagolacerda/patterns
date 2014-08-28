@@ -29,9 +29,9 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
         Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
 
     if (m_pointsPerTimeSlot.find(index) == m_pointsPerTimeSlot.end())
-        m_pointsPerTimeSlot[index] = std::vector<GPSPoint*>();
+        m_pointsPerTimeSlot[index] = std::vector<std::shared_ptr<GPSPoint>>();
 
-    m_pointsPerTimeSlot[index].push_back(new GPSPoint(latitude, longitude, timestamp, tID));
+    m_pointsPerTimeSlot[index].push_back(std::shared_ptr<GPSPoint>(new GPSPoint(latitude, longitude, timestamp, tID)));
 }
 
 void Manager::retrieveData()

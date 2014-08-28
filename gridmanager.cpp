@@ -7,7 +7,7 @@
 #include "grid.h"
 #include "utils.h"
 
-void GridManager::addPointToGrid(GPSPoint* point)
+void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
 {
     double latitude = point->latitude();
     double longitude = point->longitude();
@@ -21,10 +21,10 @@ void GridManager::addPointToGrid(GPSPoint* point)
     std::ostringstream oss;
     oss << xIndex << "_" << yIndex;
     std::string key = oss.str();
-    Grid* grid = nullptr;
-    std::unordered_map<std::string, Grid*>::const_iterator iter = m_grids.find(key);
+    std::shared_ptr<Grid> grid;
+    auto iter = m_grids.find(key);
     if (iter == m_grids.end()) {
-        grid = new Grid();
+        grid.reset(new Grid);
         m_grids[key] = grid;
     } else
         grid = iter->second;

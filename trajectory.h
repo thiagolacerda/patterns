@@ -1,6 +1,7 @@
 #ifndef Trajectory_h
 #define Trajectory_h
 
+#include <memory>
 #include <vector>
 
 class GPSPoint;
@@ -13,19 +14,14 @@ public:
         : m_id(id)
     { }
 
-    Trajectory(unsigned long id, const std::vector<GPSPoint*>& points)
-        : m_id(id)
-        , m_points(points)
-    { }
-
-    void addPoint(GPSPoint*);
+    void addPoint(const std::shared_ptr<GPSPoint>&);
 
     unsigned long id() const { return m_id; }
     void dump();
 
 private:
     unsigned long m_id;
-    std::vector<GPSPoint*> m_points;
+    std::vector<std::shared_ptr<GPSPoint>> m_points;
 };
 
 #endif // Trajectory_h

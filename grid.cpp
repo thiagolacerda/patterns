@@ -3,7 +3,7 @@
 #include <iostream>
 #include "gpspoint.h"
 
-void Grid::addPoint(GPSPoint* point)
+void Grid::addPoint(const std::shared_ptr<GPSPoint>& point)
 {
     m_points.push_back(point);
 }
