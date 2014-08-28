@@ -23,6 +23,7 @@ include_directories(
 
 set(PATTERNS_SOURCES
     config.cpp
+    disk.cpp
     factory.cpp
     filedbmanager.cpp
     gpspoint.cpp
