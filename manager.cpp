@@ -38,3 +38,10 @@ void Manager::retrieveData()
 {
     m_dbDecoder->retrievePoints();
 }
+
+void Manager::dumpPointsMap()
+{
+    std::cout << "Number of time slots: " << m_pointsPerTimeSlot.size() << std::endl;
+    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ++iter)
+        std::cout << "\ttime slot: " << iter->first << ", number of points: " << iter->second.size() << std::endl;
+}

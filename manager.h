@@ -19,6 +19,7 @@ public:
 
     void start();
     void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
+    void dumpPointsMap();
 
 private:
     void retrieveData();
