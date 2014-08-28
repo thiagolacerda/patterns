@@ -12,6 +12,7 @@ public:
     Grid() {}
 
     void addPoint(const std::shared_ptr<GPSPoint>&);
+    const std::vector<std::shared_ptr<GPSPoint>>& points() { return m_points; }
     void dump();
 
 private:
