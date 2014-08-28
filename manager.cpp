@@ -28,16 +28,10 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
     if (Config::coordinateSystem() == Config::Cartesian)
         Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
 
-    Trajectory* trajectory = m_trajectoryManager.trajectoryById(tID);
-    if (!trajectory) {
-        trajectory = new Trajectory(tID);
-        m_trajectoryManager.addTrajectory(trajectory);
-    }
-
     if (m_pointsPerTimeSlot.find(index) == m_pointsPerTimeSlot.end())
         m_pointsPerTimeSlot[index] = std::vector<GPSPoint*>();
 
-    m_pointsPerTimeSlot[index].push_back(new GPSPoint(latitude, longitude, timestamp, trajectory));
+    m_pointsPerTimeSlot[index].push_back(new GPSPoint(latitude, longitude, timestamp, tID));
 }
 
 void Manager::retrieveData()

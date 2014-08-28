@@ -7,14 +7,14 @@ GPSPoint::GPSPoint()
     : m_latitude(0)
     , m_longitude(0)
     , m_timestamp(0)
-    , m_trajectory(nullptr)
+    , m_trajectoryId(0)
 { }
 
-GPSPoint::GPSPoint(double latitude, double longitude, unsigned long timestamp, Trajectory* trajectory)
+GPSPoint::GPSPoint(double latitude, double longitude, unsigned long timestamp, unsigned long trajectoryId)
     : m_latitude(latitude)
     , m_longitude(longitude)
     , m_timestamp(timestamp)
-    , m_trajectory(trajectory)
+    , m_trajectoryId(trajectoryId)
 { }
 
 double GPSPoint::distanceToPoint(const GPSPoint& point, Utils::DistanceType type)
@@ -29,6 +29,6 @@ bool GPSPoint::operator<(GPSPoint* other) const
 
 void GPSPoint::dump()
 {
-    std::cout << "Point: tID: " << m_trajectory->id() << ", lat long: ("
+    std::cout << "Point: tID: " << m_trajectoryId << ", lat long: ("
         << m_latitude << ", " << m_longitude << "), " << m_timestamp << std::endl;
 }
