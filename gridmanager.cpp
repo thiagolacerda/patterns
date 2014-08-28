@@ -30,6 +30,16 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
         grid = iter->second;
 
     grid->addPoint(point);
+    m_pointsPerGrid[point] = grid;
+}
+
+std::shared_ptr<Grid> GridManager::gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point)
+{
+    auto iter = m_pointsPerGrid.find(point);
+    if (iter != m_pointsPerGrid.end())
+        return iter->second;
+
+    return std::shared_ptr<Grid>(nullptr);
 }
 
 void GridManager::dump()
