@@ -20,6 +20,7 @@ public:
     void addPointToGrid(const std::shared_ptr<GPSPoint>&);
     void dump();
     std::shared_ptr<Grid> gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point);
+    void clear();
 
 private:
     double m_gridSize;

@@ -42,6 +42,12 @@ std::shared_ptr<Grid> GridManager::gridThatPointBelongsTo(const std::shared_ptr<
     return std::shared_ptr<Grid>(nullptr);
 }
 
+void GridManager::clear()
+{
+    m_grids.clear();
+    m_pointsPerGrid.clear();
+}
+
 void GridManager::dump()
 {
     std::cout << "Number of grids: " << m_grids.size() << std::endl;
