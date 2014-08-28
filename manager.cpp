@@ -13,7 +13,7 @@ void Manager::start()
         return;
 
     m_dbDecoder->setGPSTupleListener(this);
-    retrieveData();
+    m_dbDecoder->retrievePoints();
 }
 
 void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
@@ -34,10 +34,6 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
     m_pointsPerTimeSlot[index].push_back(std::shared_ptr<GPSPoint>(new GPSPoint(latitude, longitude, timestamp, tID)));
 }
 
-void Manager::retrieveData()
-{
-    m_dbDecoder->retrievePoints();
-}
 
 void Manager::dumpPointsMap()
 {

@@ -22,7 +22,6 @@ public:
     void dumpPointsMap();
 
 private:
-    void retrieveData();
     DatabaseDecoder* m_dbDecoder;
     GridManager m_gridManager;
     TrajectoryManager m_trajectoryManager;
