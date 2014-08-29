@@ -2,11 +2,20 @@
 #define Disk_h
 
 #include <memory>
+#include <set>
 #include <unordered_set>
 #include <vector>
+#include "trajectory.h"
 
 class Grid;
 class Trajectory;
+
+struct TrajectoryComp {
+    bool operator() (const std::shared_ptr<Trajectory>& t1, const std::shared_ptr<Trajectory>& t2) const
+    {
+        return t1->id() < t2->id();
+    }
+};
 
 class Disk {
 public:
@@ -30,12 +39,12 @@ public:
     void addAlreadyComputedGrids(const std::vector<std::shared_ptr<Grid>>&);
     void addAlreadyComputedGrid(const std::shared_ptr<Grid>&);
     bool isGridAlreadyComputed(const std::shared_ptr<Grid>& grid);
-    const std::unordered_set<std::shared_ptr<Trajectory>>& trajectories() { return m_trajectories; }
+    unsigned numberOfTrajectories() const { return m_trajectories.size(); }
 
 private:
     double m_centerX;
     double m_centerY;
-    std::unordered_set<std::shared_ptr<Trajectory>> m_trajectories;
+    std::set<std::shared_ptr<Trajectory>, TrajectoryComp> m_trajectories;
     std::unordered_set<std::shared_ptr<Grid>> m_alreadyComputed;
 };
 

@@ -67,9 +67,9 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
                     getTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
                     getTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
                     clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());
-                    if (disk1->trajectories().size() >= trajectoriesPerFlock)
+                    if (disk1->numberOfTrajectories() >= trajectoriesPerFlock)
                         diskIsValid(disk1, iter->second, neighborGrids);
-                    if (disk2->trajectories().size() >= trajectoriesPerFlock)
+                    if (disk2->numberOfTrajectories() >= trajectoriesPerFlock)
                         diskIsValid(disk2, iter->second, neighborGrids);
                 }
             }
