@@ -49,6 +49,8 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
     std::shared_ptr<Disk> disk1;
     std::shared_ptr<Disk> disk2;
     const std::unordered_map<std::string, std::shared_ptr<Grid>>& grids = m_gridManager.grids();
+    double gridSize = Config::gridSize();
+    unsigned trajectoriesPerFlock = Config::numberOfTrajectoriesPerFlock();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
         std::string key = iter->first;
         std::vector<Disk*> resultingDisks;
@@ -60,23 +62,29 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
         for (auto it1 = pointsToProcess.begin(); it1 != pointsToProcess.end(); ++it1) {
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
                 double distance = (*it1)->distanceToPoint(*(*it2));
-                if (distance <= Config::gridSize()) {
+                if (distance <= gridSize) {
                     m_diskManager.computeDisks((*it1).get(), (*it2).get(), disk1, disk2);
                     getTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
                     getTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
                     clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());
-                    resultingDisks.push_back(disk1.get());
-                    resultingDisks.push_back(disk2.get());
+                    if (disk1->trajectories().size() >= trajectoriesPerFlock)
+                        diskIsValid(disk1, iter->second, neighborGrids);
+                    if (disk2->trajectories().size() >= trajectoriesPerFlock)
+                        diskIsValid(disk2, iter->second, neighborGrids);
                 }
             }
-        }
-        for (Disk* disk : resultingDisks) {
-            disk->addAlreadyComputedGrid(iter->second);
-            disk->addAlreadyComputedGrids(neighborGrids);
         }
     }
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
+}
+
+void Manager::diskIsValid(const std::shared_ptr<Disk>& disk, const std::shared_ptr<Grid>& queryGrid,
+    const std::vector<std::shared_ptr<Grid>>& neighborGrids)
+{
+    m_diskManager.addDisk(disk);
+    disk->addAlreadyComputedGrids(neighborGrids);
+    disk->addAlreadyComputedGrid(queryGrid);
 }
 
 void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
@@ -104,7 +112,11 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
 void Manager::getTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2)
 {
     std::shared_ptr<Trajectory> trajectory = m_trajectoryManager.trajectoryById(point->trajectoryId());
-    if (!trajectory) {
+    // Here we create a new Trajectory for this point if one of the following conditions are met:
+    // There is no Trajectory created for this point
+    // Or if its shared_ptr's use_count is equal to 2. This means that onlye the above shared_ptr and
+    // TrajectoryManager holds reference for it e no valid Disk. This lazy deletion is being performed to gain speed.
+    if (!trajectory || trajectory.use_count() == 2) {
         trajectory.reset(new Trajectory(point->trajectoryId()));
         m_trajectoryManager.addTrajectory(trajectory);
     }

@@ -13,6 +13,7 @@ public:
     DiskManager()
     { }
 
+    void addDisk(const std::shared_ptr<Disk>&);
     std::shared_ptr<Disk> findDisk(double centerX, double centerY);
     void computeDisks(GPSPoint* point1, GPSPoint* point2, std::shared_ptr<Disk>& disk1, std::shared_ptr<Disk>& disk2);
 

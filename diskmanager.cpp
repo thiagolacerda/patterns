@@ -8,6 +8,11 @@
 #include "gpspoint.h"
 #include "utils.h"
 
+void DiskManager::addDisk(const std::shared_ptr<Disk>& disk)
+{
+    m_disks[diskKey(disk->centerX(), disk->centerY())] = disk;
+}
+
 std::string DiskManager::diskKey(double x, double y)
 {
     std::ostringstream oss;
@@ -44,14 +49,10 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, std::shared_p
     double c2X = midX - multiplyParameter * perpNormVectorX;
     double c2Y = midY - multiplyParameter * perpNormVectorY;
     disk1 = findDisk(c1X, c1Y);
-    if (!disk1) {
+    if (!disk1)
         disk1.reset(new Disk(c1X, c1Y));
-        m_disks[diskKey(c1X, c1Y)] = disk1;
-    }
 
     disk2 = findDisk(c2X, c2Y);
-    if (!disk2) {
+    if (!disk2)
         disk2.reset(new Disk(c2X, c2Y));
-        m_disks[diskKey(c2X, c2Y)] = disk2;
-    }
 }

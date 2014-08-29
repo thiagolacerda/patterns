@@ -25,6 +25,8 @@ public:
     void dumpPointsMap();
 
 private:
+    void diskIsValid(const std::shared_ptr<Disk>& disk, const std::shared_ptr<Grid>& queryGrid,
+        const std::vector<std::shared_ptr<Grid>>& neighborGrids);
     void computeDisks(const std::vector<std::shared_ptr<GPSPoint>>&);
     void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess,
         GPSPoint* diskGeneratorPoint1, GPSPoint* diskGeneratorPoint2);
