@@ -50,7 +50,6 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
     std::shared_ptr<Disk> disk2;
     const std::unordered_map<std::string, std::shared_ptr<Grid>>& grids = m_gridManager.grids();
     double gridSize = Config::gridSize();
-    unsigned trajectoriesPerFlock = Config::numberOfTrajectoriesPerFlock();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
         std::string key = iter->first;
         std::vector<Disk*> resultingDisks;
@@ -67,10 +66,8 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
                     getTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
                     getTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
                     clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());
-                    if (disk1->numberOfTrajectories() >= trajectoriesPerFlock)
-                        diskIsValid(disk1, iter->second, neighborGrids);
-                    if (disk2->numberOfTrajectories() >= trajectoriesPerFlock)
-                        diskIsValid(disk2, iter->second, neighborGrids);
+                    validateAndTryStoreDisk(disk1, iter->second, neighborGrids);
+                    validateAndTryStoreDisk(disk2, iter->second, neighborGrids);
                 }
             }
         }
@@ -79,10 +76,12 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
     m_gridManager.clear();
 }
 
-void Manager::diskIsValid(const std::shared_ptr<Disk>& disk, const std::shared_ptr<Grid>& queryGrid,
+void Manager::validateAndTryStoreDisk(const std::shared_ptr<Disk>& disk, const std::shared_ptr<Grid>& queryGrid,
     const std::vector<std::shared_ptr<Grid>>& neighborGrids)
 {
-    m_diskManager.addDisk(disk);
+    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
+        return;
+
     disk->addAlreadyComputedGrids(neighborGrids);
     disk->addAlreadyComputedGrid(queryGrid);
 }

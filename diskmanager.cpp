@@ -26,6 +26,23 @@ std::shared_ptr<Disk> DiskManager::findDisk(double centerX, double centerY)
     return iter != m_disks.end() ? iter->second : nullptr;
 }
 
+bool DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
+{
+    for (auto iter = m_disks.begin(); iter != m_disks.end();) {
+        unsigned count = iter->second->countIntersection(disk.get());
+        if (disk->numberOfTrajectories() == count) // disk is a subset of iter->second, do not insert
+            return false;
+
+        if (iter->second->numberOfTrajectories() != count)
+            ++iter; // Different disks... do nothing
+        else
+            iter = m_disks.erase(iter); // disk is a superset of iter->second
+    }
+
+    addDisk(disk);
+    return true;
+}
+
 void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, std::shared_ptr<Disk>& disk1,
     std::shared_ptr<Disk>& disk2)
 {

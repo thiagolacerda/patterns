@@ -40,6 +40,7 @@ public:
     void addAlreadyComputedGrid(const std::shared_ptr<Grid>&);
     bool isGridAlreadyComputed(const std::shared_ptr<Grid>& grid);
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
+    unsigned countIntersection(Disk* other) const;
 
 private:
     double m_centerX;
