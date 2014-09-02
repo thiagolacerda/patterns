@@ -17,7 +17,7 @@ void Manager::start()
     m_dbDecoder->setGPSTupleListener(this);
     m_dbDecoder->retrievePoints();
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
-        computeDisks(iter->second);
+        computeDisks(iter->second, iter->first);
         iter = m_pointsPerTimeSlot.erase(iter);
     }
 }
@@ -40,7 +40,7 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
     m_pointsPerTimeSlot[index].push_back(std::shared_ptr<GPSPoint>(new GPSPoint(latitude, longitude, timestamp, tID)));
 }
 
-void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
+void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
 {
     // Build the grid for this time slot
     for (const std::shared_ptr<GPSPoint>& point : points)
@@ -62,7 +62,7 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (distance <= gridSize) {
-                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), disk1, disk2);
+                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, disk1, disk2);
                     createTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
                     createTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
                     clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());

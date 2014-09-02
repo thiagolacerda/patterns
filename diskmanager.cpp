@@ -43,8 +43,8 @@ bool DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
     return true;
 }
 
-void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, std::shared_ptr<Disk>& disk1,
-    std::shared_ptr<Disk>& disk2)
+void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp,
+    std::shared_ptr<Disk>& disk1, std::shared_ptr<Disk>& disk2)
 {
     double midX;
     double midY;
@@ -67,9 +67,9 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, std::shared_p
     double c2Y = midY - multiplyParameter * perpNormVectorY;
     disk1 = findDisk(c1X, c1Y);
     if (!disk1)
-        disk1.reset(new Disk(c1X, c1Y));
+        disk1.reset(new Disk(c1X, c1Y, timestamp));
 
     disk2 = findDisk(c2X, c2Y);
     if (!disk2)
-        disk2.reset(new Disk(c2X, c2Y));
+        disk2.reset(new Disk(c2X, c2Y, timestamp));
 }
