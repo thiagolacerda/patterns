@@ -63,8 +63,8 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points)
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (distance <= gridSize) {
                     m_diskManager.computeDisks((*it1).get(), (*it2).get(), disk1, disk2);
-                    getTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
-                    getTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
+                    createTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
+                    createTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
                     clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());
                     validateAndTryStoreDisk(disk1, iter->second, neighborGrids);
                     validateAndTryStoreDisk(disk2, iter->second, neighborGrids);
@@ -100,25 +100,17 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
         std::shared_ptr<Grid> grid = m_gridManager.gridThatPointBelongsTo(point);
         if (!disk1->isGridAlreadyComputed(grid) &&
             Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude) <= radius)
-            getTrajectoryAndAddToDisks(point, disk1);
+            createTrajectoryAndAddToDisks(point, disk1);
 
         if (!disk2->isGridAlreadyComputed(grid) &&
             Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude) <= radius)
-            getTrajectoryAndAddToDisks(point, disk2);
+            createTrajectoryAndAddToDisks(point, disk2);
     }
 }
 
-void Manager::getTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2)
+void Manager::createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2)
 {
-    std::shared_ptr<Trajectory> trajectory = m_trajectoryManager.trajectoryById(point->trajectoryId());
-    // Here we create a new Trajectory for this point if one of the following conditions are met:
-    // There is no Trajectory created for this point
-    // Or if its shared_ptr's use_count is equal to 2. This means that onlye the above shared_ptr and
-    // TrajectoryManager holds reference for it e no valid Disk. This lazy deletion is being performed to gain speed.
-    if (!trajectory || trajectory.use_count() == 2) {
-        trajectory.reset(new Trajectory(point->trajectoryId()));
-        m_trajectoryManager.addTrajectory(trajectory);
-    }
+    std::shared_ptr<Trajectory> trajectory(new Trajectory(point->trajectoryId()));
     trajectory->addPoint(point);
     disk1->addTrajectory(trajectory);
     if (disk2)

@@ -7,7 +7,6 @@
 #include "diskmanager.h"
 #include "gpstuplelistener.h"
 #include "gridmanager.h"
-#include "trajectorymanager.h"
 
 class DatabaseDecoder;
 class Disk;
@@ -32,11 +31,10 @@ private:
         GPSPoint* diskGeneratorPoint1, GPSPoint* diskGeneratorPoint2);
     void clusterGridPoints(Disk* disk1, Disk* disk2, Grid* grid, GPSPoint* diskGeneratorPoint1,
         GPSPoint* diskGeneratorPoint2);
-    void getTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2 = nullptr);
+    void createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2 = nullptr);
     DatabaseDecoder* m_dbDecoder;
     DiskManager m_diskManager;
     GridManager m_gridManager;
-    TrajectoryManager m_trajectoryManager;
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
 };
 
