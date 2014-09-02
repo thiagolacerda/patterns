@@ -1,8 +1,8 @@
 #ifndef Disk_h
 #define Disk_h
 
+#include <map>
 #include <memory>
-#include <set>
 #include <unordered_set>
 #include <vector>
 #include "trajectory.h"
@@ -37,7 +37,7 @@ public:
 private:
     double m_centerX;
     double m_centerY;
-    std::set<std::shared_ptr<Trajectory>, TrajectoryComp> m_trajectories;
+    std::map<unsigned long, std::shared_ptr<Trajectory>> m_trajectories;
     std::unordered_set<std::shared_ptr<Grid>> m_alreadyComputed;
 };
 

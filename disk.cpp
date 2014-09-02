@@ -5,7 +5,7 @@
 
 void Disk::addTrajectory(const std::shared_ptr<Trajectory>& trajectory)
 {
-    m_trajectories.insert(trajectory);
+    m_trajectories[trajectory->id()] = trajectory;
 }
 
 void Disk::addAlreadyComputedGrids(const std::vector<std::shared_ptr<Grid>>& grids)
@@ -31,20 +31,20 @@ unsigned Disk::countIntersection(Disk* other) const
     auto end2 = other->m_trajectories.end();
     --end1;
     --end2;
-    if (((*begin1)->id() < (*begin2)->id() && (*end1)->id() < (*begin2)->id()) ||
-        ((*begin2)->id() < (*begin1)->id() && (*end2)->id() < (*begin1)->id()))
+    if ((begin1->first < begin2->first && end1->first < begin2->first) ||
+        (begin2->first < begin1->first && end2->first < begin1->first))
         return 0;
 
     unsigned count = 0;
     while (begin1 != m_trajectories.end() && begin2 != other->m_trajectories.end()) {
-        if ((*begin1)->id() < (*begin2)->id())
+        if (begin1->first < begin2->first)
             ++begin1;
-        else if ((*begin2)->id() < (*begin1)->id())
+        else if (begin2->first < begin1->first)
             ++begin2;
         else {
-            count++;
-            begin1++;
-            begin2++;
+            ++count;
+            ++begin1;
+            ++begin2;
         }
     }
 

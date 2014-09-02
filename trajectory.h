@@ -24,11 +24,4 @@ private:
     std::vector<std::shared_ptr<GPSPoint>> m_points;
 };
 
-struct TrajectoryComp {
-    bool operator() (const std::shared_ptr<Trajectory>& t1, const std::shared_ptr<Trajectory>& t2) const
-    {
-        return t1->id() < t2->id();
-    }
-};
-
 #endif // Trajectory_h
