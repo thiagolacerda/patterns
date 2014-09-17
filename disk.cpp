@@ -1,6 +1,7 @@
 #include "disk.h"
 
 #include <algorithm>
+#include <iostream>
 #include "grid.h"
 
 void Disk::addTrajectory(const Trajectory& trajectory)
@@ -49,4 +50,22 @@ unsigned Disk::countIntersection(Disk* other) const
     }
 
     return count;
+}
+
+void Disk::dumpTrajectories() const
+{
+    if (m_trajectories.empty())
+        return;
+
+    auto iter = m_trajectories.begin();
+    std::cout << iter->second.id();
+    ++iter;
+    for (; iter != m_trajectories.end(); ++iter)
+        std::cout << ", " << iter->second.id();
+    std::cout << std::endl;
+}
+
+void Disk::dump() const
+{
+    std::cout << "Disk, x: " << m_centerX << ", y: " << m_centerY << " trajectories: " << m_trajectories.size() << std::endl;
 }

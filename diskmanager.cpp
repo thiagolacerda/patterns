@@ -64,3 +64,11 @@ void DiskManager::clear()
     std::for_each(m_disks.begin(), m_disks.end(), [](Disk* disk) { delete disk; });
     m_disks.clear();
 }
+
+void DiskManager::dump() const
+{
+    for (Disk* disk : m_disks) {
+        disk->dump();
+        disk->dumpTrajectories();
+    }
+}

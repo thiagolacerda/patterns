@@ -130,6 +130,12 @@ void Manager::createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& poi
 void Manager::dumpPointsMap()
 {
     std::cout << "Number of time slots: " << m_pointsPerTimeSlot.size() << std::endl;
-    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ++iter)
-        std::cout << "\ttime slot: " << iter->first << ", number of points: " << iter->second.size() << std::endl;
+    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ++iter) {
+        std::cout << "\t***time slot: " << iter->first << ", number of points: " << iter->second.size() << std::endl;
+        const std::vector<std::shared_ptr<GPSPoint>>& points = iter->second;
+        for (const std::shared_ptr<GPSPoint>& point : points) {
+            std::cout << "\t\t";
+            point->dump();
+        }
+    }
 }

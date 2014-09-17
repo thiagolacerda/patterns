@@ -37,6 +37,8 @@ public:
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
     unsigned countIntersection(Disk* other) const;
     const std::map<unsigned long, Trajectory>& trajectories() const { return m_trajectories; }
+    void dumpTrajectories() const;
+    void dump() const;
 
 private:
     double m_centerX;

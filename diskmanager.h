@@ -17,6 +17,8 @@ public:
     bool tryInsertDisk(Disk*);
     const std::vector<Disk*>& disks() const { return m_disks; }
     void clear();
+    void dump() const;
+    unsigned numberOfDisks() const { return m_disks.size(); }
 
 private:
     std::string diskKey(double x, double y);
