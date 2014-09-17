@@ -14,7 +14,8 @@ public:
 
     enum DBDecoder {
         LifeMap,
-        Trucks
+        Trucks,
+        TrucksPaper
     };
 
     static void setDecoderParameters(const std::vector<std::string>& parameters) { m_decoderParameters = parameters; }

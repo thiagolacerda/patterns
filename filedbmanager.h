@@ -6,8 +6,9 @@
 
 class FileDBManager : public DBManager {
 public:
-    FileDBManager()
+    FileDBManager(char separator)
         : DBManager()
+        , m_separator(separator)
     { }
 
     ~FileDBManager() { disconnect(); }
@@ -22,6 +23,7 @@ public:
 private:
     std::string getColumnValue(const std::string& row, int colIndex);
     std::ifstream m_file;
+    char m_separator;
 };
 
 #endif // FileDBManager_h

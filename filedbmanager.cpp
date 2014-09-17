@@ -33,14 +33,14 @@ std::string FileDBManager::getColumnValue(const std::string& row, int colIndex)
 {
     unsigned j = 0;
     for (int i = 0; i < colIndex && j < row.length(); ++i) {
-        j = row.find_first_of(';', j);
+        j = row.find_first_of(m_separator, j);
         ++j;
     }
 
     if (j == row.length())
         return "";
 
-    return row.substr(j, row.find_first_of(';', j) - j);
+    return row.substr(j, row.find_first_of(m_separator, j) - j);
 }
 
 double FileDBManager::getColumnAsDouble(void* row, int colIndex)

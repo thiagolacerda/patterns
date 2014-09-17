@@ -16,7 +16,10 @@ void Config::setDecoder(char* decoderName)
     std::string decoder(decoderName);
     if (decoder.compare("trucks") == 0)
         Config::m_decoderInUse = Config::Trucks;
+    else if (decoder.compare("truckspaper") == 0)
+        Config::m_decoderInUse = Config::TrucksPaper;
 }
+
 void Config::setGridSize(double size)
 {
     m_gridSize = size;
