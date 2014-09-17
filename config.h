@@ -21,8 +21,10 @@ public:
     static std::vector<std::string>& decoderParameters() { return m_decoderParameters; }
     static void setDecoder(char*);
     static DBDecoder decoder() { return m_decoderInUse; }
-    static void setGridSize(double size) { m_gridSize = size; }
+    static void setGridSize(double);
     static double gridSize() { return m_gridSize; }
+    static double radiusSquared() { return m_radiusSquared; }
+    static double radius() { return m_radius; }
     static unsigned numberOfTrajectoriesPerFlock() { return m_trajectoriesPerFlock; }
     static void setNumberOfTrajectoriesPerFlock(unsigned trajectories) { m_trajectoriesPerFlock = trajectories; }
     static void setTimeSlotSize(double size) { m_timeSlotSize = size; }
@@ -35,6 +37,8 @@ private:
     static std::vector<std::string> m_decoderParameters;
     static unsigned m_trajectoriesPerFlock;
     static double m_gridSize;
+    static double m_radiusSquared;
+    static double m_radius;
     static unsigned m_timeSlotSize;
     static CoordinateSystem m_coordinateSystem;
 };

@@ -96,7 +96,7 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess, GPSPoint* diskGeneratorPoint1,
     GPSPoint* diskGeneratorPoint2)
 {
-    double radius = Config::gridSize() / 2.0;
+    double radius = Config::radius();
     for (std::shared_ptr<GPSPoint> point : pointsToProcess) {
         if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2)
             continue;
