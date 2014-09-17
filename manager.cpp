@@ -20,6 +20,7 @@ void Manager::start()
         computeDisks(iter->second, iter->first);
         iter = m_pointsPerTimeSlot.erase(iter);
     }
+    std::cout << "flocks: " << m_foundFlocks << std::endl;
 }
 
 void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
@@ -76,6 +77,9 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
             }
         }
     }
+    m_flockManager.tryMergeFlocks(m_diskManager.disks());
+    std::vector<Flock> flocks = m_flockManager.reportFlocks();
+    m_foundFlocks += flocks.size();
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
     m_diskManager.clear();

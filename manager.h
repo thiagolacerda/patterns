@@ -5,6 +5,7 @@
 #include <memory>
 #include "config.h"
 #include "diskmanager.h"
+#include "flockmanager.h"
 #include "gpstuplelistener.h"
 #include "gridmanager.h"
 
@@ -17,6 +18,7 @@ public:
     Manager()
         : m_dbDecoder(nullptr)
         , m_gridManager(GridManager(Config::gridSize()))
+        , m_foundFlocks(0)
     { }
 
     void start();
@@ -34,7 +36,9 @@ private:
     DatabaseDecoder* m_dbDecoder;
     DiskManager m_diskManager;
     GridManager m_gridManager;
+    FlockManager m_flockManager;
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
+    unsigned long m_foundFlocks;
 };
 
 #endif // Manager_h

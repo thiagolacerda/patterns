@@ -18,3 +18,24 @@ void Trajectory::dump()
         (*iter)->dump();
     }
 }
+
+void Trajectory::mergePoints(const Trajectory& other)
+{
+    m_points.insert(m_points.end(), other.m_points.begin(), other.m_points.end());
+}
+
+void Trajectory::clearFirstPoints()
+{
+    if (m_points.empty())
+        return;
+
+    unsigned long startTime = m_points.at(0)->timestamp();
+    unsigned count = 0;
+    for (auto iter = m_points.begin(); iter != m_points.end();) {
+        if ((*iter)->timestamp() != startTime)
+            return;
+
+        count++;
+        iter = m_points.erase(iter);
+    }
+}

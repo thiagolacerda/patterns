@@ -26,6 +26,8 @@ public:
     static double gridSize() { return m_gridSize; }
     static double radiusSquared() { return m_radiusSquared; }
     static double radius() { return m_radius; }
+    static unsigned long flockLength() { return m_flockLength; }
+    static void setFlockLength(unsigned long flockLength) { m_flockLength = flockLength; }
     static unsigned numberOfTrajectoriesPerFlock() { return m_trajectoriesPerFlock; }
     static void setNumberOfTrajectoriesPerFlock(unsigned trajectories) { m_trajectoriesPerFlock = trajectories; }
     static void setTimeSlotSize(double size) { m_timeSlotSize = size; }
@@ -36,6 +38,7 @@ public:
 private:
     static DBDecoder m_decoderInUse;
     static std::vector<std::string> m_decoderParameters;
+    static unsigned long m_flockLength;
     static unsigned m_trajectoriesPerFlock;
     static double m_gridSize;
     static double m_radiusSquared;

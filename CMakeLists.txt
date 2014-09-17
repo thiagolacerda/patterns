@@ -34,6 +34,8 @@ set(PATTERNS_SOURCES
     diskmanager.cpp
     factory.cpp
     filedbmanager.cpp
+    flock.cpp
+    flockmanager.cpp
     gpspoint.cpp
     grid.cpp
     gridmanager.cpp

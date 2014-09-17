@@ -17,6 +17,8 @@ public:
     void addPoint(const std::shared_ptr<GPSPoint>&);
 
     unsigned long id() const { return m_id; }
+    void mergePoints(const Trajectory&);
+    void clearFirstPoints();
     void dump();
 
 private:
