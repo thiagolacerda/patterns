@@ -3,22 +3,22 @@
 #include <algorithm>
 #include "grid.h"
 
-void Disk::addTrajectory(const std::shared_ptr<Trajectory>& trajectory)
+void Disk::addTrajectory(const Trajectory& trajectory)
 {
-    m_trajectories[trajectory->id()] = trajectory;
+    m_trajectories[trajectory.id()] = trajectory;
 }
 
-void Disk::addAlreadyComputedGrids(const std::vector<std::shared_ptr<Grid>>& grids)
+void Disk::addAlreadyComputedGrids(const std::vector<Grid*>& grids)
 {
     std::copy(grids.begin(), grids.end(), std::inserter(m_alreadyComputed, m_alreadyComputed.end()));
 }
 
-void Disk::addAlreadyComputedGrid(const std::shared_ptr<Grid>& grid)
+void Disk::addAlreadyComputedGrid(Grid* grid)
 {
     m_alreadyComputed.insert(grid);
 }
 
-bool Disk::isGridAlreadyComputed(const std::shared_ptr<Grid>& grid)
+bool Disk::isGridAlreadyComputed(Grid* grid)
 {
     return m_alreadyComputed.find(grid) != m_alreadyComputed.end();
 }

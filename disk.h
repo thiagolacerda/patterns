@@ -30,10 +30,10 @@ public:
     void setCenterY(double centerY) { m_centerY = centerY; }
 
     unsigned long timestamp() const { return m_timestamp; }
-    void addTrajectory(const std::shared_ptr<Trajectory>&);
-    void addAlreadyComputedGrids(const std::vector<std::shared_ptr<Grid>>&);
-    void addAlreadyComputedGrid(const std::shared_ptr<Grid>&);
-    bool isGridAlreadyComputed(const std::shared_ptr<Grid>& grid);
+    void addTrajectory(const Trajectory&);
+    void addAlreadyComputedGrids(const std::vector<Grid*>&);
+    void addAlreadyComputedGrid(Grid*);
+    bool isGridAlreadyComputed(Grid*);
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
     unsigned countIntersection(Disk* other) const;
 
@@ -41,8 +41,8 @@ private:
     double m_centerX;
     double m_centerY;
     unsigned long m_timestamp;
-    std::map<unsigned long, std::shared_ptr<Trajectory>> m_trajectories;
-    std::unordered_set<std::shared_ptr<Grid>> m_alreadyComputed;
+    std::map<unsigned long, Trajectory> m_trajectories;
+    std::unordered_set<Grid*> m_alreadyComputed;
 };
 
 #endif // Disk_h

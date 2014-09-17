@@ -1,5 +1,6 @@
 #include "gridmanager.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -21,10 +22,10 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
     std::ostringstream oss;
     oss << xIndex << "_" << yIndex;
     std::string key = oss.str();
-    std::shared_ptr<Grid> grid;
+    Grid* grid;
     auto iter = m_grids.find(key);
     if (iter == m_grids.end()) {
-        grid.reset(new Grid);
+        grid = new Grid();
         m_grids[key] = grid;
     } else
         grid = iter->second;
@@ -33,25 +34,26 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
     m_pointsPerGrid[point] = grid;
 }
 
-std::shared_ptr<Grid> GridManager::gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point)
+Grid* GridManager::gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point)
 {
     auto iter = m_pointsPerGrid.find(point);
     if (iter != m_pointsPerGrid.end())
         return iter->second;
 
-    return std::shared_ptr<Grid>(nullptr);
+    return nullptr;
 }
 
 void GridManager::clear()
 {
-    m_grids.clear();
     m_pointsPerGrid.clear();
+    std::for_each(m_grids.begin(), m_grids.end(), [](const std::pair<std::string, Grid*>& elem) { delete elem.second; });
+    m_grids.clear();
 }
 
-void GridManager::neighborGridsAndPoints(const std::string& key, std::vector<std::shared_ptr<Grid>>& grids,
+void GridManager::neighborGridsAndPoints(const std::string& key, std::vector<Grid*>& grids,
     std::vector<std::shared_ptr<GPSPoint>>& points)
 {
-    std::unordered_map<std::string, std::shared_ptr<Grid>>::const_iterator iter;
+    std::unordered_map<std::string, Grid*>::const_iterator iter;
     size_t underscoreIndex = key.find_first_of('_');
     int xIndex = atoi(key.substr(0, underscoreIndex).c_str());
     ++underscoreIndex;

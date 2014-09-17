@@ -46,26 +46,30 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
     for (const std::shared_ptr<GPSPoint>& point : points)
         m_gridManager.addPointToGrid(std::shared_ptr<GPSPoint>(point));
 
-    std::shared_ptr<Disk> disk1;
-    std::shared_ptr<Disk> disk2;
-    const std::unordered_map<std::string, std::shared_ptr<Grid>>& grids = m_gridManager.grids();
+    Disk* disk1;
+    Disk* disk2;
+    const std::unordered_map<std::string, Grid*>& grids = m_gridManager.grids();
     double gridSize = Config::gridSize();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
         std::string key = iter->first;
-        std::vector<Disk*> resultingDisks;
-        std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
-        std::vector<std::shared_ptr<Grid>> neighborGrids;
-        m_gridManager.neighborGridsAndPoints(key, neighborGrids, pointsToProcess);
         const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
+        std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
+        std::vector<Grid*> neighborGrids;
+        m_gridManager.neighborGridsAndPoints(key, neighborGrids, pointsToProcess);
         pointsToProcess.insert(pointsToProcess.end(), gridPoints.begin(), gridPoints.end());
         for (auto it1 = pointsToProcess.begin(); it1 != pointsToProcess.end(); ++it1) {
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (distance <= gridSize) {
-                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, disk1, disk2);
-                    createTrajectoryAndAddToDisks(*it1, disk1.get(), disk2.get());
-                    createTrajectoryAndAddToDisks(*it2, disk1.get(), disk2.get());
-                    clusterPointsIntoDisks(disk1.get(), disk2.get(), pointsToProcess, (*it1).get(), (*it2).get());
+                    disk1 = nullptr;
+                    disk2 = nullptr;
+                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    if (!disk1 || !disk2)
+                        continue;
+
+                    createTrajectoryAndAddToDisks(*it1, disk1, disk2);
+                    createTrajectoryAndAddToDisks(*it2, disk1, disk2);
+                    clusterPointsIntoDisks(disk1, disk2, pointsToProcess, (*it1).get(), (*it2).get());
                     validateAndTryStoreDisk(disk1, iter->second, neighborGrids);
                     validateAndTryStoreDisk(disk2, iter->second, neighborGrids);
                 }
@@ -74,13 +78,15 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
     }
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
+    m_diskManager.clear();
 }
 
-void Manager::validateAndTryStoreDisk(const std::shared_ptr<Disk>& disk, const std::shared_ptr<Grid>& queryGrid,
-    const std::vector<std::shared_ptr<Grid>>& neighborGrids)
+void Manager::validateAndTryStoreDisk(Disk* disk, Grid* queryGrid, const std::vector<Grid*>& neighborGrids)
 {
-    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
+    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk)) {
+        delete disk;
         return;
+    }
 
     disk->addAlreadyComputedGrids(neighborGrids);
     disk->addAlreadyComputedGrid(queryGrid);
@@ -97,21 +103,21 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
 
         double latitude = point->latitude();
         double longitude = point->longitude();
-        std::shared_ptr<Grid> grid = m_gridManager.gridThatPointBelongsTo(point);
-        if (!disk1->isGridAlreadyComputed(grid) &&
-            Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude) <= radius)
+        Grid* grid = m_gridManager.gridThatPointBelongsTo(point);
+        double distance = Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude);
+        if (!disk1->isGridAlreadyComputed(grid) && distance <= radius)
             createTrajectoryAndAddToDisks(point, disk1);
 
-        if (!disk2->isGridAlreadyComputed(grid) &&
-            Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude) <= radius)
+        distance = Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude);
+        if (!disk2->isGridAlreadyComputed(grid) && distance <= radius)
             createTrajectoryAndAddToDisks(point, disk2);
     }
 }
 
 void Manager::createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2)
 {
-    std::shared_ptr<Trajectory> trajectory(new Trajectory(point->trajectoryId()));
-    trajectory->addPoint(point);
+    Trajectory trajectory(point->trajectoryId());
+    trajectory.addPoint(point);
     disk1->addTrajectory(trajectory);
     if (disk2)
         disk2->addTrajectory(trajectory);
