@@ -60,7 +60,7 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
         for (auto it1 = pointsToProcess.begin(); it1 != pointsToProcess.end(); ++it1) {
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
                 double distance = (*it1)->distanceToPoint(*(*it2));
-                if (distance <= gridSize) {
+                if (Utils::fuzzyLessEqual(distance, gridSize)) {
                     disk1 = nullptr;
                     disk2 = nullptr;
                     m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
@@ -105,11 +105,11 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
         double longitude = point->longitude();
         Grid* grid = m_gridManager.gridThatPointBelongsTo(point);
         double distance = Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude);
-        if (!disk1->isGridAlreadyComputed(grid) && distance <= radius)
+        if (!disk1->isGridAlreadyComputed(grid) && Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk1);
 
         distance = Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude);
-        if (!disk2->isGridAlreadyComputed(grid) && distance <= radius)
+        if (!disk2->isGridAlreadyComputed(grid) && Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk2);
     }
 }

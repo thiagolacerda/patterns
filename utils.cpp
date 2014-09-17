@@ -5,6 +5,7 @@
 #include "gpspoint.h"
 
 double Utils::m_earthRadius = 6371.009;
+double Utils::m_epsilon = 0.001;
 double Utils::m1 = 111132.92;
 double Utils::m2 = -559.82;
 double Utils::m3 = 1.175;
@@ -12,6 +13,21 @@ double Utils::m4 = -0.0023;
 double Utils::p1 = 111412.84;
 double Utils::p2 = -93.5;
 double Utils::p3 = 0.118;
+
+bool Utils::fuzzyEqual(double a, double b)
+{
+    return fabs(a - b) < Utils::m_epsilon;
+}
+
+bool Utils::fuzzyLessEqual(double a, double b)
+{
+    return a < b || Utils::fuzzyEqual(a, b);
+}
+
+bool Utils::fuzzyGreatEqual(double a, double b)
+{
+    return a > b || Utils::fuzzyEqual(a, b);
+}
 
 double Utils::degreesToRadians(double degrees)
 {

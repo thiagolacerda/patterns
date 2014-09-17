@@ -28,6 +28,10 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 
 void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
 {
+    if (Utils::fuzzyEqual(point1->latitude(), point2->latitude()) &&
+        Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
+        return;
+
     double midX;
     double midY;
     double vectorX;

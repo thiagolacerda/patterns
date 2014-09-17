@@ -20,6 +20,9 @@ public:
     static void toVector(double x1, double y1, double x2, double y2, double* vectorX, double* vectorY);
     static double vectorLength(double vectorX, double vectorY);
     static void normalizedVector(double vectorX, double vectorY, double* normX, double* normY);
+    static bool fuzzyEqual(double, double);
+    static bool fuzzyLessEqual(double, double);
+    static bool fuzzyGreatEqual(double, double);
 
 private:
     static double euclidianDistance(double p1X, double p1Y, double p2X, double p2Y);
@@ -27,6 +30,7 @@ private:
     static double flatDistanceEllipsoidal(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
     static double tunnelDistance(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
     static double m_earthRadius;
+    static double m_epsilon;
 
     // Some constants used in lat/long to meters conversion
     // Latitude calculation term 1
