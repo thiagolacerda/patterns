@@ -104,7 +104,9 @@ double Utils::distance(const GPSPoint& point1, const GPSPoint& point2, Utils::Di
 
 double Utils::euclidianDistance(double p1X, double p1Y, double p2X, double p2Y)
 {
-    return sqrt(pow(p1X - p2X, 2.0) + pow(p1Y - p2Y, 2.0));
+    double deltaX = p1X - p2X;
+    double deltaY = p1Y - p2Y;
+    return sqrt((deltaX * deltaX) + (deltaY * deltaY));
 }
 
 double Utils::flatDistanceSpherical(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad)
