@@ -77,7 +77,7 @@ void Utils::latLongToMeters(double latitude, double longitude, double* latMeters
 
 double Utils::distance(double lat1, double long1, double lat2, double long2, Utils::DistanceType type)
 {
-    if (Config::coordinateSystem() == Config::Cartesian)
+    if (Config::coordinateSystem() == Config::Cartesian || Config::coordinateSystem() == Config::CartesianNoConvert)
         return Utils::euclidianDistance(lat1, long1, lat2, long2);
 
     double (*distanceFunction)(double, double, double, double);

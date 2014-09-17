@@ -8,7 +8,8 @@ class Config {
 public:
     enum CoordinateSystem {
         WSG84,
-        Cartesian
+        Cartesian,
+        CartesianNoConvert
     };
 
     enum DBDecoder {
