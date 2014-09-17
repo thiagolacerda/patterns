@@ -15,6 +15,7 @@ public:
 
     void computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2);
     bool tryInsertDisk(Disk*);
+    const std::vector<Disk*>& disks() const { return m_disks; }
     void clear();
 
 private:

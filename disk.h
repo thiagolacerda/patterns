@@ -36,6 +36,7 @@ public:
     bool isGridAlreadyComputed(Grid*);
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
     unsigned countIntersection(Disk* other) const;
+    const std::map<unsigned long, Trajectory>& trajectories() const { return m_trajectories; }
 
 private:
     double m_centerX;
