@@ -43,6 +43,9 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
 
 void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
 {
+    if (points.size() < Config::numberOfTrajectoriesPerFlock())
+        return;
+
     // Build the grid for this time slot
     for (const std::shared_ptr<GPSPoint>& point : points)
         m_gridManager.addPointToGrid(std::shared_ptr<GPSPoint>(point));
@@ -58,6 +61,9 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
         std::vector<Grid*> neighborGrids;
         m_gridManager.neighborGridsAndPoints(key, neighborGrids, pointsToProcess);
         pointsToProcess.insert(pointsToProcess.end(), gridPoints.begin(), gridPoints.end());
+        if (pointsToProcess.size() < Config::numberOfTrajectoriesPerFlock())
+            continue;
+
         for (auto it1 = pointsToProcess.begin(); it1 != pointsToProcess.end(); ++it1) {
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
                 double distance = (*it1)->distanceToPoint(*(*it2));
