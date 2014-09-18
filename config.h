@@ -34,6 +34,7 @@ public:
     static double timeSlotSize() { return m_timeSlotSize; }
     static void setCoordinateSystem(CoordinateSystem coordSystem) { m_coordinateSystem = coordSystem; }
     static CoordinateSystem coordinateSystem() { return m_coordinateSystem; }
+    static std::string coordinateSystemName(CoordinateSystem);
 
 private:
     static DBDecoder m_decoderInUse;

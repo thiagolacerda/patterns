@@ -27,3 +27,17 @@ void Config::setGridSize(double size)
     m_radius = m_gridSize / 2.0;
     m_radiusSquared = m_radius * m_radius;
 }
+
+std::string Config::coordinateSystemName(CoordinateSystem coordSystem)
+{
+    switch(coordSystem) {
+    case Config::WSG84:
+        return "WSG84 GPS System";
+    case Config::Cartesian:
+        return "Cartesian System";
+    case Config::CartesianNoConvert:
+        return "Cartesian System but do not try to convert from GPS";
+    default:
+        return "Uknown type, falling to defalt: Cartesian";
+    }
+}
