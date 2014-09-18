@@ -5,6 +5,7 @@
 #include <memory>
 #include "config.h"
 #include "diskmanager.h"
+#include "flock.h"
 #include "flockmanager.h"
 #include "gpstuplelistener.h"
 #include "gridmanager.h"
@@ -18,12 +19,12 @@ public:
     Manager()
         : m_dbDecoder(nullptr)
         , m_gridManager(GridManager(Config::gridSize()))
-        , m_foundFlocks(0)
     { }
 
     void start();
     void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
     void dumpPointsMap();
+    void dumpFoundFlocks() const;
 
 private:
     void validateAndTryStoreDisk(Disk* disk, Grid* queryGrid, const std::vector<Grid*>& neighborGrids);
@@ -38,7 +39,7 @@ private:
     GridManager m_gridManager;
     FlockManager m_flockManager;
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
-    unsigned long m_foundFlocks;
+    std::vector<Flock> m_flocks;
 };
 
 #endif // Manager_h
