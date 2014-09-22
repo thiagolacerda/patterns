@@ -8,6 +8,7 @@
 std::unique_ptr<DatabaseDecoder> Factory::m_dbDecoderInstance;
 std::once_flag Factory::m_dbDecoderOnceFlag;
 
+// Returns the database decoder based on which one the user has chosen in command line
 DatabaseDecoder* Factory::dbDecoderInstance()
 {
     std::call_once(m_dbDecoderOnceFlag,

@@ -17,7 +17,9 @@ void Manager::start()
     m_dbDecoder->setGPSTupleListener(this);
     m_dbDecoder->retrievePoints();
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
+        // For each time instance, we get all points belonging to that and try to find flocks
         computeFlocks(iter->second, iter->first);
+        // They can be discarded after that, all points were already computed
         iter = m_pointsPerTimeSlot.erase(iter);
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
@@ -51,6 +53,8 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
 
 void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
 {
+    // If the number of points to be processed for this time instance is less than the minimum number of trajectories
+    // per flock, than we don't need to go further
     if (points.size() < Config::numberOfTrajectoriesPerFlock())
         return;
 
@@ -98,12 +102,20 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
     m_diskManager.clear();
 }
 
+/*
+ * Checks if the disk fulfil the requirements to be a potential new flock
+ */
 void Manager::validateAndTryStoreDisk(Disk* disk)
 {
     if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
+        // Invalid disk, free it
         delete disk;
 }
 
+
+/*
+ * This goes through all the points in the neighbor grids and try to put them inside the disks
+ */
 void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess, GPSPoint* diskGeneratorPoint1,
     GPSPoint* diskGeneratorPoint2)
@@ -111,6 +123,7 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     double radius = Config::radius();
     for (std::shared_ptr<GPSPoint> point : pointsToProcess) {
         if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2)
+            // diskGeneratorPoint1 and diskGeneratorPoint2 already belong to the disk
             continue;
 
         double latitude = point->latitude();
