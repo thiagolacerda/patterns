@@ -96,12 +96,18 @@ std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
     unsigned long flockLength = Config::flockLength();
-    for (auto iter = m_flocks.begin(); iter != m_flocks.end(); ++iter) {
+    for (auto iter = m_flocks.begin(); iter != m_flocks.end();) {
         if (((*iter).endTime() - (*iter).startTime()) >= flockLength) {
             results.push_back(*iter);
             (*iter).setStartTime((*iter).startTime() + Config::timeSlotSize());
+            if ((*iter).startTime() == (*iter).endTime()) {
+                // Empty flock
+                iter = m_flocks.erase(iter);
+                continue;
+            }
             (*iter).clearFirstPoints();
         }
+        ++iter;
     }
     if (!results.empty())
         checkDuplicateAnswer();
