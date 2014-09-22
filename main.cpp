@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 #include "config.h"
 #include "manager.h"
@@ -25,16 +26,40 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    Config::setNumberOfTrajectoriesPerFlock(atoi(argv[1]));
-    Config::setFlockLength(atoi(argv[2]));
-    Config::setGridSize(atof(argv[3]));
-    Config::setTimeSlotSize(atof(argv[4]));
-    Config::setDecoder(argv[5]);
-    Config::setCoordinateSystem(Config::CoordinateSystem(atoi(argv[6])));
+    int option;
+    while ((option = getopt(argc, argv, "n:l:g:t:d:s:")) != -1) {
+        switch(option) {
+        case 'n':
+            Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
+            break;
+        case 'l':
+            Config::setFlockLength(atoi(optarg));
+            break;
+        case 'g':
+            Config::setGridSize(atof(optarg));
+            break;
+        case 't':
+            Config::setTimeSlotSize(atof(optarg));
+            break;
+        case 'd':
+            Config::setDecoder(optarg);
+            break;
+        case 's':
+            Config::setCoordinateSystem(Config::CoordinateSystem(atoi(optarg)));
+            break;
+        default:
+            if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't' || optopt == 'd' || optopt == 's')
+                return -2;
+
+            std::cout << "Unknown parameter: " << optopt << std::endl;
+        }
+    }
+
     dumpParameters();
     std::vector<std::string> decoderParams;
-    for (int i = 7; i < argc; ++i)
+    for (int i = optind; i < argc; ++i)
         decoderParams.push_back(std::string(argv[i]));
+
     Config::setDecoderParameters(decoderParams);
     Manager manager;
     manager.start();
