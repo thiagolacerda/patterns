@@ -17,7 +17,7 @@ void Manager::start()
     m_dbDecoder->setGPSTupleListener(this);
     m_dbDecoder->retrievePoints();
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
-        computeDisks(iter->second, iter->first);
+        computeFlocks(iter->second, iter->first);
         iter = m_pointsPerTimeSlot.erase(iter);
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
@@ -49,7 +49,7 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
     m_pointsPerTimeSlot[index].push_back(std::shared_ptr<GPSPoint>(new GPSPoint(latitude, longitude, timestamp, tID)));
 }
 
-void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
+void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
 {
     if (points.size() < Config::numberOfTrajectoriesPerFlock())
         return;
