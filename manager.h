@@ -27,7 +27,7 @@ public:
     void dumpFoundFlocks() const;
 
 private:
-    void validateAndTryStoreDisk(Disk* disk, Grid* queryGrid, const std::vector<Grid*>& neighborGrids);
+    void validateAndTryStoreDisk(Disk* disk);
     void computeDisks(const std::vector<std::shared_ptr<GPSPoint>>&, unsigned timestamp);
     void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess,
         GPSPoint* diskGeneratorPoint1, GPSPoint* diskGeneratorPoint2);

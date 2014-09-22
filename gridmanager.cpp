@@ -31,27 +31,15 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
         grid = iter->second;
 
     grid->addPoint(point);
-    m_pointsPerGrid[point] = grid;
-}
-
-Grid* GridManager::gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point)
-{
-    auto iter = m_pointsPerGrid.find(point);
-    if (iter != m_pointsPerGrid.end())
-        return iter->second;
-
-    return nullptr;
 }
 
 void GridManager::clear()
 {
-    m_pointsPerGrid.clear();
     std::for_each(m_grids.begin(), m_grids.end(), [](const std::pair<std::string, Grid*>& elem) { delete elem.second; });
     m_grids.clear();
 }
 
-void GridManager::neighborGridsAndPoints(const std::string& key, std::vector<Grid*>& grids,
-    std::vector<std::shared_ptr<GPSPoint>>& points)
+void GridManager::neighborsGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& points)
 {
     std::unordered_map<std::string, Grid*>::const_iterator iter;
     size_t underscoreIndex = key.find_first_of('_');
@@ -67,8 +55,7 @@ void GridManager::neighborGridsAndPoints(const std::string& key, std::vector<Gri
             oss.str(std::string());
             oss << i << "_" << j;
             if ((iter = m_grids.find(oss.str())) != m_grids.end()) {
-                grids.push_back(iter->second);
-                const std::vector<std::shared_ptr<GPSPoint>> gridPoints = iter->second->points();
+                const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
                 points.insert(points.end(), gridPoints.begin(), gridPoints.end());
             }
         }

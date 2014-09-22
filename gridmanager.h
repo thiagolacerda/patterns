@@ -21,16 +21,12 @@ public:
     void addPointToGrid(const std::shared_ptr<GPSPoint>&);
     void dump();
     const std::unordered_map<std::string, Grid*> grids() { return m_grids; }
-    void neighborGridsAndPoints(const std::string& key, std::vector<Grid*>& grids,
-        std::vector<std::shared_ptr<GPSPoint>>& points);
-    Grid* gridThatPointBelongsTo(const std::shared_ptr<GPSPoint>& point);
+    void neighborsGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& points);
     void clear();
 
 private:
     double m_gridSize;
     std::unordered_map<std::string, Grid*> m_grids;
-    // This is a bit redundant but will allow fast lookup, when queying to which grid a point belongs to.
-    std::unordered_map<std::shared_ptr<GPSPoint>, Grid*> m_pointsPerGrid;
 };
 
 #endif // GridManager_h

@@ -31,9 +31,6 @@ public:
 
     unsigned long timestamp() const { return m_timestamp; }
     void addTrajectory(const Trajectory&);
-    void addAlreadyComputedGrids(const std::vector<Grid*>&);
-    void addAlreadyComputedGrid(Grid*);
-    bool isGridAlreadyComputed(Grid*);
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
     unsigned countIntersection(Disk* other) const;
     const std::map<unsigned long, Trajectory>& trajectories() const { return m_trajectories; }
@@ -45,7 +42,6 @@ private:
     double m_centerY;
     unsigned long m_timestamp;
     std::map<unsigned long, Trajectory> m_trajectories;
-    std::unordered_set<Grid*> m_alreadyComputed;
 };
 
 #endif // Disk_h

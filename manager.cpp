@@ -66,8 +66,7 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
         std::string key = iter->first;
         const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
         std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
-        std::vector<Grid*> neighborGrids;
-        m_gridManager.neighborGridsAndPoints(key, neighborGrids, pointsToProcess);
+        m_gridManager.neighborsGridPoints(key, pointsToProcess);
         pointsToProcess.insert(pointsToProcess.end(), gridPoints.begin(), gridPoints.end());
         if (pointsToProcess.size() < Config::numberOfTrajectoriesPerFlock())
             continue;
@@ -85,8 +84,8 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
                     createTrajectoryAndAddToDisks(*it1, disk1, disk2);
                     createTrajectoryAndAddToDisks(*it2, disk1, disk2);
                     clusterPointsIntoDisks(disk1, disk2, pointsToProcess, (*it1).get(), (*it2).get());
-                    validateAndTryStoreDisk(disk1, iter->second, neighborGrids);
-                    validateAndTryStoreDisk(disk2, iter->second, neighborGrids);
+                    validateAndTryStoreDisk(disk1);
+                    validateAndTryStoreDisk(disk2);
                 }
             }
         }
@@ -99,15 +98,10 @@ void Manager::computeDisks(const std::vector<std::shared_ptr<GPSPoint>>& points,
     m_diskManager.clear();
 }
 
-void Manager::validateAndTryStoreDisk(Disk* disk, Grid* queryGrid, const std::vector<Grid*>& neighborGrids)
+void Manager::validateAndTryStoreDisk(Disk* disk)
 {
-    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk)) {
+    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
         delete disk;
-        return;
-    }
-
-    disk->addAlreadyComputedGrids(neighborGrids);
-    disk->addAlreadyComputedGrid(queryGrid);
 }
 
 void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
@@ -121,13 +115,12 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
 
         double latitude = point->latitude();
         double longitude = point->longitude();
-        Grid* grid = m_gridManager.gridThatPointBelongsTo(point);
         double distance = Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude);
-        if (!disk1->isGridAlreadyComputed(grid) && Utils::fuzzyLessEqual(distance, radius))
+        if (Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk1);
 
         distance = Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude);
-        if (!disk2->isGridAlreadyComputed(grid) && Utils::fuzzyLessEqual(distance, radius))
+        if (Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk2);
     }
 }
