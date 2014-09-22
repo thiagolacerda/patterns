@@ -23,10 +23,10 @@ public:
 
     void start();
     void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
-    void dumpPointsMap();
     void dumpFoundFlocks() const;
 
 private:
+    void dumpPointsMap();
     void validateAndTryStoreDisk(Disk* disk);
     void computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>&, unsigned timestamp);
     void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess,
