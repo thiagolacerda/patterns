@@ -40,8 +40,8 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
 {
     double latitude = point->latitude();
     double longitude = point->longitude();
-    int xIndex = (Utils::distance(latitude, longitude, 0, longitude) / m_gridSize) + 1;
-    int yIndex = (Utils::distance(latitude, longitude, latitude, 0) / m_gridSize) + 1;
+    int xIndex = floor((Utils::distance(latitude, longitude, 0, longitude) / m_gridSize)) + 1;
+    int yIndex = floor((Utils::distance(latitude, longitude, latitude, 0) / m_gridSize)) + 1;
     if (latitude < 0)
         xIndex = -xIndex;
     if (longitude < 0)
