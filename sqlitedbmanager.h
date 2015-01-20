@@ -16,7 +16,7 @@ public:
 
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
-    void retrievePoints(const std::string& query) override;
+    unsigned long long retrievePoints(const std::string& query) override;
     double getColumnAsDouble(void* row, int colIndex) override;
     std::string getColumnAsString(void* row, int colIndex) override;
 

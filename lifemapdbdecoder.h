@@ -6,7 +6,7 @@
 class LifeMapDBDecoder : public DatabaseDecoder {
 public:
     void decodeRow(void* row) override;
-    void retrievePoints() override;
+    unsigned long long retrievePoints() override;
 
 private:
     friend class Factory;

@@ -34,24 +34,28 @@ void SQLiteDBManager::disconnect()
     m_db = nullptr;
 }
 
-void SQLiteDBManager::retrievePoints(const std::string& query)
+unsigned long long SQLiteDBManager::retrievePoints(const std::string& query)
 {
     sqlite3_stmt* selectStmt;
     if (sqlite3_prepare_v2(m_db, query.c_str(), -1, &selectStmt, NULL) != SQLITE_OK) {
         std::cerr << "Could not executer sqlite3_prepare_v2" << std::endl;
-        return;
+        return 0;
     }
 
+    unsigned long long retrieved = 0;
     while(true) {
         if(sqlite3_step(selectStmt) != SQLITE_ROW)
             break;
 
         m_decoder->decodeRow(selectStmt);
+        retrieved++;
     }
     sqlite3_finalize(selectStmt);
     std::string error = sqlite3_errmsg(m_db);
     if(error != "not an error")
         std::cerr << query << " " << error << std::endl;
+ 
+    return retrieved;
 }
 
 double SQLiteDBManager::getColumnAsDouble(void* row, int colIndex)

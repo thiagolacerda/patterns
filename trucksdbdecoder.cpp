@@ -39,9 +39,10 @@ void TrucksDBDecoder::decodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(tId, latitude, longitude, timestamp));
 }
 
-void TrucksDBDecoder::retrievePoints()
+unsigned long long TrucksDBDecoder::retrievePoints()
 {
     m_manager->connect(m_path, "", "");
-    m_manager->retrievePoints();
+    unsigned long long retrieved = m_manager->retrievePoints();
     m_manager->disconnect();
+    return retrieved;
 }

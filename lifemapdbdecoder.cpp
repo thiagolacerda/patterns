@@ -47,7 +47,7 @@ void LifeMapDBDecoder::decodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(m_currentId, latitude, longitude, timestamp));
 }
 
-void LifeMapDBDecoder::retrievePoints()
+unsigned long long LifeMapDBDecoder::retrievePoints()
 {
     DIR *dir;
     struct dirent *ent;
@@ -55,6 +55,7 @@ void LifeMapDBDecoder::retrievePoints()
     int dbPrefixLen = m_dbFilesPrefix.length();
 
     dir = opendir(m_path.c_str());
+    unsigned long long retrieved = 0;
     while ((ent = readdir(dir)) != NULL) {
         const std::string fileName = ent->d_name;
         const std::string fullFileName = m_path + "/" + fileName;
@@ -69,9 +70,10 @@ void LifeMapDBDecoder::retrievePoints()
             m_currentId = atoi(fileName.substr(dbPrefixLen, periodPos - dbPrefixLen).c_str());
             std::string selectQuery = "SELECT _latitude, _longitude, _time_location FROM locationTable;";
             m_manager->connect(fullFileName, "", "");
-            m_manager->retrievePoints(selectQuery);
+            retrieved += m_manager->retrievePoints(selectQuery);
             m_manager->disconnect();
         }
     }
     closedir(dir);
+    return retrieved;
 }

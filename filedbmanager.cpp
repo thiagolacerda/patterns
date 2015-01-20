@@ -20,13 +20,17 @@ void FileDBManager::disconnect()
         m_file.close();
 }
 
-void FileDBManager::retrievePoints(const std::string& query)
+unsigned long long FileDBManager::retrievePoints(const std::string& query)
 {
     UNUSED(query);
 
+    unsigned long long retrieved = 0;
     std::string line;
-    while (std::getline(m_file, line))
+    while (std::getline(m_file, line)) {
         m_decoder->decodeRow(&line);
+        retrieved++;
+    }
+    return retrieved;
 }
 
 std::string FileDBManager::getColumnValue(const std::string& row, int colIndex)

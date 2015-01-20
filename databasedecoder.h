@@ -10,7 +10,7 @@ class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
-    virtual void retrievePoints() = 0;
+    virtual unsigned long long retrievePoints() = 0;
     virtual void decodeRow(void* row) = 0;
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
 
