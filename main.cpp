@@ -20,8 +20,8 @@ int main(int argc, char** argv)
 {
     if (argc < 7) {
         std::cerr << "Error: you must run as follows:" << std::endl;
-        std::cerr << "./patterns <number_of_trajectories_per_flock> <flock_length_in_seconds> " <<
-            "<grid_size_in_meters> <time_slot_size_in_seconds> <decoder_name> <coordinate_system_code> " <<
+        std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_seconds> " <<
+            "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
             "[list_of_decoder_parameters]" << std::endl;
         return -1;
     }
