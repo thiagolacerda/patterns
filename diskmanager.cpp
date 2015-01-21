@@ -59,6 +59,47 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long
     *disk2 = new Disk(c2X, c2Y, timestamp);
 }
 
+// This code was copied from the paper as is! (changed only some names of variables)
+void DiskManager::computeDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+{
+    if (Utils::fuzzyEqual(point1->latitude(), point2->latitude()) &&
+        Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
+        return;
+
+    double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitude() : point2->latitude();
+    double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitude() : point2->longitude();
+    double x2 = point1->trajectoryId() < point2->trajectoryId() ? point2->latitude() : point1->latitude();
+    double y2 = point1->trajectoryId() < point2->trajectoryId() ? point2->longitude() : point1->longitude();
+    double x1Squared = x1 * x1;
+    double x2Squared = x2 * x2;
+    double y1Squared = y1 * y1;
+    double y2Squared = y2 * y2;
+    double twoY1Y2 = 2.0 * y1 * y2;
+    double twoY2MinusY1 = 2.0 * (y2 - y1);
+    double tmp = x2Squared - x1Squared - y1Squared + y2Squared;
+    double A = (x1 - x2) / (y2 - y1);
+    A = A * A + 1.0;
+    double B = 2.0 * ((x1 - x2) / (y2 - y1) * ((tmp - twoY1Y2 + 2.0 * y1Squared) / twoY2MinusY1) - x1);
+    double C =  x1Squared - Config::radius() * Config::radius() +
+            ((tmp - twoY1Y2 + 2.0 * y1Squared) / twoY2MinusY1) *
+            ((tmp - twoY1Y2 + 2.0 * y1Squared) / twoY2MinusY1);
+    double delta = B * B - 4.0 * A * C;
+
+    if (delta < 0) return;
+    if (Utils::fuzzyEqual(A, 0)) return;
+    if (Utils::fuzzyEqual(y2, y1)) return;
+
+    // calculating x
+    double cX1 = (-B + sqrt(delta)) / (2.0 * A);
+    double cX2 = (-B - sqrt(delta)) / (2.0 * A);
+    // calculating y
+    double cY1 = (2.0 * x1 * cX1 - 2.0 * x2 * cX1 + tmp) / twoY2MinusY1;
+    double cY2 = (2.0 * x1 * cX2 - 2.0 * x2 * cX2 + tmp) / twoY2MinusY1;
+
+    *disk1 = new Disk(cX1, cY1, timestamp);
+    *disk2 = new Disk(cX2, cY2, timestamp);
+}
+
 void DiskManager::clear()
 {
     std::for_each(m_disks.begin(), m_disks.end(), [](Disk* disk) { delete disk; });

@@ -35,6 +35,8 @@ public:
     static void setCoordinateSystem(CoordinateSystem coordSystem) { m_coordinateSystem = coordSystem; }
     static CoordinateSystem coordinateSystem() { return m_coordinateSystem; }
     static std::string coordinateSystemName(CoordinateSystem);
+    static void setCompatibilityMode(bool compatibility) { m_compatibilityMode = compatibility; }
+    static bool isInCompatibilityMode() { return m_compatibilityMode; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -46,6 +48,7 @@ private:
     static double m_radius;
     static unsigned m_timeSlotSize;
     static CoordinateSystem m_coordinateSystem;
+    static bool m_compatibilityMode;
 };
 
 #endif // Config_h

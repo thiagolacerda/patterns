@@ -15,6 +15,7 @@ void Manager::start()
         return;
 
     m_dbDecoder->setGPSTupleListener(this);
+    m_ignoreFirstPoint = Config::isInCompatibilityMode();
     m_dbDecoder->retrievePoints();
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
         // For each time instance, we get all points belonging to that and try to find flocks
@@ -35,6 +36,11 @@ void Manager::dumpFoundFlocks() const
 
 void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
 {
+    if (m_ignoreFirstPoint) {
+        m_ignoreFirstPoint = false;
+        return;
+    }
+
     unsigned long tID;
     double latitude;
     double longitude;
@@ -81,7 +87,10 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
                 if (Utils::fuzzyLessEqual(distance, gridSize)) {
                     disk1 = nullptr;
                     disk2 = nullptr;
-                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    if (Config::isInCompatibilityMode())
+                        m_diskManager.computeDisksPaperVersion((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    else
+                        m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
                     if (!disk1 || !disk2)
                         continue;
 

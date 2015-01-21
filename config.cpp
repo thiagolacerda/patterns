@@ -11,6 +11,7 @@ double Config::m_radiusSquared = 0;
 double Config::m_radius = 0;
 unsigned Config::m_timeSlotSize = 0;
 Config::CoordinateSystem Config::m_coordinateSystem = Config::Cartesian;
+bool Config::m_compatibilityMode = false;
 
 void Config::setDecoder(char* decoderName)
 {
