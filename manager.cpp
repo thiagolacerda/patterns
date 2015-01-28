@@ -74,10 +74,8 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
     double gridSize = Config::gridSize();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
         std::string key = iter->first;
-        const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
         std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
-        m_gridManager.neighborsGridPoints(key, pointsToProcess);
-        pointsToProcess.insert(pointsToProcess.end(), gridPoints.begin(), gridPoints.end());
+        m_gridManager.extendedGridPoints(key, pointsToProcess);
         if (pointsToProcess.size() < Config::numberOfTrajectoriesPerFlock())
             continue;
 

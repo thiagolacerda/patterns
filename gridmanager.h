@@ -21,7 +21,7 @@ public:
     void addPointToGrid(const std::shared_ptr<GPSPoint>&);
     void dump();
     const std::unordered_map<std::string, Grid*> grids() { return m_grids; }
-    void neighborsGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& points);
+    void extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& extendedPoints);
     void clear();
 
 private:

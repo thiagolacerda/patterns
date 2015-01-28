@@ -75,7 +75,7 @@ void GridManager::clear()
  * 1,1;1,2;1,3;2,1;2,2;2,3;3,1;3,2;3,3
  * In this method we return to the caller the vector of all eligible points.
  */
-void GridManager::neighborsGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& points)
+void GridManager::extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& extendedPoints)
 {
     std::unordered_map<std::string, Grid*>::const_iterator iter;
     size_t underscoreIndex = key.find_first_of('_');
@@ -85,14 +85,11 @@ void GridManager::neighborsGridPoints(const std::string& key, std::vector<std::s
     std::ostringstream oss;
     for (int i = xIndex - 1; i <= xIndex + 1; ++i) {
         for (int j = yIndex - 1; j <= yIndex + 1; ++j) {
-            if (i == xIndex && j == yIndex)
-                continue;
-
             oss.str(std::string());
             oss << i << "_" << j;
             if ((iter = m_grids.find(oss.str())) != m_grids.end()) {
                 const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
-                points.insert(points.end(), gridPoints.begin(), gridPoints.end());
+                extendedPoints.insert(extendedPoints.end(), gridPoints.begin(), gridPoints.end());
             }
         }
     }
