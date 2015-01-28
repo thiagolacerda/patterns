@@ -23,7 +23,9 @@ public:
 protected:
     DatabaseDecoder(DBManager* manager)
         : m_manager(manager)
-    { }
+    {
+        m_manager->setDecoder(this);
+    }
     DBManager* m_manager;
     GPSTupleListener* m_listener;
 };

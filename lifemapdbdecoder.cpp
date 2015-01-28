@@ -16,7 +16,6 @@ LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
     , m_dbFilesPrefix(parameters.at(1))
     , m_currentId(0)
 {
-    m_manager->setDecoder(this);
 }
 
 void LifeMapDBDecoder::decodeRow(void* row)

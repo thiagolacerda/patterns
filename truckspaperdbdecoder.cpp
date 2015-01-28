@@ -8,7 +8,6 @@ TrucksPaperDBDecoder::TrucksPaperDBDecoder(const std::vector<std::string>& param
     : DatabaseDecoder(new FileDBManager('\t'))
     , m_path(parameters.at(0))
 {
-    m_manager->setDecoder(this);
 }
 
 void TrucksPaperDBDecoder::decodeRow(void* row)
