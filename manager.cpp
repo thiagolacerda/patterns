@@ -46,7 +46,7 @@ void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, un
     double longitude;
     unsigned long timestamp;
     std::tie(tID, latitude, longitude, timestamp) = tuple;
-    unsigned index = timestamp / Config::timeSlotSize();
+    unsigned index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
 
     if (Config::coordinateSystem() == Config::Cartesian)
         Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
