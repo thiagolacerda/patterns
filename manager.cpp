@@ -14,13 +14,22 @@ void Manager::start()
     if (!m_dbDecoder)
         return;
 
-    m_dbDecoder->setGPSTupleListener(this);
+    m_dbDecoder->setGPSTupleListener(&m_pointProcessor);
     m_dbDecoder->retrievePoints();
-    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
-        // For each time instance, we get all points belonging to that and try to find flocks
-        computeFlocks(iter->second, iter->first);
-        // They can be discarded after that, all points were already computed
-        iter = m_pointsPerTimeSlot.erase(iter);
+    m_pointProcessor.postProcessPoints();
+    if (Config::timeSlotSize() <= Config::flockLength() &&
+        Config::timeSlotSize() * Config::numberOfTrajectoriesPerFlock() <= Config::flockLength()) {
+        std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
+        m_pointProcessor.releasePoints();
+        for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
+            // For each time instance, we get all points belonging to that and try to find flocks
+            computeFlocks(iter->second, iter->first);
+            // They can be discarded after that, all points were already computed
+            iter = pointsPerTimeSlot.erase(iter);
+        }
+    } else {
+        std::cout << "Time slot size does not allow flocks, given the flock length and number of trajectories per flock"
+            << std::endl;
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
 }
@@ -31,24 +40,6 @@ void Manager::dumpFoundFlocks() const
         flock.dump();
         flock.dumpTrajectories();
     }
-}
-
-void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
-{
-    unsigned long tID;
-    double latitude;
-    double longitude;
-    unsigned long timestamp;
-    std::tie(tID, latitude, longitude, timestamp) = tuple;
-    unsigned index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
-
-    if (Config::coordinateSystem() == Config::Cartesian)
-        Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
-
-    if (m_pointsPerTimeSlot.find(index) == m_pointsPerTimeSlot.end())
-        m_pointsPerTimeSlot[index] = std::vector<std::shared_ptr<GPSPoint>>();
-
-    m_pointsPerTimeSlot[index].push_back(std::shared_ptr<GPSPoint>(new GPSPoint(latitude, longitude, timestamp, tID)));
 }
 
 void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
@@ -143,17 +134,4 @@ void Manager::createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& poi
     disk1->addTrajectory(trajectory);
     if (disk2)
         disk2->addTrajectory(trajectory);
-}
-
-void Manager::dumpPointsMap()
-{
-    std::cout << "Number of time slots: " << m_pointsPerTimeSlot.size() << std::endl;
-    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ++iter) {
-        std::cout << "\t***time slot: " << iter->first << ", number of points: " << iter->second.size() << std::endl;
-        const std::vector<std::shared_ptr<GPSPoint>>& points = iter->second;
-        for (const std::shared_ptr<GPSPoint>& point : points) {
-            std::cout << "\t\t";
-            point->dump();
-        }
-    }
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include <string.h>
 #include <unistd.h>
 #include <vector>
 #include "config.h"
@@ -12,7 +13,8 @@ void dumpParameters()
     std::cout << "* Number of trajectories per flock: " << Config::numberOfTrajectoriesPerFlock() << std::endl;
     std::cout << "* Length of flocks (seconds): " << Config::flockLength() << std::endl;
     std::cout << "* Grid size (meters): " << Config::gridSize() << std::endl;
-    std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
+    if (!Config::automaticTimeSlot())
+        std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
     std::cout << "* Used Coordinate System: " << Config::coordinateSystemName(Config::coordinateSystem()) << std::endl;
 }
 
@@ -39,7 +41,12 @@ int main(int argc, char** argv)
             Config::setGridSize(atof(optarg));
             break;
         case 't':
-            Config::setTimeSlotSize(atof(optarg));
+            if (strcmp(optarg, "a") == 0) {
+                Config::setAutomaticTimeSlot(true);
+                Config::setTimeSlotSize(0);
+            } else {
+                Config::setTimeSlotSize(atof(optarg));
+            }
             break;
         case 'd':
             Config::setDecoder(optarg);

@@ -39,6 +39,7 @@ set(PATTERNS_SOURCES
     flock.cpp
     flockmanager.cpp
     gpspoint.cpp
+    gpspointtemporalprocessor.cpp
     grid.cpp
     gridmanager.cpp
     lifemapdbdecoder.cpp

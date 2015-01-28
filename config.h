@@ -37,6 +37,8 @@ public:
     static std::string coordinateSystemName(CoordinateSystem);
     static void setCompatibilityMode(bool compatibility) { m_compatibilityMode = compatibility; }
     static bool isInCompatibilityMode() { return m_compatibilityMode; }
+    static void setAutomaticTimeSlot(bool automatic) { m_automaticTimeSlot = automatic; }
+    static bool automaticTimeSlot() { return m_automaticTimeSlot; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -49,6 +51,7 @@ private:
     static unsigned m_timeSlotSize;
     static CoordinateSystem m_coordinateSystem;
     static bool m_compatibilityMode;
+    static bool m_automaticTimeSlot;
 };
 
 #endif // Config_h

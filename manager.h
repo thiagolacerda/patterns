@@ -7,14 +7,14 @@
 #include "diskmanager.h"
 #include "flock.h"
 #include "flockmanager.h"
-#include "gpstuplelistener.h"
+#include "gpspointtemporalprocessor.h"
 #include "gridmanager.h"
 
 class DatabaseDecoder;
 class Disk;
 class Grid;
 
-class Manager : public GPSTupleListener {
+class Manager {
 public:
     Manager()
         : m_dbDecoder(nullptr)
@@ -22,11 +22,9 @@ public:
     { }
 
     void start();
-    void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
     void dumpFoundFlocks() const;
 
 private:
-    void dumpPointsMap();
     void validateAndTryStoreDisk(Disk* disk);
     void computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>&, unsigned timestamp);
     void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess,
@@ -38,7 +36,7 @@ private:
     DiskManager m_diskManager;
     GridManager m_gridManager;
     FlockManager m_flockManager;
-    std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
+    GPSPointTemporalProcessor m_pointProcessor;
     std::vector<Flock> m_flocks;
 };
 
