@@ -79,10 +79,7 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
                 if (Utils::fuzzyLessEqual(distance, gridSize)) {
                     disk1 = nullptr;
                     disk2 = nullptr;
-                    if (Config::isInCompatibilityMode())
-                        m_diskManager.computeDisksPaperVersion((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
-                    else
-                        m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
                     if (!disk1 || !disk2)
                         continue;
 

@@ -32,6 +32,14 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long
         Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
         return;
 
+    if (Config::isInCompatibilityMode())
+        getDisksPaperVersion(point1, point2, timestamp, disk1, disk2);
+    else
+        getDisks(point1, point2, timestamp, disk1, disk2);
+}
+
+void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+{
     double midX;
     double midY;
     double vectorX;
@@ -60,12 +68,8 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long
 }
 
 // This code was copied from the paper as is! (changed only some names of variables)
-void DiskManager::computeDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
 {
-    if (Utils::fuzzyEqual(point1->latitude(), point2->latitude()) &&
-        Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
-        return;
-
     double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitude() : point2->latitude();
     double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitude() : point2->longitude();
     double x2 = point1->trajectoryId() < point2->trajectoryId() ? point2->latitude() : point1->latitude();
