@@ -15,7 +15,6 @@ void Manager::start()
         return;
 
     m_dbDecoder->setGPSTupleListener(this);
-    m_ignoreFirstPoint = Config::isInCompatibilityMode();
     m_dbDecoder->retrievePoints();
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end();) {
         // For each time instance, we get all points belonging to that and try to find flocks
@@ -36,11 +35,6 @@ void Manager::dumpFoundFlocks() const
 
 void Manager::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
 {
-    if (m_ignoreFirstPoint) {
-        m_ignoreFirstPoint = false;
-        return;
-    }
-
     unsigned long tID;
     double latitude;
     double longitude;

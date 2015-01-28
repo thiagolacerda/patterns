@@ -10,7 +10,7 @@ TrucksDBDecoder::TrucksDBDecoder(const std::vector<std::string>& parameters)
 {
 }
 
-void TrucksDBDecoder::decodeRow(void* row)
+void TrucksDBDecoder::doDecodeRow(void* row)
 {
     unsigned long tId;
     double latitude;

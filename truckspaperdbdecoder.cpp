@@ -10,7 +10,7 @@ TrucksPaperDBDecoder::TrucksPaperDBDecoder(const std::vector<std::string>& param
 {
 }
 
-void TrucksPaperDBDecoder::decodeRow(void* row)
+void TrucksPaperDBDecoder::doDecodeRow(void* row)
 {
     unsigned long tId = m_manager->getColumnAsUnsignedLong(row, 0);
     double latitude = m_manager->getColumnAsDouble(row, 1);

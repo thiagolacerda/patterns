@@ -18,7 +18,7 @@ LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
 {
 }
 
-void LifeMapDBDecoder::decodeRow(void* row)
+void LifeMapDBDecoder::doDecodeRow(void* row)
 {
     double latitude;
     double longitude;

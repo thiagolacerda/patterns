@@ -5,8 +5,10 @@
 
 class TrucksPaperDBDecoder : public DatabaseDecoder {
 public:
-    void decodeRow(void* row) override;
     unsigned long long retrievePoints() override;
+
+protected:
+    void doDecodeRow(void* row) override;
 
 private:
     friend class Factory;

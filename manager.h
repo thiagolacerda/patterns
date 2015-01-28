@@ -19,7 +19,6 @@ public:
     Manager()
         : m_dbDecoder(nullptr)
         , m_gridManager(GridManager(Config::gridSize()))
-        , m_ignoreFirstPoint(false)
     { }
 
     void start();
@@ -41,7 +40,6 @@ private:
     FlockManager m_flockManager;
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
     std::vector<Flock> m_flocks;
-    bool m_ignoreFirstPoint; // compatibility mode
 };
 
 #endif // Manager_h
