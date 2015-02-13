@@ -9,28 +9,12 @@
 
 class GPSPoint;
 
-class TemporalInfo {
-public:
-    TemporalInfo(unsigned long lastTimestamp)
-        : m_diffs(0)
-        , m_timeDiffSum(0)
-        , m_lastTimestamp(lastTimestamp)
-    {}
-
-    double average() { return double(m_timeDiffSum) / double(m_diffs); }
-    void addTime(unsigned t) {
-        m_timeDiffSum += (t - m_lastTimestamp);
-        m_lastTimestamp = t;
-        ++m_diffs;
-    }
-private:
-    unsigned long m_diffs;
-    unsigned long long m_timeDiffSum;
-    unsigned long m_lastTimestamp;
-};
-
 class GPSPointTemporalProcessor : public GPSTupleListener {
 public:
+    GPSPointTemporalProcessor()
+        : m_timeDiffsSum(0)
+    {}
+
     void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) override;
     void postProcessPoints();
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot() const { return m_pointsPerTimeSlot; }
@@ -38,9 +22,12 @@ public:
     void dumpPointsMap();
 
 private:
+    void removeOutliers();
     std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
-    std::unordered_map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlotTemp;
-    std::unordered_map<unsigned long, TemporalInfo*> m_trajectoriesTemporalInfo;
+    std::vector<std::shared_ptr<GPSPoint>> m_points;
+    std::unordered_map<unsigned long, unsigned long> m_lastTimestampPerTrajectory;
+    std::vector<unsigned long> m_timeDiffs;
+    unsigned long long m_timeDiffsSum;
 };
 
 #endif // GPSPointTemporalProcessor_h
