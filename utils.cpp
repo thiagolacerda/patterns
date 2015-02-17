@@ -4,7 +4,7 @@
 #include "config.h"
 #include "gpspoint.h"
 
-double Utils::m_earthRadius = 6371.009;
+double Utils::m_earthRadius = 6371.009 * 1000; // Earth radius in meters
 double Utils::m_epsilon = 0.001;
 double Utils::m1 = 111132.92;
 double Utils::m2 = -559.82;
