@@ -30,5 +30,5 @@ bool GPSPoint::operator<(GPSPoint* other) const
 void GPSPoint::dump()
 {
     std::cout << "Point: tID: " << m_trajectoryId << ", lat long: ("
-        << m_latitude << ", " << m_longitude << "), " << m_timestamp << std::endl;
+        << m_latitude << ", " << m_longitude << "), " << m_timestamp << ", date: " << ctime((const time_t*) &m_timestamp) << std::endl;
 }
