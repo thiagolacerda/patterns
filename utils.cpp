@@ -60,9 +60,41 @@ void Utils::normalizedVector(double vectorX, double vectorY, double* normX, doub
 
 void Utils::latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters)
 {
-    // This is the algorithm used by the National Geospatial-Intelligence Agency
-    // check: http://msi.nga.mil/NGAPortal/MSI.portal
-    // and: http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&_st=&_pageLabel=msi_portal_page_145&calcCode=03
+    /* This is the algorithm used by the National Geospatial-Intelligence Agency
+    check: http://msi.nga.mil/NGAPortal/MSI.portal
+    and: http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&_st=&_pageLabel=msi_portal_page_145&calcCode=03
+    The original sourcecode:
+    function compute(obj) // Compute lengths of degrees
+    {
+        // Convert latitude to radians
+        lat = deg2rad(obj.deg.value);
+
+        // Set up "Constants"
+        m1 = 111132.92;     // latitude calculation term 1
+        m2 = -559.82;       // latitude calculation term 2
+        m3 = 1.175;         // latitude calculation term 3
+        m4 = -0.0023;       // latitude calculation term 4
+        p1 = 111412.84;     // longitude calculation term 1
+        p2 = -93.5;         // longitude calculation term 2
+        p3 = 0.118;         // longitude calculation term 3
+
+        // Calculate the length of a degree of latitude and longitude in meters
+        latlen = m1 + (m2 * Math.cos(2 * lat)) + (m3 * Math.cos(4 * lat)) +
+                (m4 * Math.cos(6 * lat));
+        longlen = (p1 * Math.cos(lat)) + (p2 * Math.cos(3 * lat)) +
+                    (p3 * Math.cos(5 * lat));
+
+        // Place values in output fields
+        obj.latmeters.value = Math.round(latlen);
+        obj.latfeet.value = Math.round(latlen / 12 * 39.370079);
+        obj.latsm.value = obj.latfeet.value / 5280;
+        obj.latnm.value = obj.latsm.value / 1.15077945;
+        obj.longmeters.value = Math.round(longlen);
+        obj.longfeet.value = Math.round(longlen / 12 * 39.370079);
+        obj.longsm.value = obj.longfeet.value / 5280;
+        obj.longnm.value = obj.longsm.value / 1.15077945;
+
+    } */
 
     double latRad = Utils::degreesToRadians(latitude);
 
