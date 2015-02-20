@@ -17,8 +17,7 @@ void Manager::start()
     m_dbDecoder->setGPSTupleListener(&m_pointProcessor);
     m_dbDecoder->retrievePoints();
     m_pointProcessor.postProcessPoints();
-    if (Config::timeSlotSize() <= Config::flockLength() &&
-        Config::timeSlotSize() * Config::numberOfTrajectoriesPerFlock() <= Config::flockLength()) {
+    if (Config::timeSlotSize() <= Config::flockLength()) {
         std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
         m_pointProcessor.releasePoints();
         for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
@@ -28,7 +27,7 @@ void Manager::start()
             iter = pointsPerTimeSlot.erase(iter);
         }
     } else {
-        std::cout << "Time slot size does not allow flocks, given the flock length and number of trajectories per flock"
+        std::cout << "Time slot size does not allow flocks, given the flock length"
             << std::endl;
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
