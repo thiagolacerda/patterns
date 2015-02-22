@@ -32,21 +32,9 @@ private:
     static double m_earthRadius;
     static double m_epsilon;
 
-    // Some constants used in lat/long to meters conversion
-    // Latitude calculation term 1
-    static double m1;
-    // Latitude calculation term 2
-    static double m2;
-    // Latitude calculation term 3
-    static double m3;
-    // Latitude calculation term 4
-    static double m4;
-    // Longitude calculation term 1
-    static double p1;
-    // Longitude calculation term 2
-    static double p2;
-    // Longitude calculation term 3
-    static double p3;
+    // Below is the length of a degree of latitude and longitude in 0,0 coordinate
+    static double m_latDegMeterLen;
+    static double m_longDegMeterLen;
 };
 
 #endif // Utils_h

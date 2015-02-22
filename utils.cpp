@@ -6,13 +6,8 @@
 
 double Utils::m_earthRadius = 6371.009 * 1000; // Earth radius in meters
 double Utils::m_epsilon = 0.001;
-double Utils::m1 = 111132.92;
-double Utils::m2 = -559.82;
-double Utils::m3 = 1.175;
-double Utils::m4 = -0.0023;
-double Utils::p1 = 111412.84;
-double Utils::p2 = -93.5;
-double Utils::p3 = 0.118;
+double Utils::m_latDegMeterLen = 110567.238;
+double Utils::m_longDegMeterLen = 111320.7;
 
 bool Utils::fuzzyEqual(double a, double b)
 {
@@ -60,50 +55,38 @@ void Utils::normalizedVector(double vectorX, double vectorY, double* normX, doub
 
 void Utils::latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters)
 {
-    /* This is the algorithm used by the National Geospatial-Intelligence Agency
-    check: http://msi.nga.mil/NGAPortal/MSI.portal
-    and: http://msi.nga.mil/NGAPortal/MSI.portal?_nfpb=true&_st=&_pageLabel=msi_portal_page_145&calcCode=03
-    The original sourcecode:
-    function compute(obj) // Compute lengths of degrees
-    {
-        // Convert latitude to radians
-        lat = deg2rad(obj.deg.value);
+    /*
+       This code is based in the routines found in http://www.whoi.edu/marine/ndsf/utility/NDSFutility.html
 
-        // Set up "Constants"
-        m1 = 111132.92;     // latitude calculation term 1
-        m2 = -559.82;       // latitude calculation term 2
-        m3 = 1.175;         // latitude calculation term 3
-        m4 = -0.0023;       // latitude calculation term 4
-        p1 = 111412.84;     // longitude calculation term 1
-        p2 = -93.5;         // longitude calculation term 2
-        p3 = 0.118;         // longitude calculation term 3
+       // METERS_DEGLAT and METERS_DEGLON is the length of a degree of latitude and longitude at the 0,0 coord
+       xx = (porg.slon - porg.olon)*METERS_DEGLON(porg.olat);
+       yy = (porg.slat - porg.olat)*METERS_DEGLAT(porg.olat);
 
-        // Calculate the length of a degree of latitude and longitude in meters
-        latlen = m1 + (m2 * Math.cos(2 * lat)) + (m3 * Math.cos(4 * lat)) +
-                (m4 * Math.cos(6 * lat));
-        longlen = (p1 * Math.cos(lat)) + (p2 * Math.cos(3 * lat)) +
-                    (p3 * Math.cos(5 * lat));
+       r = sqrt(xx*xx + yy*yy);
 
-        // Place values in output fields
-        obj.latmeters.value = Math.round(latlen);
-        obj.latfeet.value = Math.round(latlen / 12 * 39.370079);
-        obj.latsm.value = obj.latfeet.value / 5280;
-        obj.latnm.value = obj.latsm.value / 1.15077945;
-        obj.longmeters.value = Math.round(longlen);
-        obj.longfeet.value = Math.round(longlen / 12 * 39.370079);
-        obj.longsm.value = obj.longfeet.value / 5280;
-        obj.longnm.value = obj.longsm.value / 1.15077945;
+       if(r) {
+           ct = xx/r;
+           st = yy/r;
+           // angle is 0, cos(0) = 1 and sin(0) = 0
+           xx = r * ( (ct * cos(angle)) + (st * sin(angle)) );
+           yy = r * ( (st * cos(angle)) - (ct * sin(angle)) );
+       }
+       pxpos_mtrs = xx + porg.xoffset_mtrs;
+       pypos_mtrs = yy + porg.yoffset_mtrs;
 
-    } */
+       var sxy={};
+       sxy={x:pxpos_mtrs, y:pypos_mtrs};
+     */
 
-    double latRad = Utils::degreesToRadians(latitude);
-
-    // Calculate the length of a degree of latitude and longitude in meters
-    double latLen = Utils::m1 + (Utils::m2 * cos(2 * latRad)) + (Utils::m3 * cos(4 * latRad)) +
-        (Utils::m4 * cos(6 * latRad));
-    double longLen = (Utils::p1 * cos(latRad)) + (Utils::p2 * cos(3 * latRad)) + (Utils::p3 * cos(5 * latRad));
-    *latMeters = latitude * latLen;
-    *longMeters = longitude * longLen;
+    double x = longitude * m_longDegMeterLen;
+    double y = latitude * m_latDegMeterLen;
+    double r = sqrt(x * x + y * y);
+    if (r > 0) {
+        x = r * (x / r);
+        y = r * (y / r);
+    }
+    *latMeters = y;
+    *longMeters = x;
 
 }
 
