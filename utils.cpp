@@ -90,6 +90,44 @@ void Utils::latLongToMeters(double latitude, double longitude, double* latMeters
 
 }
 
+void Utils::metersToLatLong(double latMeters, double longMeters, double *latitude, double *longitude)
+{
+    /*
+       This code is based in the routines found in http://www.whoi.edu/marine/ndsf/utility/NDSFutility.html
+
+       pxpos_mtrs = porg.x;
+       pypos_mtrs = porg.y;
+       xx = pxpos_mtrs - porg.xoffset_mtrs;
+       yy = pypos_mtrs - porg.yoffset_mtrs;
+       r = sqrt(xx*xx + yy*yy);
+
+       if(r) {
+           ct = xx/r;
+           st = yy/r;
+           xx = r * ( (ct * cos(angle))+ (st * sin(angle)) );
+           yy = r * ( (st * cos(angle))- (ct * sin(angle)) );
+       }
+
+       // METERS_DEGLAT and METERS_DEGLON is the length of a degree of latitude and longitude at the 0,0 coord
+       var plon = porg.olon + xx/METERS_DEGLON(olat);
+       var plat = porg.olat + yy/METERS_DEGLAT(olat);
+
+       var sll={};
+       sll={slat:plat, slon:plon};
+     */
+
+    double x = longMeters;
+    double y = latMeters;
+    double r = sqrt(x * x + y * y);
+    if (r > 0) {
+        x = r * (x / r);
+        y = r * (y / r);
+    }
+    *latitude = y / m_latDegMeterLen;
+    *longitude = x / m_longDegMeterLen;
+
+}
+
 double Utils::distance(double lat1, double long1, double lat2, double long2, Utils::DistanceType type)
 {
     if (Config::coordinateSystem() == Config::Cartesian || Config::coordinateSystem() == Config::CartesianNoConvert)
