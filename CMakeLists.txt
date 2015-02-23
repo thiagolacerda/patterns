@@ -24,33 +24,6 @@ else(CMAKE_BUILD_TYPE STREQUAL Debug)
     set(CMAKE_BUILD_TYPE Release)
 endif(CMAKE_BUILD_TYPE STREQUAL Debug)
 
-find_package(SQLite3 REQUIRED)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
-include_directories(
-    ${SQLite3_INCLUDE_DIRS}
-)
-
-set(PATTERNS_SOURCES
-    config.cpp
-    disk.cpp
-    diskmanager.cpp
-    factory.cpp
-    filedbmanager.cpp
-    flock.cpp
-    flockmanager.cpp
-    gpspoint.cpp
-    gpspointtemporalprocessor.cpp
-    grid.cpp
-    gridmanager.cpp
-    lifemapdbdecoder.cpp
-    main.cpp
-    manager.cpp
-    sqlitedbmanager.cpp
-    trajectory.cpp
-    trucksdbdecoder.cpp
-    truckspaperdbdecoder.cpp
-    utils.cpp
-)
-
-add_executable(patterns ${PATTERNS_SOURCES})
-target_link_libraries(patterns ${SQLite3_LIBRARIES})
+add_subdirectory(src)
