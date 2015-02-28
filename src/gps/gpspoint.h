@@ -1,37 +1,34 @@
-#ifndef GPSPoint_h
-#define GPSPoint_h
+#ifndef GPSPOINT_H
+#define GPSPOINT_H
 
+#include <cstdint>
 #include "utils.h"
 
 class GPSPoint {
 public:
     GPSPoint();
 
-    GPSPoint(double latitude, double longitude, unsigned long timestamp, unsigned long trajectoryId);
+    GPSPoint(double latitude, double longitude, uint32_t timestamp, uint32_t trajectoryId);
 
     double latitude() const { return m_latitude; }
-    void setLatitude(double latitude) { m_latitude = latitude; }
 
     double longitude() const { return m_longitude; }
-    void setLongitude(double longitude) { m_longitude = longitude; }
 
-    unsigned long timestamp() const { return m_timestamp; }
-    void setTimestamp(unsigned long timestamp) { m_timestamp = timestamp; }
+    uint32_t timestamp() const { return m_timestamp; }
 
-    unsigned long trajectoryId() const { return m_trajectoryId; }
-    void setTrajectoryId(unsigned long trajectoryId) { m_trajectoryId = trajectoryId; }
+    uint32_t trajectoryId() const { return m_trajectoryId; }
 
     double distanceToPoint(const GPSPoint&, Utils::DistanceType type = Utils::FlatSpherical);
 
-    bool operator<(GPSPoint*) const;
+    bool operator<(GPSPoint* point) const;
 
     void dump();
 
 private:
     double m_latitude;
     double m_longitude;
-    unsigned long m_timestamp;
-    unsigned long m_trajectoryId;
+    uint32_t m_timestamp;
+    uint32_t m_trajectoryId;
 };
 
-#endif // GPSPoint_h
+#endif  // GPSPOINT_H

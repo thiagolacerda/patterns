@@ -1,24 +1,24 @@
 #include "gpspointtemporalprocessor.h"
 
+#include <math.h>
 #include <algorithm>
 #include <iostream>
-#include <math.h>
 #include "config.h"
 #include "gpspoint.h"
 #include "utils.h"
 
-void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>& tuple)
+void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, double, double, uint32_t>& tuple)
 {
-    unsigned long tID;
+    uint32_t tID;
     double latitude;
     double longitude;
-    unsigned long timestamp;
+    uint32_t timestamp;
     std::tie(tID, latitude, longitude, timestamp) = tuple;
 
     if (Config::coordinateSystem() == Config::Cartesian)
         Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
 
-    unsigned index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
+    uint32_t index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
     if (Config::automaticTimeSlot()) {
         auto iter = m_lastTimestampPerTrajectory.find(tID);
@@ -26,7 +26,7 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<unsigned long, 
             if (iter->second > timestamp)
                 std::cout << "ERROR!!!!! tID: " << tID << " " << iter->second << " > " << timestamp << std::endl;
 
-            unsigned long diff = timestamp - iter->second;
+            uint32_t diff = timestamp - iter->second;
             m_timeDiffs.push_back(diff);
             m_timeDiffsSum += diff;
         }
@@ -41,18 +41,19 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<unsigned long, 
     }
 }
 
-void GPSPointTemporalProcessor::removeOutliers() {
+void GPSPointTemporalProcessor::removeOutliers()
+{
     bool stop = false;
-    unsigned long n = m_timeDiffs.size();
+    uint32_t n = m_timeDiffs.size();
     while (n > 0 && !stop) {
         long double mean = (long double)(m_timeDiffsSum) / n;
         long double accumulator = 0;
-        std::for_each(m_timeDiffs.begin(), m_timeDiffs.end(), [&accumulator, mean](unsigned long n) {
+        std::for_each(m_timeDiffs.begin(), m_timeDiffs.end(), [&accumulator, mean](uint32_t n) {
             accumulator += pow(mean - n, 2);
         });
         long double stdDev = sqrt(accumulator / n);
         long double reject = (1.96 * (n - 1)) / (sqrt(n) * sqrt(n - 2 + 1.96 * 1.96));
-        std::vector<unsigned long>::iterator rejected = m_timeDiffs.end();
+        std::vector<uint32_t>::iterator rejected = m_timeDiffs.end();
         for (auto iter = m_timeDiffs.begin(); iter != m_timeDiffs.end(); ++iter) {
             long double value = fabsl((*iter - mean) / stdDev);
             if (value > reject && (rejected == m_timeDiffs.end() || (*rejected) < value))
@@ -61,8 +62,9 @@ void GPSPointTemporalProcessor::removeOutliers() {
         if (rejected != m_timeDiffs.end()) {
             m_timeDiffsSum -= *rejected;
             m_timeDiffs.erase(rejected);
-        } else
+        } else {
             stop = true;
+        }
 
         n = m_timeDiffs.size();
     }
@@ -74,12 +76,12 @@ void GPSPointTemporalProcessor::postProcessPoints()
         return;
 
     removeOutliers();
-    unsigned long slot = m_timeDiffsSum / m_timeDiffs.size();
+    uint32_t slot = m_timeDiffsSum / m_timeDiffs.size();
     Config::setTimeSlotSize(slot);
     m_timeDiffs.clear();
 
     for (const std::shared_ptr<GPSPoint>& point : m_points) {
-        unsigned index = Config::timeSlotSize() > 0 ? point->timestamp() / Config::timeSlotSize() : point->timestamp();
+        uint32_t index = Config::timeSlotSize() > 0 ? point->timestamp() / Config::timeSlotSize() : point->timestamp();
         if (m_pointsPerTimeSlot.find(index) == m_pointsPerTimeSlot.end())
             m_pointsPerTimeSlot[index] = std::vector<std::shared_ptr<GPSPoint>>();
 

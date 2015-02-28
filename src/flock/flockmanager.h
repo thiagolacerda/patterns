@@ -1,9 +1,10 @@
-#ifndef FlockManager_h
-#define FlockManager_h
+#ifndef FLOCKMANAGER_H
+#define FLOCKMANAGER_H
 
+#include <cstdint>
 #include <map>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 #include "flock.h"
 
 class Disk;
@@ -14,16 +15,15 @@ public:
     FlockManager()
     { }
 
-    unsigned intersection(const std::map<unsigned long, Trajectory>& set1,
-        const std::map<unsigned long, Trajectory>& set2, std::map<unsigned long, Trajectory>* inter);
+    unsigned intersection(const std::map<uint32_t, Trajectory>& set1,
+        const std::map<uint32_t, Trajectory>& set2, std::map<uint32_t, Trajectory>* inter);
     void tryMergeFlocks(const std::vector<Disk*>&);
-    bool mergeFlocks(std::vector<Flock>& flocks, const Flock& newFlock);
     std::vector<Flock> reportFlocks();
-    unsigned numberOfFlocks() const { return m_flocks.size(); }
     void dump() const;
 private:
+    bool mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock);
     void checkDuplicateAnswer();
     std::vector<Flock> m_flocks;
 };
 
-#endif // FlockManager_h
+#endif  // FLOCKMANAGER_H

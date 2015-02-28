@@ -1,8 +1,8 @@
-#include <iostream>
 #include <stdlib.h>
-#include <string>
 #include <string.h>
 #include <unistd.h>
+#include <iostream>
+#include <string>
 #include <vector>
 #include "config.h"
 #include "manager.h"
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 
     int option;
     while ((option = getopt(argc, argv, "n:l:g:t:d:s:c")) != -1) {
-        switch(option) {
+        switch (option) {
         case 'n':
             Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
             break;

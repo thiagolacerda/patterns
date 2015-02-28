@@ -1,12 +1,14 @@
-#ifndef FileDBManager_h
-#define FileDBManager_h
+#ifndef FILEDBMANAGER_H
+#define FILEDBMANAGER_H
 
+#include <cstdint>
 #include <fstream>
+#include <string>
 #include "dbmanager.h"
 
 class FileDBManager : public DBManager {
 public:
-    FileDBManager(char separator)
+    explicit FileDBManager(char separator)
         : DBManager()
         , m_separator(separator)
     { }
@@ -15,9 +17,9 @@ public:
 
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
-    unsigned long long retrievePoints(const std::string& query) override;
+    uint64_t retrievePoints(const std::string& query) override;
     double getColumnAsDouble(void* row, int colIndex) override;
-    unsigned long getColumnAsUnsignedLong(void* row, int colIndex) override;
+    uint32_t getColumnAsUnsignedLong(void* row, int colIndex) override;
     std::string getColumnAsString(void* row, int colIndex) override;
 
 private:
@@ -26,4 +28,4 @@ private:
     char m_separator;
 };
 
-#endif // FileDBManager_h
+#endif  // FILEDBMANAGER_H

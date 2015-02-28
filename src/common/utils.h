@@ -1,5 +1,5 @@
-#ifndef Utils_h
-#define Utils_h
+#ifndef UTILS_H
+#define UTILS_H
 
 class GPSPoint;
 
@@ -11,7 +11,7 @@ public:
         TunnelDistance
     };
 
-    static double degreesToRadians(double);
+    static double degreesToRadians(double degres);
     static double distance(double lat1, double long1, double lat2, double long2,
         Utils::DistanceType type = FlatSpherical);
     static double distance(const GPSPoint&, const GPSPoint&, Utils::DistanceType type = FlatSpherical);
@@ -38,4 +38,4 @@ private:
     static double m_longDegMeterLen;
 };
 
-#endif // Utils_h
+#endif  // UTILS_H

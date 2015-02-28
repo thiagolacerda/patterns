@@ -1,5 +1,5 @@
-#ifndef DBManager_h
-#define DBManager_h
+#ifndef DBMANAGER_H
+#define DBMANAGER_H
 
 #include <string>
 #include "patterns.h"
@@ -17,14 +17,14 @@ public:
     void setDecoder(DatabaseDecoder* decoder) { m_decoder = decoder; }
     virtual bool connect(const std::string& address, const std::string& user, const std::string& password) = 0;
     virtual void disconnect() = 0;
-    virtual unsigned long long retrievePoints(const std::string& query = "") = 0;
+    virtual uint64_t retrievePoints(const std::string& query = "") = 0;
     virtual double getColumnAsDouble(void* row, int colIndex)
     {
         UNUSED(row);
         UNUSED(colIndex);
         return 0.0;
     }
-    virtual unsigned long getColumnAsUnsignedLong(void* row, int colIndex)
+    virtual uint32_t getColumnAsUnsignedLong(void* row, int colIndex)
     {
         UNUSED(row);
         UNUSED(colIndex);
@@ -47,4 +47,4 @@ protected:
     DatabaseDecoder* m_decoder;
 };
 
-#endif // DBManager_h
+#endif  // DBMANAGER_H

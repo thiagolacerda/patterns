@@ -1,13 +1,14 @@
-#ifndef GPSTupleListener_h
-#define GPSTupleListener_h
+#ifndef GPSTUPLELISTENER_H
+#define GPSTUPLELISTENER_H
 
+#include <cstdint>
 #include <tuple>
 
 class GPSTupleListener {
 public:
-    virtual void processGPSTuple(const std::tuple<unsigned long, double, double, unsigned long>&) = 0;
+    virtual void processGPSTuple(const std::tuple<uint32_t, double, double, uint32_t>&) = 0;
 
     virtual ~GPSTupleListener() { }
 };
 
-#endif // GPSTupleListener_h
+#endif  // GPSTUPLELISTENER_H

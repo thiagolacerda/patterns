@@ -4,7 +4,7 @@
 #include "config.h"
 #include "gpspoint.h"
 
-double Utils::m_earthRadius = 6371.009 * 1000; // Earth radius in meters
+double Utils::m_earthRadius = 6371.009 * 1000;  // Earth radius in meters
 double Utils::m_epsilon = 0.001;
 double Utils::m_latDegMeterLen = 110567.238;
 double Utils::m_longDegMeterLen = 111320.7;
@@ -17,11 +17,6 @@ bool Utils::fuzzyEqual(double a, double b)
 bool Utils::fuzzyLessEqual(double a, double b)
 {
     return a < b || Utils::fuzzyEqual(a, b);
-}
-
-bool Utils::fuzzyGreatEqual(double a, double b)
-{
-    return a > b || Utils::fuzzyEqual(a, b);
 }
 
 double Utils::degreesToRadians(double degrees)
@@ -87,7 +82,6 @@ void Utils::latLongToMeters(double latitude, double longitude, double* latMeters
     }
     *latMeters = y;
     *longMeters = x;
-
 }
 
 void Utils::metersToLatLong(double latMeters, double longMeters, double *latitude, double *longitude)
@@ -125,7 +119,6 @@ void Utils::metersToLatLong(double latMeters, double longMeters, double *latitud
     }
     *latitude = y / m_latDegMeterLen;
     *longitude = x / m_longDegMeterLen;
-
 }
 
 double Utils::distance(double lat1, double long1, double lat2, double long2, Utils::DistanceType type)
@@ -134,7 +127,7 @@ double Utils::distance(double lat1, double long1, double lat2, double long2, Uti
         return Utils::euclidianDistance(lat1, long1, lat2, long2);
 
     double (*distanceFunction)(double, double, double, double);
-    switch(type) {
+    switch (type) {
     case Utils::FlatEllipsoidal:
         distanceFunction = Utils::flatDistanceEllipsoidal;
         break;

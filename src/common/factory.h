@@ -1,5 +1,5 @@
-#ifndef Factory_h
-#define Factory_h
+#ifndef FACTORY_H
+#define FACTORY_H
 
 #include <memory>
 #include <mutex>
@@ -15,4 +15,4 @@ private:
     static std::once_flag m_dbDecoderOnceFlag;
 };
 
-#endif // Factory_h
+#endif  // FACTORY_H

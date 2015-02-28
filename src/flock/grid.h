@@ -1,9 +1,8 @@
-#ifndef Grid_h
-#define Grid_h
+#ifndef GRID_H
+#define GRID_H
 
 #include <memory>
 #include <vector>
-#include "utils.h"
 
 class GPSPoint;
 
@@ -19,4 +18,4 @@ private:
     std::vector<std::shared_ptr<GPSPoint>> m_points;
 };
 
-#endif // Grid_h
+#endif  // GRID_H

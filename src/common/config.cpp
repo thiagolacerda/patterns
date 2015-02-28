@@ -4,12 +4,12 @@
 
 Config::DBDecoder Config::m_decoderInUse = Config::LifeMap;
 std::vector<std::string> Config::m_decoderParameters;
-unsigned long Config::m_flockLength = 0;
-unsigned Config::m_trajectoriesPerFlock = 0;
+uint32_t Config::m_flockLength = 0;
+uint32_t Config::m_trajectoriesPerFlock = 0;
 double Config::m_gridSize = 0;
 double Config::m_radiusSquared = 0;
 double Config::m_radius = 0;
-unsigned Config::m_timeSlotSize = 0;
+uint32_t Config::m_timeSlotSize = 0;
 Config::CoordinateSystem Config::m_coordinateSystem = Config::Cartesian;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
@@ -32,7 +32,7 @@ void Config::setGridSize(double size)
 
 std::string Config::coordinateSystemName(CoordinateSystem coordSystem)
 {
-    switch(coordSystem) {
+    switch (coordSystem) {
     case Config::WSG84:
         return "WSG84 GPS System";
     case Config::Cartesian:

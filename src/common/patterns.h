@@ -1,6 +1,6 @@
-#ifndef Patterns_h
-#define Patterns_h
+#ifndef PATTERNS_H
+#define PATTERNS_H
 
 #define UNUSED(x) (void)x;
 
-#endif // Patterns_h
+#endif  // PATTERNS_H

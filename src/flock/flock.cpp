@@ -1,9 +1,9 @@
 #include "flock.h"
 
-#include "config.h"
 #include <iostream>
+#include "config.h"
 
-void Flock::setTrajectories(const std::map<unsigned long, Trajectory>& trajectories)
+void Flock::setTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
 {
     m_trajectories = trajectories;
 }
@@ -11,7 +11,7 @@ void Flock::setTrajectories(const std::map<unsigned long, Trajectory>& trajector
 /*
  * New trajectories for the next time slot are available for this flock, so we need to merge than with the old ones
  */
-void Flock::mergeTrajectories(const std::map<unsigned long, Trajectory>& trajectories)
+void Flock::mergeTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
 {
     for (auto iter = m_trajectories.begin(); iter != m_trajectories.end(); ++iter) {
         auto found = trajectories.find(iter->first);
@@ -33,7 +33,8 @@ void Flock::clearFirstPoints()
 
 void Flock::dump() const
 {
-    std::cout << "Flock's startTime: " << m_startTime << ", endTime: " << m_endTime << ", number of trajectories: " << m_trajectories.size() << std::endl;
+    std::cout << "Flock's startTime: " << m_startTime << ", endTime: " << m_endTime << ", number of trajectories: "
+        << m_trajectories.size() << std::endl;
 }
 
 void Flock::dumpTrajectories() const

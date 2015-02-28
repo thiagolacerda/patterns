@@ -12,18 +12,18 @@ TrucksPaperDBDecoder::TrucksPaperDBDecoder(const std::vector<std::string>& param
 
 void TrucksPaperDBDecoder::doDecodeRow(void* row)
 {
-    unsigned long tId = m_manager->getColumnAsUnsignedLong(row, 0);
+    uint32_t tId = m_manager->getColumnAsUnsignedLong(row, 0);
     double latitude = m_manager->getColumnAsDouble(row, 1);
     double longitude = m_manager->getColumnAsDouble(row, 2);
-    unsigned long timestamp = m_manager->getColumnAsUnsignedLong(row, 3);
+    uint32_t timestamp = m_manager->getColumnAsUnsignedLong(row, 3);
 
     m_listener->processGPSTuple(std::make_tuple(tId, latitude, longitude, timestamp));
 }
 
-unsigned long long TrucksPaperDBDecoder::retrievePoints()
+uint64_t TrucksPaperDBDecoder::retrievePoints()
 {
     m_manager->connect(m_path, "", "");
-    unsigned long long retrieved = m_manager->retrievePoints();
+    uint64_t retrieved = m_manager->retrievePoints();
     m_manager->disconnect();
     return retrieved;
 }

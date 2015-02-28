@@ -1,6 +1,7 @@
 #include "manager.h"
 
 #include <iostream>
+#include <string>
 #include "databasedecoder.h"
 #include "disk.h"
 #include "factory.h"
@@ -18,7 +19,8 @@ void Manager::start()
     m_dbDecoder->retrievePoints();
     m_pointProcessor.postProcessPoints();
     if (Config::timeSlotSize() <= Config::flockLength()) {
-        std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
+        std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>>
+            pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
         m_pointProcessor.releasePoints();
         for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
             // For each time instance, we get all points belonging to that and try to find flocks
@@ -59,7 +61,7 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
         std::string key = iter->first;
         std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
-        m_gridManager.extendedGridPoints(key, pointsToProcess);
+        m_gridManager.extendedGridPoints(key, &pointsToProcess);
         if (pointsToProcess.size() < Config::numberOfTrajectoriesPerFlock())
             continue;
 

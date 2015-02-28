@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include "gpspoint.h"
 #include "grid.h"
 #include "utils.h"
@@ -55,15 +56,17 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
     if (iter == m_grids.end()) {
         grid = new Grid();
         m_grids[key] = grid;
-    } else
+    } else {
         grid = iter->second;
+    }
 
     grid->addPoint(point);
 }
 
 void GridManager::clear()
 {
-    std::for_each(m_grids.begin(), m_grids.end(), [](const std::pair<std::string, Grid*>& elem) { delete elem.second; });
+    std::for_each(m_grids.begin(), m_grids.end(),
+        [](const std::pair<std::string, Grid*>& elem) { delete elem.second; });
     m_grids.clear();
 }
 
@@ -75,7 +78,7 @@ void GridManager::clear()
  * 1,1;1,2;1,3;2,1;2,2;2,3;3,1;3,2;3,3
  * In this method we return to the caller the vector of all eligible points.
  */
-void GridManager::extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& extendedPoints)
+void GridManager::extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>* extendedPoints)
 {
     std::unordered_map<std::string, Grid*>::const_iterator iter;
     size_t underscoreIndex = key.find_first_of('_');
@@ -89,7 +92,7 @@ void GridManager::extendedGridPoints(const std::string& key, std::vector<std::sh
             oss << i << "_" << j;
             if ((iter = m_grids.find(oss.str())) != m_grids.end()) {
                 const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
-                extendedPoints.insert(extendedPoints.end(), gridPoints.begin(), gridPoints.end());
+                extendedPoints->insert(extendedPoints->end(), gridPoints.begin(), gridPoints.end());
             }
         }
     }

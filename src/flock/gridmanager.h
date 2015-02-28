@@ -1,7 +1,8 @@
-#ifndef GridManager_h
-#define GridManager_h
+#ifndef GRIDMANAGER_H
+#define GRIDMANAGER_H
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -14,14 +15,14 @@ public:
         : m_gridSize(0)
     { }
 
-    GridManager(double gridSize)
+    explicit GridManager(double gridSize)
         : m_gridSize(gridSize)
     { }
 
     void addPointToGrid(const std::shared_ptr<GPSPoint>&);
     void dump();
     const std::unordered_map<std::string, Grid*> grids() { return m_grids; }
-    void extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>& extendedPoints);
+    void extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>* extendedPoints);
     void clear();
 
 private:
@@ -29,4 +30,4 @@ private:
     std::unordered_map<std::string, Grid*> m_grids;
 };
 
-#endif // GridManager_h
+#endif  // GRIDMANAGER_H

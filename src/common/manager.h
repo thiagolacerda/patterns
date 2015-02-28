@@ -1,8 +1,9 @@
-#ifndef Manager_h
-#define Manager_h
+#ifndef MANAGER_H
+#define MANAGER_H
 
 #include <map>
 #include <memory>
+#include <vector>
 #include "config.h"
 #include "diskmanager.h"
 #include "flock.h"
@@ -40,4 +41,4 @@ private:
     std::vector<Flock> m_flocks;
 };
 
-#endif // Manager_h
+#endif  // MANAGER_H

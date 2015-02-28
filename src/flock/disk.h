@@ -1,6 +1,7 @@
-#ifndef Disk_h
-#define Disk_h
+#ifndef DISK_H
+#define DISK_H
 
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <unordered_set>
@@ -17,31 +18,29 @@ public:
         , m_timestamp(0)
     { }
 
-    Disk(double centerX, double centerY, unsigned long timestamp)
+    Disk(double centerX, double centerY, uint32_t timestamp)
         : m_centerX(centerX)
         , m_centerY(centerY)
         , m_timestamp(timestamp)
     { }
 
     double centerX() const { return m_centerX; }
-    void setCenterX(double centerX) { m_centerX = centerX; }
 
     double centerY() const { return m_centerY; }
-    void setCenterY(double centerY) { m_centerY = centerY; }
 
-    unsigned long timestamp() const { return m_timestamp; }
+    uint32_t timestamp() const { return m_timestamp; }
     void addTrajectory(const Trajectory&);
     unsigned numberOfTrajectories() const { return m_trajectories.size(); }
     unsigned countIntersection(Disk* other) const;
-    const std::map<unsigned long, Trajectory>& trajectories() const { return m_trajectories; }
+    const std::map<uint32_t, Trajectory>& trajectories() const { return m_trajectories; }
     void dumpTrajectories() const;
     void dump() const;
 
 private:
     double m_centerX;
     double m_centerY;
-    unsigned long m_timestamp;
-    std::map<unsigned long, Trajectory> m_trajectories;
+    uint32_t m_timestamp;
+    std::map<uint32_t, Trajectory> m_trajectories;
 };
 
-#endif // Disk_h
+#endif  // DISK_H

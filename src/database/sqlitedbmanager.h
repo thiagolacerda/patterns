@@ -1,6 +1,8 @@
-#ifndef SQLiteDBManager_h
-#define SQLiteDBManager_h
+#ifndef SQLITEDBMANAGER_H
+#define SQLITEDBMANAGER_H
 
+#include <cstdint>
+#include <string>
 #include "dbmanager.h"
 
 struct sqlite3;
@@ -16,7 +18,7 @@ public:
 
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
-    unsigned long long retrievePoints(const std::string& query) override;
+    uint64_t retrievePoints(const std::string& query) override;
     double getColumnAsDouble(void* row, int colIndex) override;
     std::string getColumnAsString(void* row, int colIndex) override;
 
@@ -24,4 +26,4 @@ private:
     sqlite3* m_db;
 };
 
-#endif // SQLiteDBManager_h
+#endif  // SQLITEDBMANAGER_H

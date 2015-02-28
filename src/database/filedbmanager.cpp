@@ -20,11 +20,11 @@ void FileDBManager::disconnect()
         m_file.close();
 }
 
-unsigned long long FileDBManager::retrievePoints(const std::string& query)
+uint64_t FileDBManager::retrievePoints(const std::string& query)
 {
     UNUSED(query);
 
-    unsigned long long retrieved = 0;
+    uint64_t retrieved = 0;
     std::string line;
     while (std::getline(m_file, line)) {
         m_decoder->decodeRow(&line);
@@ -35,7 +35,7 @@ unsigned long long FileDBManager::retrievePoints(const std::string& query)
 
 std::string FileDBManager::getColumnValue(const std::string& row, int colIndex)
 {
-    unsigned j = 0;
+    uint32_t j = 0;
     for (int i = 0; i < colIndex && j < row.length(); ++i) {
         j = row.find_first_of(m_separator, j);
         ++j;
@@ -53,7 +53,7 @@ double FileDBManager::getColumnAsDouble(void* row, int colIndex)
     return atof(getColumnValue(*str, colIndex).c_str());
 }
 
-unsigned long FileDBManager::getColumnAsUnsignedLong(void* row, int colIndex)
+uint32_t FileDBManager::getColumnAsUnsignedLong(void* row, int colIndex)
 {
     std::string* str = (std::string*) row;
     return strtoul(getColumnValue(*str, colIndex).c_str(), NULL, 10);

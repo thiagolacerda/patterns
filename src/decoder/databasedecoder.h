@@ -1,6 +1,7 @@
-#ifndef DatabaseDecoder_h
-#define DatabaseDecoder_h
+#ifndef DATABASEDECODER_H
+#define DATABASEDECODER_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "config.h"
@@ -11,9 +12,10 @@ class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
-    virtual unsigned long long retrievePoints() = 0;
+    virtual uint64_t retrievePoints() = 0;
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
-    void decodeRow(void* row) {
+    void decodeRow(void* row)
+    {
         if (m_ignoreFirstRow) {
             m_ignoreFirstRow = false;
             return;
@@ -29,7 +31,7 @@ public:
     }
 
 protected:
-    DatabaseDecoder(DBManager* manager)
+    explicit DatabaseDecoder(DBManager* manager)
         : m_manager(manager)
         , m_ignoreFirstRow(Config::isInCompatibilityMode())
     {
@@ -38,7 +40,7 @@ protected:
     virtual void doDecodeRow(void* row) = 0;
     DBManager* m_manager;
     GPSTupleListener* m_listener;
-    bool m_ignoreFirstRow; // compatibility mode
+    bool m_ignoreFirstRow;  // compatibility mode
 };
 
-#endif // DatabaseDecoder_h
+#endif  // DATABASEDECODER_H

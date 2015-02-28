@@ -1,12 +1,12 @@
 #include "lifemapdbdecoder.h"
 
-#include <algorithm>
-#include <iostream>
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <algorithm>
+#include <iostream>
 #include "gpstuplelistener.h"
 #include "sqlitedbmanager.h"
 
@@ -23,10 +23,10 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
     double latitude;
     double longitude;
     std::string timestampStr;
-    unsigned long timestamp;
+    uint32_t timestamp;
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
-    for(int col = 0; col < 3; ++col) {
+    for (int col = 0; col < 3; ++col) {
         if (col == 0)
             latitude = m_manager->getColumnAsDouble(row, col) / 1000000;
         else if (col == 1)
@@ -46,7 +46,7 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(m_currentId, latitude, longitude, timestamp));
 }
 
-unsigned long long LifeMapDBDecoder::retrievePoints()
+uint64_t LifeMapDBDecoder::retrievePoints()
 {
     DIR *dir;
     struct dirent *ent;
@@ -54,7 +54,7 @@ unsigned long long LifeMapDBDecoder::retrievePoints()
     int dbPrefixLen = m_dbFilesPrefix.length();
 
     dir = opendir(m_path.c_str());
-    unsigned long long retrieved = 0;
+    uint64_t retrieved = 0;
     while ((ent = readdir(dir)) != NULL) {
         const std::string fileName = ent->d_name;
         const std::string fullFileName = m_path + "/" + fileName;

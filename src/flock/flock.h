@@ -1,6 +1,7 @@
-#ifndef Flock_h
-#define Flock_h
+#ifndef FLOCK_H
+#define FLOCK_H
 
+#include <cstdint>
 #include <map>
 #include "trajectory.h"
 
@@ -12,27 +13,27 @@ public:
         , m_endTime(0)
     { }
 
-    Flock(unsigned long startTime, unsigned long endTime)
+    Flock(uint32_t startTime, uint32_t endTime)
         : m_startTime(startTime)
         , m_endTime(endTime)
     { }
 
-    void setTrajectories(const std::map<unsigned long, Trajectory>&);
-    void mergeTrajectories(const std::map<unsigned long, Trajectory>&);
-    const std::map<unsigned long, Trajectory>& trajectories() const { return m_trajectories; }
-    unsigned long startTime() const { return m_startTime; }
-    void setStartTime(unsigned long startTime) { m_startTime = startTime; }
-    unsigned long endTime() const { return m_endTime; }
-    void setEndTime(unsigned long endTime) { m_endTime = endTime; }
+    void setTrajectories(const std::map<uint32_t, Trajectory>&);
+    void mergeTrajectories(const std::map<uint32_t, Trajectory>&);
+    const std::map<uint32_t, Trajectory>& trajectories() const { return m_trajectories; }
+    uint32_t startTime() const { return m_startTime; }
+    void setStartTime(uint32_t startTime) { m_startTime = startTime; }
+    uint32_t endTime() const { return m_endTime; }
+    void setEndTime(uint32_t endTime) { m_endTime = endTime; }
     void clearFirstPoints();
     void dump() const;
     void dumpTrajectories() const;
 
 private:
-    unsigned long m_startTime;
-    unsigned long m_endTime;
+    uint32_t m_startTime;
+    uint32_t m_endTime;
     // Stores the trajectories that belong to this flock, ordered by the id of the trajectory
-    std::map<unsigned long, Trajectory> m_trajectories;
+    std::map<uint32_t, Trajectory> m_trajectories;
 };
 
-#endif // Flock_h
+#endif  // FLOCK_H

@@ -12,12 +12,12 @@ TrucksDBDecoder::TrucksDBDecoder(const std::vector<std::string>& parameters)
 
 void TrucksDBDecoder::doDecodeRow(void* row)
 {
-    unsigned long tId;
+    uint32_t tId;
     double latitude;
     double longitude;
     std::string dateStr;
     std::string hourStr;
-    unsigned long timestamp;
+    uint32_t timestamp;
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
     tId = m_manager->getColumnAsUnsignedLong(row, 0);
@@ -38,10 +38,10 @@ void TrucksDBDecoder::doDecodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(tId, latitude, longitude, timestamp));
 }
 
-unsigned long long TrucksDBDecoder::retrievePoints()
+uint64_t TrucksDBDecoder::retrievePoints()
 {
     m_manager->connect(m_path, "", "");
-    unsigned long long retrieved = m_manager->retrievePoints();
+    uint64_t retrieved = m_manager->retrievePoints();
     m_manager->disconnect();
     return retrieved;
 }

@@ -1,19 +1,21 @@
-#ifndef TrucksPaperDBDecoder_h
-#define TrucksPaperDBDecoder_h
+#ifndef TRUCKSPAPERDBDECODER_H
+#define TRUCKSPAPERDBDECODER_H
 
+#include <string>
+#include <vector>
 #include "databasedecoder.h"
 
 class TrucksPaperDBDecoder : public DatabaseDecoder {
 public:
-    unsigned long long retrievePoints() override;
+    uint64_t retrievePoints() override;
 
 protected:
     void doDecodeRow(void* row) override;
 
 private:
     friend class Factory;
-    TrucksPaperDBDecoder(const std::vector<std::string>& parameters);
+    explicit TrucksPaperDBDecoder(const std::vector<std::string>& parameters);
     std::string m_path;
 };
 
-#endif // TrucksPaperDBDecoder_h
+#endif  // TRUCKSPAPERDBDECODER_H

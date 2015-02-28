@@ -29,7 +29,7 @@ void Trajectory::clearFirstPoints()
     if (m_points.empty())
         return;
 
-    unsigned long startTime = m_points.at(0)->timestamp();
+    uint32_t startTime = m_points.at(0)->timestamp();
     unsigned count = 0;
     for (auto iter = m_points.begin(); iter != m_points.end();) {
         if ((*iter)->timestamp() != startTime)

@@ -1,6 +1,7 @@
-#ifndef Trajectory_h
-#define Trajectory_h
+#ifndef TRAJECTORY_H
+#define TRAJECTORY_H
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -10,20 +11,20 @@ class Trajectory {
 public:
     Trajectory() { }
 
-    Trajectory(unsigned long id)
+    explicit Trajectory(uint32_t id)
         : m_id(id)
     { }
 
     void addPoint(const std::shared_ptr<GPSPoint>&);
 
-    unsigned long id() const { return m_id; }
+    uint32_t id() const { return m_id; }
     void mergePoints(const Trajectory&);
     void clearFirstPoints();
     void dump();
 
 private:
-    unsigned long m_id;
+    uint32_t m_id;
     std::vector<std::shared_ptr<GPSPoint>> m_points;
 };
 
-#endif // Trajectory_h
+#endif  // TRAJECTORY_H

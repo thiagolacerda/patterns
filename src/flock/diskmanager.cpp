@@ -1,8 +1,8 @@
 #include "diskmanager.h"
 
+#include <math.h>
 #include <algorithm>
 #include <iomanip>
-#include <math.h>
 #include <sstream>
 #include "config.h"
 #include "disk.h"
@@ -13,20 +13,20 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
         unsigned count = (*iter)->countIntersection(disk);
-        if (disk->numberOfTrajectories() == count) // disk is a subset of iter->second, do not insert
+        if (disk->numberOfTrajectories() == count)  // disk is a subset of iter->second, do not insert
             return false;
 
         if ((*iter)->numberOfTrajectories() != count)
-            ++iter; // Different disks... do nothing
+            ++iter;  // Different disks... do nothing
         else
-            iter = m_disks.erase(iter); // disk is a superset of iter->second
+            iter = m_disks.erase(iter);  // disk is a superset of iter->second
     }
 
     m_disks.push_back(disk);
     return true;
 }
 
-void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2)
 {
     if (Utils::fuzzyEqual(point1->latitude(), point2->latitude()) &&
         Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
@@ -38,7 +38,7 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long
         getDisks(point1, point2, timestamp, disk1, disk2);
 }
 
-void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2)
 {
     double midX;
     double midY;
@@ -68,7 +68,8 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, unsigned long tim
 }
 
 // This code was copied from the paper as is! (changed only some names of variables)
-void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp,
+    Disk** disk1, Disk** disk2)
 {
     double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitude() : point2->latitude();
     double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitude() : point2->longitude();

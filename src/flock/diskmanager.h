@@ -1,6 +1,7 @@
-#ifndef DiskManager_h
-#define DiskManager_h
+#ifndef DISKMANAGER_H
+#define DISKMANAGER_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -13,18 +14,17 @@ public:
     DiskManager()
     { }
 
-    void computeDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2);
-    bool tryInsertDisk(Disk*);
+    void computeDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2);
+    bool tryInsertDisk(Disk* disk);
     const std::vector<Disk*>& disks() const { return m_disks; }
     void clear();
     void dump() const;
-    unsigned numberOfDisks() const { return m_disks.size(); }
 
 private:
-    void getDisks(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2);
-    void getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, unsigned long timestamp, Disk** disk1, Disk** disk2);
+    void getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2);
+    void getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2);
     std::string diskKey(double x, double y);
     std::vector<Disk*> m_disks;
 };
 
-#endif // DiskManager_h
+#endif  // DISKMANAGER_H

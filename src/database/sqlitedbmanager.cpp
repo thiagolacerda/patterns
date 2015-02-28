@@ -1,7 +1,7 @@
 #include "sqlitedbmanager.h"
 
-#include <iostream>
 #include <sqlite3.h>
+#include <iostream>
 #include <tuple>
 #include <vector>
 #include "databasedecoder.h"
@@ -34,7 +34,7 @@ void SQLiteDBManager::disconnect()
     m_db = nullptr;
 }
 
-unsigned long long SQLiteDBManager::retrievePoints(const std::string& query)
+uint64_t SQLiteDBManager::retrievePoints(const std::string& query)
 {
     sqlite3_stmt* selectStmt;
     if (sqlite3_prepare_v2(m_db, query.c_str(), -1, &selectStmt, NULL) != SQLITE_OK) {
@@ -42,9 +42,9 @@ unsigned long long SQLiteDBManager::retrievePoints(const std::string& query)
         return 0;
     }
 
-    unsigned long long retrieved = 0;
-    while(true) {
-        if(sqlite3_step(selectStmt) != SQLITE_ROW)
+    uint64_t retrieved = 0;
+    while (true) {
+        if (sqlite3_step(selectStmt) != SQLITE_ROW)
             break;
 
         m_decoder->decodeRow(selectStmt);
@@ -52,20 +52,20 @@ unsigned long long SQLiteDBManager::retrievePoints(const std::string& query)
     }
     sqlite3_finalize(selectStmt);
     std::string error = sqlite3_errmsg(m_db);
-    if(error != "not an error")
+    if (error != "not an error")
         std::cerr << query << " " << error << std::endl;
- 
+
     return retrieved;
 }
 
 double SQLiteDBManager::getColumnAsDouble(void* row, int colIndex)
 {
-    sqlite3_stmt* statement = (sqlite3_stmt*) row;
+    sqlite3_stmt* statement = reinterpret_cast<sqlite3_stmt*>(row);
     return sqlite3_column_double(statement, colIndex);
 }
 
 std::string SQLiteDBManager::getColumnAsString(void* row, int colIndex)
 {
-    sqlite3_stmt* statement = (sqlite3_stmt*) row;
+    sqlite3_stmt* statement = reinterpret_cast<sqlite3_stmt*>(row);
     return reinterpret_cast<const char*>(sqlite3_column_text(statement, colIndex));
 }

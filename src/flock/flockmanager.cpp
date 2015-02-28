@@ -8,8 +8,8 @@
  * By default we return the number of common trajectories between those two sets.
  * If the parameter 'inter' is a valid map, we also store the common trajectories on that map
  */
-unsigned FlockManager::intersection(const std::map<unsigned long, Trajectory>& set1,
-    const std::map<unsigned long, Trajectory>& set2, std::map<unsigned long, Trajectory>* inter)
+unsigned FlockManager::intersection(const std::map<uint32_t, Trajectory>& set1,
+    const std::map<uint32_t, Trajectory>& set2, std::map<uint32_t, Trajectory>* inter)
 {
     auto begin1 = set1.begin();
     auto begin2 = set2.begin();
@@ -25,11 +25,11 @@ unsigned FlockManager::intersection(const std::map<unsigned long, Trajectory>& s
 
     unsigned count = 0;
     while (begin1 != set1.end() && begin2 != set2.end()) {
-        if (begin1->first < begin2->first)
+        if (begin1->first < begin2->first) {
             ++begin1;
-        else if (begin2->first < begin1->first)
+        } else if (begin2->first < begin1->first) {
             ++begin2;
-        else {
+        } else {
             if (inter)
                 (*inter)[begin1->first] = begin1->second;
             ++count;
@@ -49,7 +49,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
         for (auto it1 = disks.begin(); it1 != disks.end(); ++it1) {
             Disk* disk = *it1;
             for (auto it2 = m_flocks.begin(); it2 != m_flocks.end(); ++it2) {
-                std::map<unsigned long, Trajectory> inter;
+                std::map<uint32_t, Trajectory> inter;
                 intersection((*it2).trajectories(), disk->trajectories(), &inter);
                 if (inter.size() >= Config::numberOfTrajectoriesPerFlock()) {
                     // We have a pontential increment for a previous flock
@@ -59,7 +59,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
                     newFlock.setEndTime(disk->timestamp() + Config::timeSlotSize());
                     // Before inserting it in FlockManager we need to check if there isn't any other flock that is a
                     // superset of it
-                    if (mergeFlocks(flocksFromDisks, newFlock))
+                    if (mergeFlocks(&flocksFromDisks, newFlock))
                         newFlock.mergeTrajectories(disk->trajectories());
                 }
             }
@@ -74,7 +74,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
         if (noFlocksInitialy)
             m_flocks.push_back(newFlock);
         else
-            mergeFlocks(flocksFromDisks, newFlock);
+            mergeFlocks(&flocksFromDisks, newFlock);
     }
     if (!noFlocksInitialy)
         m_flocks = flocksFromDisks;
@@ -83,9 +83,9 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
 /*
  * Check if this flock can be inserted (it can't be a subset of an already existing flock)
  */
-bool FlockManager::mergeFlocks(std::vector<Flock>& flocks, const Flock& newFlock)
+bool FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock)
 {
-    for (auto it1 = flocks.begin(); it1 != flocks.end();) {
+    for (auto it1 = flocks->begin(); it1 != flocks->end();) {
         unsigned count = intersection((*it1).trajectories(), newFlock.trajectories(), nullptr);
         if (newFlock.trajectories().size() == count) {
             // This new flock is, potentially, a subset of (*it)
@@ -98,18 +98,19 @@ bool FlockManager::mergeFlocks(std::vector<Flock>& flocks, const Flock& newFlock
             else
                 // (*it1) is a subset of new flock: They have the same number of trajectories and new flock's start time
                 // is not earlier than (*it1)
-                it1 = flocks.erase(it1);
+                it1 = flocks->erase(it1);
         } else if ((*it1).trajectories().size() == count) {
             // (*it1) is, potentially, a subset of new flock
             if ((*it1).startTime() < newFlock.startTime())
                 // (*it1) is older, so we keep both
                 ++it1;
             else
-                it1 = flocks.erase(it1);
-        } else
+                it1 = flocks->erase(it1);
+        } else {
             ++it1;
+        }
     }
-    flocks.push_back(newFlock);
+    flocks->push_back(newFlock);
     return true;
 }
 
@@ -119,7 +120,7 @@ bool FlockManager::mergeFlocks(std::vector<Flock>& flocks, const Flock& newFlock
 std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
-    unsigned long flockLength = Config::flockLength();
+    uint32_t flockLength = Config::flockLength();
     for (auto iter = m_flocks.begin(); iter != m_flocks.end();) {
         if (((*iter).endTime() - (*iter).startTime()) >= flockLength) {
             results.push_back(*iter);
@@ -155,10 +156,9 @@ void FlockManager::checkDuplicateAnswer()
     // This vector will contain only the unique flocks (no subsets)
     std::vector<Flock> flocks;
     unsigned int interCount;
-    bool insert;
 
     for (auto it1 = m_flocks.begin(); it1 != m_flocks.end(); ++it1) {
-        insert = true;
+        bool insert = true;
         const Flock& flock = (*it1);
         for (auto it2 = flocks.begin(); insert && it2 != flocks.end();) {
             if (flock.startTime() == (*it2).startTime() && flock.endTime() == (*it2).endTime()) {
@@ -172,8 +172,9 @@ void FlockManager::checkDuplicateAnswer()
                     it2 = flocks.erase(it2);
                 else
                     ++it2;
-            } else
+            } else {
                 ++it2;
+            }
         }
         if (insert)
             flocks.push_back(flock);
