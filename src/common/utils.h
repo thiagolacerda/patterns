@@ -19,11 +19,11 @@ public:
     static bool fuzzyGreatEqual(double, double);
 
 private:
-    static double m_epsilon;
+    static constexpr double m_epsilon = 0.001;
 
     // Below is the length of a degree of latitude and longitude in 0,0 coordinate
-    static double m_latDegMeterLen;
-    static double m_longDegMeterLen;
+    static constexpr double m_latDegMeterLen = 110567.238;
+    static constexpr double m_longDegMeterLen = 111320.7;
 };
 
 #endif  // UTILS_H

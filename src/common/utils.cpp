@@ -4,10 +4,6 @@
 #include "config.h"
 #include "gpspoint.h"
 
-double Utils::m_epsilon = 0.001;
-double Utils::m_latDegMeterLen = 110567.238;
-double Utils::m_longDegMeterLen = 111320.7;
-
 bool Utils::fuzzyEqual(double a, double b)
 {
     return fabs(a - b) < Utils::m_epsilon;
