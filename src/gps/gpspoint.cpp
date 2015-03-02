@@ -1,7 +1,6 @@
 #include "gpspoint.h"
 
 #include <time.h>
-#include <iostream>
 #include "config.h"
 #include "trajectory.h"
 
@@ -42,9 +41,15 @@ bool GPSPoint::operator<(GPSPoint* other) const
 
 void GPSPoint::dump()
 {
+    std::cout << this << std::endl;
+}
+
+std::ostream& operator<<(std::ostream& stream, const GPSPoint& point)
+{
     char buf[32];
-    ctime_r((const time_t*) &m_timestamp, buf);
-    std::cout << "Point: tID: " << m_trajectoryId << ", lat long: ("
-        << m_latitude << ", " << m_longitude << "), " << m_timestamp
-        << ", date: " << buf << std::endl;
+    ctime_r((const time_t*) &point.m_timestamp, buf);
+    stream << "Point -> trajectory: " << point.m_trajectoryId << ", lat long: (" << point.m_latitude << ", "
+        << point.m_longitude << "), lat long in meters: (" << point.m_latitudeMeters << ", " << point.m_longitudeMeters
+        << "), time: " << point.m_timestamp << ", date: " << buf;
+    return stream;
 }

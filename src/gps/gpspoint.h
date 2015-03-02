@@ -2,6 +2,7 @@
 #define GPSPOINT_H
 
 #include <cstdint>
+#include <iostream>
 #include "utils.h"
 
 class GPSPoint {
@@ -25,6 +26,8 @@ public:
     bool operator<(GPSPoint* point) const;
 
     void dump();
+
+    friend std::ostream& operator<<(std::ostream& stream, const GPSPoint& point);
 
 private:
     double m_latitude;
