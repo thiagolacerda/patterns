@@ -24,6 +24,22 @@ else(CMAKE_BUILD_TYPE STREQUAL Debug)
     set(CMAKE_BUILD_TYPE Release)
 endif(CMAKE_BUILD_TYPE STREQUAL Debug)
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(PROJECT_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+
+set(COMMON_DIR ${PROJECT_SRC_DIR}/common)
+set(DATABASE_DIR ${PROJECT_SRC_DIR}/database)
+set(DECODER_DIR ${PROJECT_SRC_DIR}/decoder)
+set(FLOCK_DIR ${PROJECT_SRC_DIR}/flock)
+set(GPS_DIR ${PROJECT_SRC_DIR}/gps)
+
+include_directories(
+    ${COMMON_DIR}
+    ${DATABASE_DIR}
+    ${DECODER_DIR}
+    ${FLOCK_DIR}
+    ${GPS_DIR}
+)
 
 add_subdirectory(src)
+enable_testing()
+add_subdirectory(test)

@@ -1,17 +1,6 @@
 find_package(SQLite3 REQUIRED)
 
-set(COMMON_DIR common)
-set(DATABASE_DIR database)
-set(DECODER_DIR decoder)
-set(FLOCK_DIR flock)
-set(GPS_DIR gps)
-
 include_directories(
-    ${COMMON_DIR}
-    ${DATABASE_DIR}
-    ${DECODER_DIR}
-    ${FLOCK_DIR}
-    ${GPS_DIR}
     ${SQLite3_INCLUDE_DIRS}
 )
 
@@ -56,6 +45,8 @@ set(PATTERNS_SOURCES
     ${GPS_SRCS}
     main.cpp
 )
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 add_executable(patterns ${PATTERNS_SOURCES})
 target_link_libraries(patterns ${SQLite3_LIBRARIES})
