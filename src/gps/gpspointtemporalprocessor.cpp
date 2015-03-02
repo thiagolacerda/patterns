@@ -3,6 +3,7 @@
 #include <math.h>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 #include "config.h"
 #include "gpspoint.h"
 #include "utils.h"
@@ -20,8 +21,11 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     if (Config::automaticTimeSlot()) {
         auto iter = m_lastTimestampPerTrajectory.find(tID);
         if (iter != m_lastTimestampPerTrajectory.end()) {
-            if (iter->second > timestamp)
-                std::cout << "ERROR!!!!! tID: " << tID << " " << iter->second << " > " << timestamp << std::endl;
+            if (iter->second > timestamp) {
+                std::ostringstream oss;
+                oss << "Data set is not ordered by time. Point " << point << " is older than the last one processed";
+                throw std::runtime_error(oss.str());
+            }
 
             uint32_t diff = timestamp - iter->second;
             m_timeDiffs.push_back(diff);
