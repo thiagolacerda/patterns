@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <iostream>
 #include "patterns.h"
 
 Config::DBDecoder Config::m_decoderInUse = Config::LifeMap;
@@ -10,7 +11,7 @@ double Config::m_gridSize = 0;
 double Config::m_radiusSquared = 0;
 double Config::m_radius = 0;
 uint32_t Config::m_timeSlotSize = 0;
-Config::CoordinateSystem Config::m_coordinateSystem = Config::Cartesian;
+Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
 
@@ -30,16 +31,24 @@ void Config::setGridSize(double size)
     m_radiusSquared = m_radius * m_radius;
 }
 
+void Config::setCoordinateSystem(CoordinateSystem coordSystem)
+{
+    if (coordSystem != Config::WSG84 && coordSystem != Config::Metric) {
+        std::cout << "Unknown type, falling to defalt: Metric" << std::endl;
+        return;
+    }
+
+    m_coordinateSystem = coordSystem;
+}
+
 std::string Config::coordinateSystemName(CoordinateSystem coordSystem)
 {
     switch (coordSystem) {
     case Config::WSG84:
         return "WSG84 GPS System";
-    case Config::Cartesian:
-        return "Cartesian System";
-    case Config::CartesianNoConvert:
-        return "Cartesian System but do not try to convert from GPS";
+    case Config::Metric:
+        return "Metric System";
     default:
-        return "Uknown type, falling to defalt: Cartesian";
+        return "Uknown type, falling to defalt: Metric";
     }
 }

@@ -39,13 +39,13 @@
  */
 void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
 {
-    double latitude = point->latitude();
-    double longitude = point->longitude();
-    int xIndex = floor((Utils::distance(latitude, longitude, 0, longitude) / m_gridSize)) + 1;
-    int yIndex = floor((Utils::distance(latitude, longitude, latitude, 0) / m_gridSize)) + 1;
-    if (latitude < 0)
+    double latMeters = point->latitudeMeters();
+    double longMeters = point->longitudeMeters();
+    int xIndex = floor((Utils::distance(longMeters, latMeters, 0, latMeters) / m_gridSize)) + 1;
+    int yIndex = floor((Utils::distance(longMeters, latMeters, longMeters, 0) / m_gridSize)) + 1;
+    if (latMeters < 0)
         xIndex = -xIndex;
-    if (longitude < 0)
+    if (longMeters < 0)
         yIndex = -yIndex;
 
     std::ostringstream oss;

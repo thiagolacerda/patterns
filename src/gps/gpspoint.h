@@ -11,14 +11,16 @@ public:
     GPSPoint(double latitude, double longitude, uint32_t timestamp, uint32_t trajectoryId);
 
     double latitude() const { return m_latitude; }
+    double latitudeMeters() const { return m_latitudeMeters; }
 
     double longitude() const { return m_longitude; }
+    double longitudeMeters() const { return m_longitudeMeters; }
 
     uint32_t timestamp() const { return m_timestamp; }
 
     uint32_t trajectoryId() const { return m_trajectoryId; }
 
-    double distanceToPoint(const GPSPoint&, Utils::DistanceType type = Utils::FlatSpherical);
+    double distanceToPoint(const GPSPoint& other);
 
     bool operator<(GPSPoint* point) const;
 
@@ -26,7 +28,9 @@ public:
 
 private:
     double m_latitude;
+    double m_latitudeMeters;
     double m_longitude;
+    double m_longitudeMeters;
     uint32_t m_timestamp;
     uint32_t m_trajectoryId;
 };

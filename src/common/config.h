@@ -9,8 +9,7 @@ class Config {
 public:
     enum CoordinateSystem {
         WSG84,
-        Cartesian,
-        CartesianNoConvert
+        Metric
     };
 
     enum DBDecoder {
@@ -33,7 +32,7 @@ public:
     static void setNumberOfTrajectoriesPerFlock(uint32_t trajectories) { m_trajectoriesPerFlock = trajectories; }
     static void setTimeSlotSize(double size) { m_timeSlotSize = size; }
     static double timeSlotSize() { return m_timeSlotSize; }
-    static void setCoordinateSystem(CoordinateSystem coordSystem) { m_coordinateSystem = coordSystem; }
+    static void setCoordinateSystem(CoordinateSystem coordSystem);
     static CoordinateSystem coordinateSystem() { return m_coordinateSystem; }
     static std::string coordinateSystemName(CoordinateSystem);
     static void setCompatibilityMode(bool compatibility) { m_compatibilityMode = compatibility; }

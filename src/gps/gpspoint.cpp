@@ -2,25 +2,37 @@
 
 #include <time.h>
 #include <iostream>
+#include "config.h"
 #include "trajectory.h"
 
 GPSPoint::GPSPoint()
     : m_latitude(0)
+    , m_latitudeMeters(0)
     , m_longitude(0)
+    , m_longitudeMeters(0)
     , m_timestamp(0)
     , m_trajectoryId(0)
 { }
 
 GPSPoint::GPSPoint(double latitude, double longitude, uint32_t timestamp, uint32_t trajectoryId)
     : m_latitude(latitude)
+    , m_latitudeMeters(0)
     , m_longitude(longitude)
+    , m_longitudeMeters(0)
     , m_timestamp(timestamp)
     , m_trajectoryId(trajectoryId)
-{ }
-
-double GPSPoint::distanceToPoint(const GPSPoint& point, Utils::DistanceType type)
 {
-    return Utils::distance(*this, point, type);
+    if (Config::coordinateSystem() == Config::Metric) {
+        m_latitudeMeters = m_latitude;
+        m_longitudeMeters = m_longitude;
+    } else {
+        Utils::latLongToMeters(m_latitude, m_longitude, &m_latitudeMeters, &m_longitudeMeters);
+    }
+}
+
+double GPSPoint::distanceToPoint(const GPSPoint& other)
+{
+    return Utils::distance(*this, other);
 }
 
 bool GPSPoint::operator<(GPSPoint* other) const

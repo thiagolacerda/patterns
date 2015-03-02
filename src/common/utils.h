@@ -5,16 +5,9 @@ class GPSPoint;
 
 class Utils {
 public:
-    enum DistanceType {
-        FlatSpherical,
-        FlatEllipsoidal,
-        TunnelDistance
-    };
-
     static double degreesToRadians(double degres);
-    static double distance(double lat1, double long1, double lat2, double long2,
-        Utils::DistanceType type = FlatSpherical);
-    static double distance(const GPSPoint&, const GPSPoint&, Utils::DistanceType type = FlatSpherical);
+    static double distance(double p1X, double p1Y, double p2X, double p2Y);
+    static double distance(const GPSPoint& point1, const GPSPoint& point2);
     static void latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters);
     static void metersToLatLong(double latMeters, double longMeters, double *latitude, double *longitude);
     static void midPoint(double x1, double y1, double x2, double y2, double* midX, double* midY);
@@ -26,11 +19,6 @@ public:
     static bool fuzzyGreatEqual(double, double);
 
 private:
-    static double euclidianDistance(double p1X, double p1Y, double p2X, double p2Y);
-    static double flatDistanceSpherical(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
-    static double flatDistanceEllipsoidal(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
-    static double tunnelDistance(double p1LatRad, double p1LongRad, double p2LatRad, double p2LongRad);
-    static double m_earthRadius;
     static double m_epsilon;
 
     // Below is the length of a degree of latitude and longitude in 0,0 coordinate

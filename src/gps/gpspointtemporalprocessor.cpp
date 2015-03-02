@@ -15,9 +15,6 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     uint32_t timestamp;
     std::tie(tID, latitude, longitude, timestamp) = tuple;
 
-    if (Config::coordinateSystem() == Config::Cartesian)
-        Utils::latLongToMeters(latitude, longitude, &latitude, &longitude);
-
     uint32_t index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
     if (Config::automaticTimeSlot()) {

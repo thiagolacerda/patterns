@@ -116,13 +116,13 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
             // diskGeneratorPoint1 and diskGeneratorPoint2 already belong to the disk
             continue;
 
-        double latitude = point->latitude();
-        double longitude = point->longitude();
-        double distance = Utils::distance(disk1->centerX(), disk1->centerY(), latitude, longitude);
+        double latMeters = point->latitudeMeters();
+        double longMeters = point->longitudeMeters();
+        double distance = Utils::distance(disk1->centerX(), disk1->centerY(), longMeters, latMeters);
         if (Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk1);
 
-        distance = Utils::distance(disk2->centerX(), disk2->centerY(), latitude, longitude);
+        distance = Utils::distance(disk2->centerX(), disk2->centerY(), longMeters, latMeters);
         if (Utils::fuzzyLessEqual(distance, radius))
             createTrajectoryAndAddToDisks(point, disk2);
     }

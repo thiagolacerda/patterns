@@ -28,8 +28,8 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 
 void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2)
 {
-    if (Utils::fuzzyEqual(point1->latitude(), point2->latitude()) &&
-        Utils::fuzzyEqual(point1->longitude(), point2->longitude()))
+    if (Utils::fuzzyEqual(point1->latitudeMeters(), point2->latitudeMeters()) &&
+        Utils::fuzzyEqual(point1->longitudeMeters(), point2->longitudeMeters()))
         return;
 
     if (Config::isInCompatibilityMode())
@@ -46,10 +46,10 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestam
     double vectorY;
     double perpNormVectorX;
     double perpNormVectorY;
-    double x1 = point1->latitude();
-    double y1 = point1->longitude();
-    double x2 = point2->latitude();
-    double y2 = point2->longitude();
+    double x1 = point1->longitudeMeters();
+    double y1 = point1->latitudeMeters();
+    double x2 = point2->longitudeMeters();
+    double y2 = point2->latitudeMeters();
     Utils::midPoint(x1, y1, x2, y2, &midX, &midY);
     Utils::toVector(x1, y1, x2, y2, &vectorX, &vectorY);
     double pointsDistance = Utils::vectorLength(vectorX, vectorY);
@@ -71,10 +71,10 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestam
 void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp,
     Disk** disk1, Disk** disk2)
 {
-    double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitude() : point2->latitude();
-    double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitude() : point2->longitude();
-    double x2 = point1->trajectoryId() < point2->trajectoryId() ? point2->latitude() : point1->latitude();
-    double y2 = point1->trajectoryId() < point2->trajectoryId() ? point2->longitude() : point1->longitude();
+    double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitudeMeters() : point2->longitudeMeters();
+    double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitudeMeters() : point2->latitudeMeters();
+    double x2 = point1->trajectoryId() < point2->trajectoryId() ? point2->longitudeMeters() : point1->longitudeMeters();
+    double y2 = point1->trajectoryId() < point2->trajectoryId() ? point2->latitudeMeters() : point1->latitudeMeters();
     double x1Squared = x1 * x1;
     double x2Squared = x2 * x2;
     double y1Squared = y1 * y1;
