@@ -15,7 +15,7 @@ Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
 
-void Config::setDecoder(char* decoderName)
+void Config::setDecoder(char const* decoderName)
 {
     std::string decoder(decoderName);
     if (decoder.compare("trucks") == 0)

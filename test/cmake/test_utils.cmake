@@ -1,0 +1,6 @@
+function(create_test_target test_name source dependencies test_libs)
+    add_executable(${test_name} ${source} ${dependencies})
+    target_link_libraries(${test_name} ${TESTS_BUILD_DEPENDENCIES} ${test_libs})
+    add_test(${test_name} ${test_name})
+    add_dependencies(${test_name} googletest)
+endfunction()

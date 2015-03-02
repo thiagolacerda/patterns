@@ -24,6 +24,7 @@ public:
 
     void start();
     void dumpFoundFlocks() const;
+    int foundFlocks() const { return m_flocks.size(); }
 
 private:
     void validateAndTryStoreDisk(Disk* disk);

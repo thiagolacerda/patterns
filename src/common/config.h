@@ -20,7 +20,7 @@ public:
 
     static void setDecoderParameters(const std::vector<std::string>& parameters) { m_decoderParameters = parameters; }
     static std::vector<std::string>& decoderParameters() { return m_decoderParameters; }
-    static void setDecoder(char* decoderName);
+    static void setDecoder(char const* decoderName);
     static DBDecoder decoder() { return m_decoderInUse; }
     static void setGridSize(double size);
     static double gridSize() { return m_gridSize; }
