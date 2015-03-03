@@ -2,7 +2,33 @@
 
 #include <algorithm>
 #include <iostream>
+#include "config.h"
 #include "grid.h"
+#include "utils.h"
+
+Disk::Disk()
+    : m_centerX(0)
+    , m_centerLongitude(0)
+    , m_centerY(0)
+    , m_centerLatitude(0)
+    , m_timestamp(0)
+{
+}
+
+Disk::Disk(double centerX, double centerY, uint32_t timestamp)
+    : m_centerX(centerX)
+    , m_centerLongitude(0)
+    , m_centerY(centerY)
+    , m_centerLatitude(0)
+    , m_timestamp(timestamp)
+{
+    if (Config::coordinateSystem() == Config::Metric) {
+        m_centerLongitude = m_centerX;
+        m_centerLatitude = m_centerY;
+    } else {
+        Utils::metersToLatLong(m_centerY, m_centerX, &m_centerLatitude, &m_centerLongitude);
+    }
+}
 
 void Disk::addTrajectory(const Trajectory& trajectory)
 {

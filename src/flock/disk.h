@@ -12,21 +12,14 @@ class Grid;
 
 class Disk {
 public:
-    Disk()
-        : m_centerX(0)
-        , m_centerY(0)
-        , m_timestamp(0)
-    { }
-
-    Disk(double centerX, double centerY, uint32_t timestamp)
-        : m_centerX(centerX)
-        , m_centerY(centerY)
-        , m_timestamp(timestamp)
-    { }
+    Disk();
+    Disk(double centerX, double centerY, uint32_t timestamp);
 
     double centerX() const { return m_centerX; }
+    double centerLongitude() const { return m_centerLongitude; }
 
     double centerY() const { return m_centerY; }
+    double centerLatitude() const { return m_centerLatitude; }
 
     uint32_t timestamp() const { return m_timestamp; }
     void addTrajectory(const Trajectory&);
@@ -38,7 +31,9 @@ public:
 
 private:
     double m_centerX;
+    double m_centerLongitude;
     double m_centerY;
+    double m_centerLatitude;
     uint32_t m_timestamp;
     std::map<uint32_t, Trajectory> m_trajectories;
 };
