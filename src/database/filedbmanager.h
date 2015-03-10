@@ -19,7 +19,8 @@ public:
     void disconnect() override;
     uint64_t retrievePoints(const std::string& query) override;
     double getColumnAsDouble(void* row, int colIndex) override;
-    uint32_t getColumnAsUnsignedLong(void* row, int colIndex) override;
+    uint32_t getColumnAsUInt32(void* row, int colIndex) override;
+    uint64_t getColumnAsUInt64(void* row, int colIndex) override;
     std::string getColumnAsString(void* row, int colIndex) override;
 
 private:

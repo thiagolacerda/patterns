@@ -17,10 +17,10 @@ void TrucksDBDecoder::doDecodeRow(void* row)
     double longitude;
     std::string dateStr;
     std::string hourStr;
-    uint32_t timestamp;
+    uint64_t timestamp;
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
-    tId = m_manager->getColumnAsUnsignedLong(row, 0);
+    tId = m_manager->getColumnAsUInt32(row, 0);
     dateStr = m_manager->getColumnAsString(row, 2);
     hourStr = m_manager->getColumnAsString(row, 3);
     longitude = m_manager->getColumnAsDouble(row, 4);

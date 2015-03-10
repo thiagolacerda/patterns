@@ -15,7 +15,7 @@ Disk::Disk()
 {
 }
 
-Disk::Disk(double centerX, double centerY, uint32_t timestamp)
+Disk::Disk(double centerX, double centerY, uint64_t timestamp)
     : m_centerX(centerX)
     , m_centerLongitude(0)
     , m_centerY(centerY)
@@ -35,7 +35,7 @@ void Disk::addTrajectory(const Trajectory& trajectory)
     m_trajectories[trajectory.id()] = trajectory;
 }
 
-unsigned Disk::countIntersection(Disk* other) const
+uint32_t Disk::countIntersection(Disk* other) const
 {
     auto begin1 = m_trajectories.begin();
     auto begin2 = other->m_trajectories.begin();
@@ -47,7 +47,7 @@ unsigned Disk::countIntersection(Disk* other) const
         (begin2->first < begin1->first && end2->first < begin1->first))
         return 0;
 
-    unsigned count = 0;
+    uint32_t count = 0;
     while (begin1 != m_trajectories.end() && begin2 != other->m_trajectories.end()) {
         if (begin1->first < begin2->first) {
             ++begin1;

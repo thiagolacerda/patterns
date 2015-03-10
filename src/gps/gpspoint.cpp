@@ -13,7 +13,7 @@ GPSPoint::GPSPoint()
     , m_trajectoryId(0)
 { }
 
-GPSPoint::GPSPoint(double latitude, double longitude, uint32_t timestamp, uint32_t trajectoryId)
+GPSPoint::GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32_t trajectoryId)
     : m_latitude(latitude)
     , m_latitudeMeters(0)
     , m_longitude(longitude)

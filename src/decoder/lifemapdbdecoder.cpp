@@ -23,7 +23,7 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
     double latitude;
     double longitude;
     std::string timestampStr;
-    uint32_t timestamp;
+    uint64_t timestamp;
     struct tm tm;
     memset(&tm, 0, sizeof(struct tm));
     for (int col = 0; col < 3; ++col) {

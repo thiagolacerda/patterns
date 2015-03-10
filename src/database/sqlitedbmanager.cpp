@@ -69,3 +69,15 @@ std::string SQLiteDBManager::getColumnAsString(void* row, int colIndex)
     sqlite3_stmt* statement = reinterpret_cast<sqlite3_stmt*>(row);
     return reinterpret_cast<const char*>(sqlite3_column_text(statement, colIndex));
 }
+
+uint32_t SQLiteDBManager::getColumnAsUInt32(void* row, int colIndex)
+{
+    sqlite3_stmt* statement = reinterpret_cast<sqlite3_stmt*>(row);
+    return stoul(std::string(reinterpret_cast<const char*>(sqlite3_column_text(statement, colIndex))));
+}
+
+uint64_t SQLiteDBManager::getColumnAsUInt64(void* row, int colIndex)
+{
+    sqlite3_stmt* statement = reinterpret_cast<sqlite3_stmt*>(row);
+    return stoull(std::string(reinterpret_cast<const char*>(sqlite3_column_text(statement, colIndex))));
+}

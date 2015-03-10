@@ -6,7 +6,7 @@
 
 class GPSTupleListener {
 public:
-    virtual void processGPSTuple(const std::tuple<uint32_t, double, double, uint32_t>&) = 0;
+    virtual void processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>&) = 0;
 
     virtual ~GPSTupleListener() { }
 };

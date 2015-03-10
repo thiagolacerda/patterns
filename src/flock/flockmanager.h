@@ -15,7 +15,7 @@ public:
     FlockManager()
     { }
 
-    unsigned intersection(const std::map<uint32_t, Trajectory>& set1,
+    uint32_t intersection(const std::map<uint32_t, Trajectory>& set1,
         const std::map<uint32_t, Trajectory>& set2, std::map<uint32_t, Trajectory>* inter);
     void tryMergeFlocks(const std::vector<Disk*>&);
     std::vector<Flock> reportFlocks();

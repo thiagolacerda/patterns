@@ -17,18 +17,18 @@ public:
         : m_timeDiffsSum(0)
     {}
 
-    void processGPSTuple(const std::tuple<uint32_t, double, double, uint32_t>&) override;
+    void processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>&) override;
     void postProcessPoints();
-    std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot() const { return m_pointsPerTimeSlot; }
+    std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot() const { return m_pointsPerTimeSlot; }
     void releasePoints() { m_pointsPerTimeSlot.clear(); }
     void dumpPointsMap();
 
 private:
     void removeOutliers();
-    std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
+    std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>> m_pointsPerTimeSlot;
     std::vector<std::shared_ptr<GPSPoint>> m_points;
-    std::unordered_map<uint32_t, uint32_t> m_lastTimestampPerTrajectory;
-    std::vector<uint32_t> m_timeDiffs;
+    std::unordered_map<uint32_t, uint64_t> m_lastTimestampPerTrajectory;
+    std::vector<uint64_t> m_timeDiffs;
     uint64_t m_timeDiffsSum;
 };
 

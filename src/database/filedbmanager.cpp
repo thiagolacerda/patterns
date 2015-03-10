@@ -1,6 +1,5 @@
 #include "filedbmanager.h"
 
-#include <stdlib.h>
 #include <string>
 #include "databasedecoder.h"
 #include "patterns.h"
@@ -50,13 +49,19 @@ std::string FileDBManager::getColumnValue(const std::string& row, int colIndex)
 double FileDBManager::getColumnAsDouble(void* row, int colIndex)
 {
     std::string* str = (std::string*) row;
-    return atof(getColumnValue(*str, colIndex).c_str());
+    return stod(getColumnValue(*str, colIndex));
 }
 
-uint32_t FileDBManager::getColumnAsUnsignedLong(void* row, int colIndex)
+uint32_t FileDBManager::getColumnAsUInt32(void* row, int colIndex)
 {
     std::string* str = (std::string*) row;
-    return strtoul(getColumnValue(*str, colIndex).c_str(), NULL, 10);
+    return stoul(getColumnValue(*str, colIndex), NULL, 10);
+}
+
+uint64_t FileDBManager::getColumnAsUInt64(void* row, int colIndex)
+{
+    std::string* str = (std::string*) row;
+    return stoull(getColumnValue(*str, colIndex), NULL, 10);
 }
 
 std::string FileDBManager::getColumnAsString(void* row, int colIndex)

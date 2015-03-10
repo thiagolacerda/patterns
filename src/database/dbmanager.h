@@ -24,7 +24,13 @@ public:
         UNUSED(colIndex);
         return 0.0;
     }
-    virtual uint32_t getColumnAsUnsignedLong(void* row, int colIndex)
+    virtual uint32_t getColumnAsUInt32(void* row, int colIndex)
+    {
+        UNUSED(row);
+        UNUSED(colIndex);
+        return 0;
+    }
+    virtual uint64_t getColumnAsUInt64(void* row, int colIndex)
     {
         UNUSED(row);
         UNUSED(colIndex);

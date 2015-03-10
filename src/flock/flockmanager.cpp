@@ -8,7 +8,7 @@
  * By default we return the number of common trajectories between those two sets.
  * If the parameter 'inter' is a valid map, we also store the common trajectories on that map
  */
-unsigned FlockManager::intersection(const std::map<uint32_t, Trajectory>& set1,
+uint32_t FlockManager::intersection(const std::map<uint32_t, Trajectory>& set1,
     const std::map<uint32_t, Trajectory>& set2, std::map<uint32_t, Trajectory>* inter)
 {
     auto begin1 = set1.begin();
@@ -23,7 +23,7 @@ unsigned FlockManager::intersection(const std::map<uint32_t, Trajectory>& set1,
         (begin2->first < begin1->first && end2->first < begin1->first))
         return 0;
 
-    unsigned count = 0;
+    uint32_t count = 0;
     while (begin1 != set1.end() && begin2 != set2.end()) {
         if (begin1->first < begin2->first) {
             ++begin1;
@@ -86,7 +86,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
 bool FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock)
 {
     for (auto it1 = flocks->begin(); it1 != flocks->end();) {
-        unsigned count = intersection((*it1).trajectories(), newFlock.trajectories(), nullptr);
+        uint32_t count = intersection((*it1).trajectories(), newFlock.trajectories(), nullptr);
         if (newFlock.trajectories().size() == count) {
             // This new flock is, potentially, a subset of (*it)
             if ((*it1).startTime() <= newFlock.startTime())
@@ -155,7 +155,7 @@ void FlockManager::checkDuplicateAnswer()
 
     // This vector will contain only the unique flocks (no subsets)
     std::vector<Flock> flocks;
-    unsigned int interCount;
+    uint32_t interCount;
 
     for (auto it1 = m_flocks.begin(); it1 != m_flocks.end(); ++it1) {
         bool insert = true;

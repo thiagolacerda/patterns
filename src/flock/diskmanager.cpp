@@ -12,7 +12,7 @@
 bool DiskManager::tryInsertDisk(Disk* disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
-        unsigned count = (*iter)->countIntersection(disk);
+        uint32_t count = (*iter)->countIntersection(disk);
         if (disk->numberOfTrajectories() == count)  // disk is a subset of iter->second, do not insert
             return false;
 
@@ -26,7 +26,7 @@ bool DiskManager::tryInsertDisk(Disk* disk)
     return true;
 }
 
-void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
 {
     if (Utils::fuzzyEqual(point1->latitudeMeters(), point2->latitudeMeters()) &&
         Utils::fuzzyEqual(point1->longitudeMeters(), point2->longitudeMeters()))
@@ -38,7 +38,7 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint32_t time
         getDisks(point1, point2, timestamp, disk1, disk2);
 }
 
-void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
 {
     double midX;
     double midY;
@@ -68,7 +68,7 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint32_t timestam
 }
 
 // This code was copied from the paper as is! (changed only some names of variables)
-void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint32_t timestamp,
+void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp,
     Disk** disk1, Disk** disk2)
 {
     double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitudeMeters() : point2->longitudeMeters();

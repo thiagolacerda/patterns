@@ -19,7 +19,7 @@ void Manager::start()
     m_dbDecoder->retrievePoints();
     m_pointProcessor.postProcessPoints();
     if (Config::timeSlotSize() <= Config::flockLength()) {
-        std::map<unsigned, std::vector<std::shared_ptr<GPSPoint>>>
+        std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>>
             pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
         m_pointProcessor.releasePoints();
         for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
@@ -43,7 +43,7 @@ void Manager::dumpFoundFlocks() const
     }
 }
 
-void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, unsigned timestamp)
+void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, uint64_t timestamp)
 {
     // If the number of points to be processed for this time instance is less than the minimum number of trajectories
     // per flock, than we don't need to go further
