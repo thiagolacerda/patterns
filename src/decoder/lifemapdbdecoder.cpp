@@ -46,7 +46,7 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(m_currentId, latitude, longitude, timestamp));
 }
 
-uint64_t LifeMapDBDecoder::retrievePoints()
+uint64_t LifeMapDBDecoder::doRetrievePoints()
 {
     DIR *dir;
     struct dirent *ent;

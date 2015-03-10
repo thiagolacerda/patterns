@@ -6,10 +6,8 @@
 #include "databasedecoder.h"
 
 class TrucksPaperDBDecoder : public DatabaseDecoder {
-public:
-    uint64_t retrievePoints() override;
-
 protected:
+    uint64_t doRetrievePoints() override;
     void doDecodeRow(void* row) override;
 
 private:

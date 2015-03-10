@@ -12,14 +12,19 @@ class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
-    virtual uint64_t retrievePoints() = 0;
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
+
+    uint64_t retrievePoints()
+    {
+        m_readLines = 0;
+        return doRetrievePoints();
+    }
+
     void decodeRow(void* row)
     {
-        if (m_ignoreFirstRow) {
-            m_ignoreFirstRow = false;
+        ++m_readLines;
+        if (Config::isInCompatibilityMode() && m_readLines == 1)
             return;
-        }
 
         doDecodeRow(row);
     }
@@ -33,14 +38,15 @@ public:
 protected:
     explicit DatabaseDecoder(DBManager* manager)
         : m_manager(manager)
-        , m_ignoreFirstRow(Config::isInCompatibilityMode())
+        , m_readLines(0)
     {
         m_manager->setDecoder(this);
     }
+    virtual uint64_t doRetrievePoints() = 0;
     virtual void doDecodeRow(void* row) = 0;
     DBManager* m_manager;
     GPSTupleListener* m_listener;
-    bool m_ignoreFirstRow;  // compatibility mode
+    uint64_t m_readLines;
 };
 
 #endif  // DATABASEDECODER_H
