@@ -42,20 +42,20 @@ uint32_t FlockManager::intersection(const std::map<uint32_t, Trajectory>& set1,
 
 void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
 {
-    bool noFlocksInitialy = m_flocks.empty();
+    bool hasFlocks = !m_flocks.empty();
     std::vector<Flock> flocksFromDisks;
-    if (!noFlocksInitialy) {
+    if (hasFlocks) {
         // There are some flocks from previuos time instance, so we try to merge the computed disks with them
-        for (auto it1 = disks.begin(); it1 != disks.end(); ++it1) {
-            Disk* disk = *it1;
-            for (auto it2 = m_flocks.begin(); it2 != m_flocks.end(); ++it2) {
+        for (auto diskIter = disks.begin(); diskIter != disks.end(); ++diskIter) {
+            Disk* disk = *diskIter;
+            for (auto existingFlock = m_flocks.begin(); existingFlock != m_flocks.end(); ++existingFlock) {
                 std::map<uint32_t, Trajectory> inter;
-                intersection((*it2).trajectories(), disk->trajectories(), &inter);
+                intersection((*existingFlock).trajectories(), disk->trajectories(), &inter);
                 if (inter.size() >= Config::numberOfTrajectoriesPerFlock()) {
                     // We have a pontential increment for a previous flock
                     Flock newFlock;
                     newFlock.setTrajectories(inter);
-                    newFlock.setStartTime((*it2).startTime());
+                    newFlock.setStartTime((*existingFlock).startTime());
                     newFlock.setEndTime(disk->timestamp() + Config::timeSlotSize());
                     // Before inserting it in FlockManager we need to check if there isn't any other flock that is a
                     // superset of it
@@ -66,17 +66,17 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
         }
     }
 
-    for (auto iter = disks.begin(); iter != disks.end(); ++iter) {
+    for (auto diskIter = disks.begin(); diskIter != disks.end(); ++diskIter) {
         Flock newFlock;
-        newFlock.setTrajectories((*iter)->trajectories());
-        newFlock.setStartTime((*iter)->timestamp());
-        newFlock.setEndTime((*iter)->timestamp() + Config::timeSlotSize());
-        if (noFlocksInitialy)
+        newFlock.setTrajectories((*diskIter)->trajectories());
+        newFlock.setStartTime((*diskIter)->timestamp());
+        newFlock.setEndTime((*diskIter)->timestamp() + Config::timeSlotSize());
+        if (!hasFlocks)
             m_flocks.push_back(newFlock);
         else
             mergeFlocks(&flocksFromDisks, newFlock);
     }
-    if (!noFlocksInitialy)
+    if (hasFlocks)
         m_flocks = flocksFromDisks;
 }
 
@@ -85,29 +85,29 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
  */
 bool FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock)
 {
-    for (auto it1 = flocks->begin(); it1 != flocks->end();) {
-        uint32_t count = intersection((*it1).trajectories(), newFlock.trajectories(), nullptr);
+    for (auto existingFlock = flocks->begin(); existingFlock != flocks->end();) {
+        uint32_t count = intersection((*existingFlock).trajectories(), newFlock.trajectories(), nullptr);
         if (newFlock.trajectories().size() == count) {
-            // This new flock is, potentially, a subset of (*it)
-            if ((*it1).startTime() <= newFlock.startTime())
-                // (*it) start time is less than new flock's start time so new flock is definitely a subset of (*it)
+            // This new flock is, potentially, a subset of (*existingFlock)
+            if ((*existingFlock).startTime() <= newFlock.startTime())
+                // (*existingFlock) start time is less than new flock's start time so new flock is definitely a subset of (*existingFlock)
                 return false;
-            else if ((*it1).trajectories().size() > count)
-                // (*it) and new flock do not have the same trajectories so we need to keep both
-                ++it1;
+            else if ((*existingFlock).trajectories().size() > count)
+                // (*existingFlock) and new flock do not have the same trajectories so we need to keep both
+                ++existingFlock;
             else
-                // (*it1) is a subset of new flock: They have the same number of trajectories and new flock's start time
-                // is not earlier than (*it1)
-                it1 = flocks->erase(it1);
-        } else if ((*it1).trajectories().size() == count) {
-            // (*it1) is, potentially, a subset of new flock
-            if ((*it1).startTime() < newFlock.startTime())
-                // (*it1) is older, so we keep both
-                ++it1;
+                // (*existingFlock) is a subset of new flock: They have the same number of trajectories and new flock's
+                // start time is not earlier than (*existingFlock)
+                existingFlock = flocks->erase(existingFlock);
+        } else if ((*existingFlock).trajectories().size() == count) {
+            // (*existingFlock) is, potentially, a subset of new flock
+            if ((*existingFlock).startTime() < newFlock.startTime())
+                // (*existingFlock) is older, so we keep both
+                ++existingFlock;
             else
-                it1 = flocks->erase(it1);
+                existingFlock = flocks->erase(existingFlock);
         } else {
-            ++it1;
+            ++existingFlock;
         }
     }
     flocks->push_back(newFlock);
@@ -121,21 +121,21 @@ std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
     uint32_t flockLength = Config::flockLength();
-    for (auto iter = m_flocks.begin(); iter != m_flocks.end();) {
-        if (((*iter).endTime() - (*iter).startTime()) >= flockLength) {
-            results.push_back(*iter);
+    for (auto flock = m_flocks.begin(); flock != m_flocks.end();) {
+        if (((*flock).endTime() - (*flock).startTime()) >= flockLength) {
+            results.push_back(*flock);
             // This is valid flock, so let's increment its start time to check for a new flock starting in the
             // subsequent time slot
-            (*iter).setStartTime((*iter).startTime() + Config::timeSlotSize());
-            if ((*iter).startTime() == (*iter).endTime()) {
+            (*flock).setStartTime((*flock).startTime() + Config::timeSlotSize());
+            if ((*flock).startTime() == (*flock).endTime()) {
                 // Empty flock
-                iter = m_flocks.erase(iter);
+                flock = m_flocks.erase(flock);
                 continue;
             }
             // Remove the points that belong to the first time slot of this flock
-            (*iter).clearFirstPoints();
+            (*flock).clearFirstPoints();
         }
-        ++iter;
+        ++flock;
     }
     if (!results.empty())
         // When incrementing the the start time of flock, there could be another flock with the same trajectories and

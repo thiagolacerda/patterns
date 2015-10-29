@@ -13,13 +13,13 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
         uint32_t count = (*iter)->countIntersection(disk);
-        if (disk->numberOfTrajectories() == count)  // disk is a subset of iter->second, do not insert
-            return false;
+        if (disk->numberOfTrajectories() == count)
+            return false; // disk is a subset of disk already in disk manager, do not insert
 
         if ((*iter)->numberOfTrajectories() != count)
-            ++iter;  // Different disks... do nothing
+            ++iter; // Different disks... do nothing
         else
-            iter = m_disks.erase(iter);  // disk is a superset of iter->second
+            iter = m_disks.erase(iter); // disk is a superset of *iter
     }
 
     m_disks.push_back(disk);

@@ -29,8 +29,7 @@ void Manager::start()
             iter = pointsPerTimeSlot.erase(iter);
         }
     } else {
-        std::cout << "Time slot size does not allow flocks, given the flock length"
-            << std::endl;
+        std::cout << "Time slot size does not allow flocks, given the flock length" << std::endl;
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
 }
