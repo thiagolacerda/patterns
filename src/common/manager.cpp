@@ -9,9 +9,15 @@
 #include "grid.h"
 #include "trajectory.h"
 
+Manager::~Manager()
+{
+    if (m_dbDecoder)
+        delete m_dbDecoder;
+}
+
 void Manager::start()
 {
-    m_dbDecoder = Factory::dbDecoderInstance();
+    m_dbDecoder = Factory::dbDecoderInstance(Config::decoder());
     if (!m_dbDecoder)
         return;
 

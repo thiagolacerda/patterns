@@ -22,6 +22,8 @@ public:
         , m_gridManager(GridManager(Config::gridSize()))
     { }
 
+    ~Manager();
+
     void start();
     void dumpFoundFlocks() const;
     int foundFlocks() const { return m_flocks.size(); }

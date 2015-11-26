@@ -1,18 +1,13 @@
 #ifndef FACTORY_H
 #define FACTORY_H
 
-#include <memory>
-#include <mutex>
+#include "config.h"
 
 class DatabaseDecoder;
 
 class Factory {
 public:
-    static DatabaseDecoder* dbDecoderInstance();
-
-private:
-    static std::unique_ptr<DatabaseDecoder> m_dbDecoderInstance;
-    static std::once_flag m_dbDecoderOnceFlag;
+    static DatabaseDecoder* dbDecoderInstance(Config::DBDecoder);
 };
 
 #endif  // FACTORY_H
