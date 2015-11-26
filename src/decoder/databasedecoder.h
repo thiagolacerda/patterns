@@ -12,6 +12,8 @@ class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
+    virtual std::string decoderName() = 0;
+
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
 
     uint64_t retrievePoints()

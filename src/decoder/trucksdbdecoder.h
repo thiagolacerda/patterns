@@ -7,6 +7,9 @@
 #include "databasedecoder.h"
 
 class TrucksDBDecoder : public DatabaseDecoder {
+public:
+    std::string decoderName() override { return "TrucksDB"; };
+
 protected:
     uint64_t doRetrievePoints() override;
     void doDecodeRow(void* row) override;

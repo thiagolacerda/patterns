@@ -7,6 +7,9 @@
 #include "databasedecoder.h"
 
 class LifeMapDBDecoder : public DatabaseDecoder {
+public:
+    std::string decoderName() override { return "LifeDB"; };
+
 protected:
     uint64_t doRetrievePoints() override;
     void doDecodeRow(void* row) override;
