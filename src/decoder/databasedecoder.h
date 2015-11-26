@@ -19,14 +19,14 @@ public:
 
     uint64_t retrievePoints()
     {
-        m_readLines = 0;
+        m_readRecords = 0;
         return doRetrievePoints();
     }
 
     void decodeRow(void* row)
     {
-        ++m_readLines;
-        if (Config::isInCompatibilityMode() && m_readLines == 1)
+        ++m_readRecords;
+        if (Config::isInCompatibilityMode() && m_readRecords == 1)
             return;
 
         doDecodeRow(row);
@@ -41,7 +41,7 @@ public:
 protected:
     explicit DatabaseDecoder(DBManager* manager)
         : m_manager(manager)
-        , m_readLines(0)
+        , m_readRecords(0)
     {
         m_manager->setDecoder(this);
     }
@@ -49,7 +49,7 @@ protected:
     virtual void doDecodeRow(void* row) = 0;
     DBManager* m_manager;
     GPSTupleListener* m_listener;
-    uint64_t m_readLines;
+    uint64_t m_readRecords;
 };
 
 #endif  // DATABASEDECODER_H
