@@ -24,9 +24,7 @@ public:
 
     uint64_t retrievePoints(int64_t batchSize = -1)
     {
-        if (!m_manager->isConnected())
-            connectToDB();
-
+        connectToDBIfDisconnected();
         return doRetrievePoints(batchSize);
     }
 
@@ -52,6 +50,12 @@ protected:
     {
         m_manager->setDecoder(this);
     }
+    void connectToDBIfDisconnected()
+    {
+        if (!m_manager->isConnected())
+            connectToDB();
+    }
+
     virtual uint64_t doRetrievePoints(int64_t batchSize) = 0;
     virtual void doDecodeRow(void* row) = 0;
     virtual void connectToDB() = 0;
