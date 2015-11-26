@@ -17,6 +17,7 @@ set(DATABASE_SRCS
 )
 
 set(DECODER_SRCS
+    ${DECODER_DIR}/basegpsfiledecoder.cpp
     ${DECODER_DIR}/lifemapdbdecoder.cpp
     ${DECODER_DIR}/trucksdbdecoder.cpp
     ${DECODER_DIR}/truckspaperdbdecoder.cpp

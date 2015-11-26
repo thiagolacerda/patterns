@@ -11,6 +11,7 @@ set(TEST_SYSTEM_DEPENDENCIES
     ${COMMON_DIR}/utils.cpp
     ${DATABASE_DIR}/filedbmanager.cpp
     ${DATABASE_DIR}/sqlitedbmanager.cpp
+    ${DECODER_DIR}/basegpsfiledecoder.cpp
     ${DECODER_DIR}/lifemapdbdecoder.cpp
     ${DECODER_DIR}/trucksdbdecoder.cpp
     ${DECODER_DIR}/truckspaperdbdecoder.cpp

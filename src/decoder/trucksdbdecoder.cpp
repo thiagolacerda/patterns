@@ -1,17 +1,8 @@
 #include "trucksdbdecoder.h"
 
-#include <algorithm>
-#include <fstream>
-#include <iterator>
+#include <stdlib.h>
 #include <string.h>
-#include "filedbmanager.h"
 #include "gpstuplelistener.h"
-
-TrucksDBDecoder::TrucksDBDecoder(const std::vector<std::string>& parameters)
-    : DatabaseDecoder(new FileDBManager(';'))
-    , m_path(parameters.at(0))
-{
-}
 
 void TrucksDBDecoder::doDecodeRow(void* row)
 {
@@ -35,13 +26,3 @@ void TrucksDBDecoder::doDecodeRow(void* row)
     m_listener->processGPSTuple(std::make_tuple(tId, latitude, longitude, timestamp));
 }
 
-uint64_t TrucksDBDecoder::doRetrievePoints(int64_t batchSize)
-{
-    return m_manager->retrievePoints("", batchSize);
-}
-
-uint64_t TrucksDBDecoder::numberOfRecords()
-{
-    std::ifstream inFile(m_path);
-    return std::count(std::istreambuf_iterator<char>(inFile), std::istreambuf_iterator<char>(), '\n');
-}

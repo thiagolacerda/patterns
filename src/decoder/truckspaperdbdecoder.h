@@ -3,22 +3,20 @@
 
 #include <string>
 #include <vector>
-#include "databasedecoder.h"
+#include "basegpsfiledecoder.h"
 
-class TrucksPaperDBDecoder : public DatabaseDecoder {
+class TrucksPaperDBDecoder : public BaseGPSFileDecoder {
 public:
     std::string decoderName() override { return "TrucksPaperDB"; };
-    uint64_t numberOfRecords() override;
 
 protected:
-    uint64_t doRetrievePoints(int64_t batchSize) override;
     void doDecodeRow(void* row) override;
-    void connectToDB() override { m_manager->connect(m_path, "", ""); };
 
 private:
     friend class Factory;
-    explicit TrucksPaperDBDecoder(const std::vector<std::string>& parameters);
-    std::string m_path;
+    explicit TrucksPaperDBDecoder(const std::vector<std::string>& parameters)
+        : BaseGPSFileDecoder(parameters, '\t')
+    {}
 };
 
 #endif  // TRUCKSPAPERDBDECODER_H
