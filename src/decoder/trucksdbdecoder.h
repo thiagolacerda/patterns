@@ -9,6 +9,7 @@
 class TrucksDBDecoder : public DatabaseDecoder {
 public:
     std::string decoderName() override { return "TrucksDB"; };
+    uint64_t numberOfRecords() override;
 
 protected:
     uint64_t doRetrievePoints() override;

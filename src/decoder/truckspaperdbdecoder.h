@@ -8,6 +8,7 @@
 class TrucksPaperDBDecoder : public DatabaseDecoder {
 public:
     std::string decoderName() override { return "TrucksPaperDB"; };
+    uint64_t numberOfRecords() override;
 
 protected:
     uint64_t doRetrievePoints() override;

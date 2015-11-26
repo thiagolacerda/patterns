@@ -1,5 +1,8 @@
 #include "truckspaperdbdecoder.h"
 
+#include <algorithm>
+#include <fstream>
+#include <iterator>
 #include <string.h>
 #include "filedbmanager.h"
 #include "gpstuplelistener.h"
@@ -26,4 +29,10 @@ uint64_t TrucksPaperDBDecoder::doRetrievePoints()
     uint64_t retrieved = m_manager->retrievePoints();
     m_manager->disconnect();
     return retrieved;
+}
+
+uint64_t TrucksPaperDBDecoder::numberOfRecords()
+{
+    std::ifstream inFile(m_path);
+    return std::count(std::istreambuf_iterator<char>(inFile), std::istreambuf_iterator<char>(), '\n');
 }
