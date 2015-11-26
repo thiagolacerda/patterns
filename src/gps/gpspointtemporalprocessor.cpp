@@ -8,13 +8,13 @@
 #include "gpspoint.h"
 #include "utils.h"
 
-void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>& tuple)
+void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>& gpsTuple)
 {
     uint32_t tID;
     double latitude;
     double longitude;
     uint64_t timestamp;
-    std::tie(tID, latitude, longitude, timestamp) = tuple;
+    std::tie(tID, latitude, longitude, timestamp) = gpsTuple;
 
     uint64_t index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
