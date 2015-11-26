@@ -23,7 +23,8 @@ public:
 
     double distanceToPoint(const GPSPoint& other);
 
-    bool operator<(GPSPoint* point) const;
+    bool operator<(const GPSPoint& other) const;
+    bool operator==(const GPSPoint& other) const;
 
     void dump();
 

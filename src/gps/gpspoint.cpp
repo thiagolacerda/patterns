@@ -34,9 +34,15 @@ double GPSPoint::distanceToPoint(const GPSPoint& other)
     return Utils::distance(*this, other);
 }
 
-bool GPSPoint::operator<(GPSPoint* other) const
+bool GPSPoint::operator<(const GPSPoint& other) const
 {
-    return m_timestamp < other->timestamp();
+    return m_timestamp <= other.timestamp();
+}
+
+bool GPSPoint::operator==(const GPSPoint& other) const
+{
+    return m_timestamp == other.timestamp() &&
+        m_trajectoryId == other.trajectoryId();
 }
 
 void GPSPoint::dump()
