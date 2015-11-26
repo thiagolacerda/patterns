@@ -12,6 +12,9 @@ public:
     uint64_t numberOfRecords() override { return 0; }; // TODO: return the correct number programmatically
     void done() override;
 
+    void setPath(const std::string& path) { m_path = path; }
+    void setDBFilesPrefix(const std::string& prefix) { m_dbFilesPrefix = prefix; }
+
 protected:
     uint64_t doRetrievePoints(int64_t batchSize) override;
     void doDecodeRow(void* row) override;

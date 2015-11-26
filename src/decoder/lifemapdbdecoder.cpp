@@ -12,8 +12,8 @@
 
 LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
     : DatabaseDecoder(new SQLiteDBManager())
-    , m_path(parameters.at(0))
-    , m_dbFilesPrefix(parameters.at(1))
+    , m_path(parameters.empty() ? "" : parameters.at(0))
+    , m_dbFilesPrefix(parameters.size() < 2 ? "" : parameters.at(1))
     , m_currentId(0)
     , m_currentDbFileIndex(0)
     , m_selectQuery("SELECT _latitude, _longitude, _time_location FROM locationTable;")

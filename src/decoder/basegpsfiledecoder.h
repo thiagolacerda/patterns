@@ -9,6 +9,8 @@ class BaseGPSFileDecoder : public DatabaseDecoder {
 public:
     uint64_t numberOfRecords() override;
 
+    void setPath(const std::string& path) { m_path = path; }
+
 protected:
     uint64_t doRetrievePoints(int64_t batchSize) override;
     void connectToDB() override { m_manager->connect(m_path, "", ""); };
