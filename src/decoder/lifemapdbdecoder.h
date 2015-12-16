@@ -10,11 +10,12 @@ class LifeMapDBDecoder : public DatabaseDecoder {
 public:
     std::string decoderName() override { return "LifeDB"; };
     uint64_t numberOfRecords() override { return 0; }; // TODO: return the correct number programmatically
+    void done() override;
 
 protected:
-    uint64_t doRetrievePoints() override;
+    uint64_t doRetrievePoints(int64_t batchSize) override;
     void doDecodeRow(void* row) override;
-    void connectToDB() override { }; // TODO: implement
+    void connectToDB() override;
 
 private:
     friend class Factory;
@@ -23,6 +24,9 @@ private:
     std::string m_path;
     std::string m_dbFilesPrefix;
     uint32_t m_currentId;
+    uint32_t m_currentDbFileIndex;
+    std::vector<std::string> m_dbFiles;
+    std::string m_selectQuery;
 };
 
 #endif  // LIFEMAPDBDECODER_H

@@ -34,23 +34,24 @@ void SQLiteDBManager::disconnect()
     m_db = nullptr;
 }
 
-uint64_t SQLiteDBManager::retrievePoints(const std::string& query)
+uint64_t SQLiteDBManager::retrievePoints(const std::string& query, uint64_t batchSize)
 {
-    sqlite3_stmt* selectStmt;
-    if (sqlite3_prepare_v2(m_db, query.c_str(), -1, &selectStmt, NULL) != SQLITE_OK) {
+    if (!m_currentStatement && sqlite3_prepare_v2(m_db, query.c_str(), -1, &m_currentStatement, NULL) != SQLITE_OK) {
         std::cerr << "Could not executer sqlite3_prepare_v2" << std::endl;
         return 0;
     }
 
     uint64_t retrieved = 0;
-    while (true) {
-        if (sqlite3_step(selectStmt) != SQLITE_ROW)
-            break;
+    while (m_currentStatement && (batchSize == -1 || retrieved < batchSize)) {
+        if (sqlite3_step(m_currentStatement) != SQLITE_ROW) {
+            sqlite3_finalize(m_currentStatement);
+            m_currentStatement = nullptr;
+            continue;
+        }
 
-        m_decoder->decodeRow(selectStmt);
+        m_decoder->decodeRow(m_currentStatement);
         retrieved++;
     }
-    sqlite3_finalize(selectStmt);
     std::string error = sqlite3_errmsg(m_db);
     if (error != "not an error")
         std::cerr << query << " " << error << std::endl;

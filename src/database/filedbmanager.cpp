@@ -19,13 +19,13 @@ void FileDBManager::disconnect()
         m_file.close();
 }
 
-uint64_t FileDBManager::retrievePoints(const std::string& query)
+uint64_t FileDBManager::retrievePoints(const std::string& query, uint64_t batchSize)
 {
     UNUSED(query);
 
     uint64_t retrieved = 0;
     std::string line;
-    while (std::getline(m_file, line)) {
+    while ((batchSize == -1 || retrieved < batchSize) && std::getline(m_file, line)) {
         m_decoder->decodeRow(&line);
         retrieved++;
     }

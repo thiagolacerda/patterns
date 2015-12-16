@@ -22,12 +22,12 @@ public:
 
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
 
-    uint64_t retrievePoints()
+    uint64_t retrievePoints(int64_t batchSize = -1)
     {
         if (!m_manager->isConnected())
             connectToDB();
 
-        return doRetrievePoints();
+        return doRetrievePoints(batchSize);
     }
 
     void decodeRow(void* row)
@@ -52,7 +52,7 @@ protected:
     {
         m_manager->setDecoder(this);
     }
-    virtual uint64_t doRetrievePoints() = 0;
+    virtual uint64_t doRetrievePoints(int64_t batchSize) = 0;
     virtual void doDecodeRow(void* row) = 0;
     virtual void connectToDB() = 0;
     DBManager* m_manager;

@@ -11,7 +11,7 @@ public:
     uint64_t numberOfRecords() override;
 
 protected:
-    uint64_t doRetrievePoints() override;
+    uint64_t doRetrievePoints(int64_t batchSize) override;
     void doDecodeRow(void* row) override;
     void connectToDB() override { m_manager->connect(m_path, "", ""); };
 

@@ -18,7 +18,7 @@ public:
     virtual bool connect(const std::string& address, const std::string& user, const std::string& password) = 0;
     virtual void disconnect() = 0;
     virtual bool isConnected() = 0;
-    virtual uint64_t retrievePoints(const std::string& query = "") = 0;
+    virtual uint64_t retrievePoints(const std::string& query, uint64_t batchSize) = 0;
     virtual double getColumnAsDouble(void* row, int colIndex)
     {
         UNUSED(row);

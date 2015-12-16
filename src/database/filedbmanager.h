@@ -18,7 +18,7 @@ public:
     bool isConnected() override { return m_file.is_open(); }
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
-    uint64_t retrievePoints(const std::string& query) override;
+    uint64_t retrievePoints(const std::string& query, uint64_t batchSize) override;
     double getColumnAsDouble(void* row, int colIndex) override;
     uint32_t getColumnAsUInt32(void* row, int colIndex) override;
     uint64_t getColumnAsUInt64(void* row, int colIndex) override;
