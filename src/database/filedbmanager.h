@@ -15,6 +15,7 @@ public:
 
     ~FileDBManager() { disconnect(); }
 
+    bool isConnected() override { return m_file.is_open(); }
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
     uint64_t retrievePoints(const std::string& query) override;

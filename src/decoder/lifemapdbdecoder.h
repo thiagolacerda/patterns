@@ -14,6 +14,7 @@ public:
 protected:
     uint64_t doRetrievePoints() override;
     void doDecodeRow(void* row) override;
+    void connectToDB() override { }; // TODO: implement
 
 private:
     friend class Factory;

@@ -13,6 +13,7 @@ public:
 protected:
     uint64_t doRetrievePoints() override;
     void doDecodeRow(void* row) override;
+    void connectToDB() override { m_manager->connect(m_path, "", ""); };
 
 private:
     friend class Factory;

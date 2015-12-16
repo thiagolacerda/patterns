@@ -17,6 +17,7 @@ void Manager::start()
 
     m_dbDecoder->setGPSTupleListener(&m_pointProcessor);
     m_dbDecoder->retrievePoints();
+    m_dbDecoder->done();
     m_pointProcessor.postProcessPoints();
     if (Config::timeSlotSize() <= Config::flockLength()) {
         std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>>

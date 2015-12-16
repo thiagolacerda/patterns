@@ -15,11 +15,18 @@ public:
     virtual std::string decoderName() = 0;
     virtual uint64_t numberOfRecords() = 0;
 
+    virtual void done() {
+        m_readRecords = 0;
+        m_manager->disconnect();
+    };
+
     void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
 
     uint64_t retrievePoints()
     {
-        m_readRecords = 0;
+        if (!m_manager->isConnected())
+            connectToDB();
+
         return doRetrievePoints();
     }
 
@@ -47,6 +54,7 @@ protected:
     }
     virtual uint64_t doRetrievePoints() = 0;
     virtual void doDecodeRow(void* row) = 0;
+    virtual void connectToDB() = 0;
     DBManager* m_manager;
     GPSTupleListener* m_listener;
     uint64_t m_readRecords;
