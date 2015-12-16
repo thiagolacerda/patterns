@@ -22,6 +22,8 @@ void Config::setDecoder(char const* decoderName)
         Config::m_decoderInUse = Config::Trucks;
     else if (decoder.compare("truckspaper") == 0)
         Config::m_decoderInUse = Config::TrucksPaper;
+    else if (decoder.compare("sortedfile") == 0)
+        Config::m_decoderInUse = Config::SortedFile;
 }
 
 void Config::setGridSize(double size)

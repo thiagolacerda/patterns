@@ -1,6 +1,7 @@
 #include "factory.h"
 
 #include "lifemapdbdecoder.h"
+#include "sortedfiledecoder.h"
 #include "trucksdbdecoder.h"
 #include "truckspaperdbdecoder.h"
 
@@ -12,6 +13,8 @@ DatabaseDecoder* Factory::dbDecoderInstance(Config::DBDecoder decoder)
         return new TrucksDBDecoder(Config::decoderParameters());
     if (decoder == Config::TrucksPaper)
         return new TrucksPaperDBDecoder(Config::decoderParameters());
+    if (decoder == Config::SortedFile)
+        return new SortedFileDecoder(Config::decoderParameters());
 
     return nullptr;
 }

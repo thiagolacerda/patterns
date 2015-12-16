@@ -4,6 +4,8 @@ include_directories(
     ${SQLite3_INCLUDE_DIRS}
 )
 
+add_subdirectory(sorter)
+
 set(COMMON_SRCS
     ${COMMON_DIR}/config.cpp
     ${COMMON_DIR}/factory.cpp
@@ -19,6 +21,7 @@ set(DATABASE_SRCS
 set(DECODER_SRCS
     ${DECODER_DIR}/basegpsfiledecoder.cpp
     ${DECODER_DIR}/lifemapdbdecoder.cpp
+    ${DECODER_DIR}/sortedfiledecoder.cpp
     ${DECODER_DIR}/trucksdbdecoder.cpp
     ${DECODER_DIR}/truckspaperdbdecoder.cpp
 )

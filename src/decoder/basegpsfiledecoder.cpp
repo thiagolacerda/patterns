@@ -21,3 +21,4 @@ uint64_t BaseGPSFileDecoder::numberOfRecords()
     std::ifstream inFile(m_path);
     return std::count(std::istreambuf_iterator<char>(inFile), std::istreambuf_iterator<char>(), '\n');
 }
+
