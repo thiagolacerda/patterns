@@ -2,13 +2,13 @@
 #define DATABASEDECODER_H
 
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <vector>
 #include "config.h"
 #include "dbmanager.h"
 
 class DBManager;
-class GPSTupleListener;
 
 class DatabaseDecoder {
 public:
@@ -20,7 +20,10 @@ public:
         m_manager->disconnect();
     };
 
-    void setGPSTupleListener(GPSTupleListener* listener) { m_listener = listener; }
+    void setListenerFunction(const std::function<void (const std::tuple<uint32_t, double, double, uint64_t>&)>& func)
+    {
+        m_listener = func;
+    }
 
     uint64_t retrievePoints(int64_t batchSize = -1)
     {
@@ -50,6 +53,7 @@ protected:
     {
         m_manager->setDecoder(this);
     }
+
     void connectToDBIfDisconnected()
     {
         if (!m_manager->isConnected())
@@ -60,8 +64,8 @@ protected:
     virtual void doDecodeRow(void* row) = 0;
     virtual void connectToDB() = 0;
     DBManager* m_manager;
-    GPSTupleListener* m_listener;
     uint64_t m_readRecords;
+    std::function<void (const std::tuple<uint32_t, double, double, uint64_t>&)> m_listener;
 };
 
 #endif  // DATABASEDECODER_H

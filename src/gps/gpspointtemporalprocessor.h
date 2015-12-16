@@ -7,17 +7,16 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
-#include "gpstuplelistener.h"
 
 class GPSPoint;
 
-class GPSPointTemporalProcessor : public GPSTupleListener {
+class GPSPointTemporalProcessor {
 public:
     GPSPointTemporalProcessor()
         : m_timeDiffsSum(0)
     {}
 
-    void processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>&) override;
+    void processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>&);
     void postProcessPoints();
     std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>> pointsPerTimeSlot() const { return m_pointsPerTimeSlot; }
     void releasePoints() { m_pointsPerTimeSlot.clear(); }

@@ -21,7 +21,7 @@ void Manager::start()
     if (!m_dbDecoder)
         return;
 
-    m_dbDecoder->setGPSTupleListener(&m_pointProcessor);
+    m_dbDecoder->setListenerFunction(std::bind(&GPSPointTemporalProcessor::processGPSTuple, &m_pointProcessor, std::placeholders::_1));
     m_dbDecoder->retrievePoints();
     m_dbDecoder->done();
     m_pointProcessor.postProcessPoints();

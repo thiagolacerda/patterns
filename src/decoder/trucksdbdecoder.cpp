@@ -2,7 +2,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "gpstuplelistener.h"
 
 void TrucksDBDecoder::doDecodeRow(void* row)
 {
@@ -23,6 +22,6 @@ void TrucksDBDecoder::doDecodeRow(void* row)
     dateTime.tm_sec = atoi(hourStr.substr(6, 2).c_str());
     uint64_t timestamp = mktime(&dateTime);
 
-    m_listener->processGPSTuple(std::make_tuple(tId, latitude, longitude, timestamp));
+    m_listener(std::make_tuple(tId, latitude, longitude, timestamp));
 }
 

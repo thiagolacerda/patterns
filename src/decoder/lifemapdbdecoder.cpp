@@ -7,7 +7,6 @@
 #include <time.h>
 #include <algorithm>
 #include <iostream>
-#include "gpstuplelistener.h"
 #include "sqlitedbmanager.h"
 
 LifeMapDBDecoder::LifeMapDBDecoder(const std::vector<std::string>& parameters)
@@ -76,7 +75,7 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
     tm.tm_sec = atoi(timestampStr.substr(12, 2).c_str());
     uint64_t timestamp = mktime(&tm);
 
-    m_listener->processGPSTuple(std::make_tuple(m_currentId, latitude, longitude, timestamp));
+    m_listener(std::make_tuple(m_currentId, latitude, longitude, timestamp));
 }
 
 uint64_t LifeMapDBDecoder::doRetrievePoints(int64_t batchSize)
