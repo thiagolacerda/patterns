@@ -26,8 +26,7 @@ void Manager::start()
     m_dbDecoder->done();
     m_pointProcessor.postProcessPoints();
     if (Config::timeSlotSize() <= Config::flockLength()) {
-        std::map<uint64_t, std::vector<std::shared_ptr<GPSPoint>>>
-            pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
+        auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
         m_pointProcessor.releasePoints();
         for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
             // For each time instance, we get all points belonging to that and try to find flocks
@@ -49,7 +48,7 @@ void Manager::dumpFoundFlocks() const
     }
 }
 
-void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points, uint64_t timestamp)
+void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::shared_ptr<GPSPoint>>>& points, uint64_t timestamp)
 {
     // If the number of points to be processed for this time instance is less than the minimum number of trajectories
     // per flock, than we don't need to go further
@@ -57,8 +56,11 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
         return;
 
     // Build the grid for this time slot
-    for (const std::shared_ptr<GPSPoint>& point : points)
-        m_gridManager.addPointToGrid(std::shared_ptr<GPSPoint>(point));
+    for (const auto& pointMapVectorEntry : points) {
+        const auto& pointEntries = pointMapVectorEntry.second;
+        for (const std::shared_ptr<GPSPoint>& point : pointEntries)
+            m_gridManager.addPointToGrid(std::shared_ptr<GPSPoint>(point));
+    }
 
     Disk* disk1;
     Disk* disk2;
