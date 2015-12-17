@@ -73,6 +73,9 @@ void Manager::computeFlocks(const std::vector<std::shared_ptr<GPSPoint>>& points
 
         for (auto it1 = pointsToProcess.begin(); it1 != pointsToProcess.end(); ++it1) {
             for (auto it2 = std::next(it1); it2 != pointsToProcess.end(); ++it2) {
+                if ((*it1)->trajectoryId() == (*it2)->trajectoryId())
+                    continue;
+
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (Utils::fuzzyLessEqual(distance, gridSize)) {
                     disk1 = nullptr;
