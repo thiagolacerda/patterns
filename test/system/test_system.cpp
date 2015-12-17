@@ -33,6 +33,7 @@ class ThoroughTest : public ::testing::TestWithParam<std::tuple<int, int, double
         Config::setDecoder("truckspaper");
         Config::setTimeSlotSize(1);
         Config::setCompatibilityMode(true);
+        Config::setCoordinateSystem(Config::Metric);
     }
 };
 
@@ -68,6 +69,7 @@ TEST(System, Find_35218_Flocks)
     Config::setTimeSlotSize(1);
     Config::setDecoder("truckspaper");
     Config::setCompatibilityMode(true);
+    Config::setCoordinateSystem(Config::Metric);
     Config::setDecoderParameters(std::vector<std::string>{"test_data/trucks_by_time.txt"});
 
     // when
