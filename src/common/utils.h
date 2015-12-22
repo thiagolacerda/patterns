@@ -14,7 +14,7 @@ public:
     static void toVector(double x1, double y1, double x2, double y2, double* vectorX, double* vectorY);
     static double vectorLength(double vectorX, double vectorY);
     static void normalizedVector(double vectorX, double vectorY, double* normX, double* normY);
-    static bool fuzzyEqual(double, double);
+    static bool fuzzyEqual(double a, double b, double eps = Utils::m_epsilon);
     static bool fuzzyLessEqual(double, double);
     static bool fuzzyGreatEqual(double, double);
 

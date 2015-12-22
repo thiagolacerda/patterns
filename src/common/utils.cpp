@@ -4,9 +4,9 @@
 #include "config.h"
 #include "gpspoint.h"
 
-bool Utils::fuzzyEqual(double a, double b)
+bool Utils::fuzzyEqual(double a, double b, double eps)
 {
-    return fabs(a - b) < Utils::m_epsilon;
+    return fabs(a - b) < eps;
 }
 
 bool Utils::fuzzyLessEqual(double a, double b)
