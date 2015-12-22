@@ -15,6 +15,20 @@ Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
 
+void Config::reset()
+{
+    Config::m_decoderInUse = Config::Trucks;
+    Config::m_decoderParameters = std::vector<std::string>();
+    Config::m_flockLength = 0;
+    Config::m_trajectoriesPerFlock = 0;
+    Config::m_gridSize = 0;
+    Config::m_radiusSquared = 0;
+    Config::m_radius = 0;
+    Config::m_timeSlotSize = 0;
+    Config::m_coordinateSystem = Config::Metric;
+    Config::m_compatibilityMode = false;
+    Config::m_automaticTimeSlot = false;
+}
 void Config::setDecoder(char const* decoderName)
 {
     std::string decoder(decoderName);

@@ -20,6 +20,7 @@ public:
         TrucksPaper
     };
 
+    static void reset();
     static void setDecoderParameters(const std::vector<std::string>& parameters) { m_decoderParameters = parameters; }
     static std::vector<std::string>& decoderParameters() { return m_decoderParameters; }
     static void setDecoder(char const* decoderName);
