@@ -1,6 +1,6 @@
 #include "utils.h"
 
-#include <math.h>
+#include <cmath>
 #include "config.h"
 #include "gpspoint.h"
 
@@ -17,6 +17,11 @@ bool Utils::fuzzyLessEqual(double a, double b)
 double Utils::degreesToRadians(double degrees)
 {
     return (degrees * M_PI) / 180.0;
+}
+
+double Utils::radiansToDegrees(double radians)
+{
+    return (radians * 180.0) / M_PI;
 }
 
 void Utils::midPoint(double x1, double y1, double x2, double y2, double* midX, double* midY)
@@ -127,4 +132,23 @@ double Utils::distance(const GPSPoint& point1, const GPSPoint& point2)
 {
     return Utils::distance(point1.longitudeMeters(), point1.latitudeMeters(),
         point2.longitudeMeters(), point2.latitudeMeters());
+}
+
+std::shared_ptr<GPSPoint> Utils::interpolate(const GPSPoint& p1, const GPSPoint& p2)
+{
+    double dLon = Utils::degreesToRadians(p2.longitude() - p1.longitude());
+
+    //convert to radians
+    double lat1Radians = Utils::degreesToRadians(p1.latitude());
+    double long1Radians = Utils::degreesToRadians(p1.longitude());
+    double lat2Radians = Utils::degreesToRadians(p2.latitude());
+
+    double bx = cos(lat2Radians) * cos(dLon);
+    double by = cos(lat2Radians) * sin(dLon);
+    double finalLat = atan2(sin(lat1Radians) + sin(lat2Radians),
+        sqrt((cos(lat1Radians) + bx) * (cos(lat1Radians) + bx) + by * by));
+    double finalLong = long1Radians + atan2(by, cos(lat1Radians) + bx);
+
+    return std::shared_ptr<GPSPoint>(new GPSPoint(Utils::radiansToDegrees(finalLat),
+        Utils::radiansToDegrees(finalLong), (p1.timestamp() + p2.timestamp()) / 2, p1.trajectoryId()));
 }

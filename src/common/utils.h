@@ -1,11 +1,14 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <memory>
+
 class GPSPoint;
 
 class Utils {
 public:
     static double degreesToRadians(double degres);
+    static double radiansToDegrees(double radians);
     static double distance(double p1X, double p1Y, double p2X, double p2Y);
     static double distance(const GPSPoint& point1, const GPSPoint& point2);
     static void latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters);
@@ -17,6 +20,7 @@ public:
     static bool fuzzyEqual(double a, double b, double eps = Utils::m_epsilon);
     static bool fuzzyLessEqual(double, double);
     static bool fuzzyGreatEqual(double, double);
+    static std::shared_ptr<GPSPoint> interpolate(const GPSPoint& p1, const GPSPoint& p2);
 
 private:
     static constexpr double m_epsilon = 0.001;

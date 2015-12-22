@@ -42,7 +42,12 @@ bool GPSPoint::operator<(const GPSPoint& other) const
 bool GPSPoint::operator==(const GPSPoint& other) const
 {
     return m_timestamp == other.timestamp() &&
-        m_trajectoryId == other.trajectoryId();
+        m_trajectoryId == other.trajectoryId() &&
+        Utils::fuzzyEqual(m_latitude, other.latitude()) &&
+        Utils::fuzzyEqual(m_longitude, other.longitude()) &&
+        // we accept up to 5 meters of inaccuracy when converting from lat long to meters
+        Utils::fuzzyEqual(m_latitudeMeters, other.latitudeMeters(), 5.0) &&
+        Utils::fuzzyEqual(m_longitudeMeters, other.longitudeMeters(), 5.0);
 }
 
 void GPSPoint::dump()

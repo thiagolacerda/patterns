@@ -1,4 +1,6 @@
 #include <math.h>
+#include "config.h"
+#include "gpspoint.h"
 #include "gtest/gtest.h"
 #include "utils.h"
 
@@ -12,6 +14,14 @@ double roundToDecimalPlaces(double number, int decimalPlaces)
     double multiplier = pow(10, decimalPlaces);
     return round(number * multiplier) / multiplier;
 }
+
+class UtilsTest : public ::testing::Test {
+public:
+    void TearDown() override
+    {
+        Config::reset();
+    }
+};
 
 TEST(UtilsTest, fuzzyEqual)
 {
@@ -128,4 +138,29 @@ TEST(UtilsTest, metersToLatLong_allNegative)
     // then
     ASSERT_EQ(-LATITUDE_TEST, roundToDecimalPlaces(latitude, 6));
     ASSERT_EQ(-LONGITUDE_TEST, roundToDecimalPlaces(longitude, 6));
+}
+
+TEST(UtilsTest, interpolate)
+{
+    // given
+    Config::setCoordinateSystem(Config::WSG84);
+    uint64_t timestamp1 = 12435690;
+    uint64_t timestamp2 = 14481908;
+    uint32_t trajectoryId = 6;
+    GPSPoint p1(LATITUDE_TEST, LONGITUDE_TEST, timestamp1, trajectoryId);
+
+    double p2Lat = LATITUDE_TEST + 1.3;
+    double p2Long = LONGITUDE_TEST + 1.21;
+    GPSPoint p2(p2Lat, p2Long, timestamp2, trajectoryId);
+
+    double interpolatedLat = 38.67;
+    double interpolatedLong = 24.4446;
+    uint64_t midTimestamp = (timestamp1 + timestamp2) / 2;
+    GPSPoint expected(interpolatedLat, interpolatedLong, midTimestamp, trajectoryId);
+
+    // when
+    std::shared_ptr<GPSPoint> actual = Utils::interpolate(p1, p2);
+
+    // then
+    ASSERT_EQ(expected, *actual.get());
 }
