@@ -6,6 +6,7 @@ set(SORTER_SOURCES
     ${DECODER_DIR}/basegpsfiledecoder.cpp
     ${DECODER_DIR}/lifemapdbdecoder.cpp
     ${DECODER_DIR}/sortedfiledecoder.cpp
+    ${DECODER_DIR}/tdrivedecoder.cpp
     ${DECODER_DIR}/trucksdbdecoder.cpp
     ${DECODER_DIR}/truckspaperdbdecoder.cpp
     ${GPS_DIR}/gpspoint.cpp

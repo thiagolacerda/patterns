@@ -24,6 +24,8 @@ void Config::setDecoder(char const* decoderName)
         Config::m_decoderInUse = Config::TrucksPaper;
     else if (decoder.compare("sortedfile") == 0)
         Config::m_decoderInUse = Config::SortedFile;
+    else if (decoder.compare("tdrive") == 0)
+        Config::m_decoderInUse = Config::TDrive;
 }
 
 void Config::setGridSize(double size)
