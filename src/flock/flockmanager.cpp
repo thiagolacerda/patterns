@@ -121,12 +121,13 @@ std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
     uint32_t flockLength = Config::flockLength();
+    double timeSlot = Config::timeSlotSize();
     for (auto flock = m_flocks.begin(); flock != m_flocks.end();) {
-        if (((*flock).endTime() - (*flock).startTime()) >= flockLength) {
+        if ((((*flock).endTime() - (*flock).startTime()) / timeSlot) >= flockLength) {
             results.push_back(*flock);
             // This is valid flock, so let's increment its start time to check for a new flock starting in the
             // subsequent time slot
-            (*flock).setStartTime((*flock).startTime() + Config::timeSlotSize());
+            (*flock).setStartTime((*flock).startTime() + timeSlot);
             if ((*flock).startTime() == (*flock).endTime()) {
                 // Empty flock
                 flock = m_flocks.erase(flock);

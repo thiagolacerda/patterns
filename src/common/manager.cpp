@@ -25,17 +25,13 @@ void Manager::start()
     m_dbDecoder->retrievePoints();
     m_dbDecoder->done();
     m_pointProcessor.postProcessPoints();
-    if (Config::timeSlotSize() <= Config::flockLength()) {
-        auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
-        m_pointProcessor.releasePoints();
-        for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
-            // For each time instance, we get all points belonging to that and try to find flocks
-            computeFlocks(iter->second, iter->first);
-            // They can be discarded after that, all points were already computed
-            iter = pointsPerTimeSlot.erase(iter);
-        }
-    } else {
-        std::cout << "Time slot size does not allow flocks, given the flock length" << std::endl;
+    auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
+    m_pointProcessor.releasePoints();
+    for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
+        // For each time instance, we get all points belonging to that and try to find flocks
+        computeFlocks(iter->second, iter->first);
+        // They can be discarded after that, all points were already computed
+        iter = pointsPerTimeSlot.erase(iter);
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
 }

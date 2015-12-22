@@ -11,7 +11,7 @@ void dumpParameters()
 {
     std::cout << "******** Parameters ********" << std::endl;
     std::cout << "* Number of trajectories per flock: " << Config::numberOfTrajectoriesPerFlock() << std::endl;
-    std::cout << "* Length of flocks (seconds): " << Config::flockLength() << std::endl;
+    std::cout << "* Length of flocks (time slot units): " << Config::flockLength() << std::endl;
     std::cout << "* Grid size (meters): " << Config::gridSize() << std::endl;
     if (!Config::automaticTimeSlot())
         std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 {
     if (argc < 7) {
         std::cerr << "Error: you must run as follows:" << std::endl;
-        std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_seconds> " <<
+        std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_time_slot_units> " <<
             "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
             "[-c] (to set compatibility mode) [list_of_decoder_parameters]" << std::endl;
         return -1;
