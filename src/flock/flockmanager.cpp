@@ -60,7 +60,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
                     // Before inserting it in FlockManager we need to check if there isn't any other flock that is a
                     // superset of it
                     if (mergeFlocks(&flocksFromDisks, newFlock))
-                        newFlock.mergeTrajectories(disk->trajectories());
+                        flocksFromDisks.back().mergeTrajectories(disk->trajectories());
                 }
             }
         }
