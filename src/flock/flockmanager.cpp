@@ -56,7 +56,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
                     Flock newFlock;
                     newFlock.setTrajectories(inter);
                     newFlock.setStartTime((*existingFlock).startTime());
-                    newFlock.setEndTime(disk->timestamp() + Config::timeSlotSize());
+                    newFlock.setEndTime(disk->timestamp());
                     // Before inserting it in FlockManager we need to check if there isn't any other flock that is a
                     // superset of it
                     if (mergeFlocks(&flocksFromDisks, newFlock))
@@ -70,7 +70,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
         Flock newFlock;
         newFlock.setTrajectories((*diskIter)->trajectories());
         newFlock.setStartTime((*diskIter)->timestamp());
-        newFlock.setEndTime((*diskIter)->timestamp() + Config::timeSlotSize());
+        newFlock.setEndTime((*diskIter)->timestamp());
         if (!hasFlocks)
             m_flocks.push_back(newFlock);
         else
@@ -121,14 +121,13 @@ std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
     uint32_t flockLength = Config::flockLength();
-    double timeSlot = Config::timeSlotSize();
     for (auto flock = m_flocks.begin(); flock != m_flocks.end();) {
-        if ((((*flock).endTime() - (*flock).startTime()) / timeSlot) >= flockLength) {
+        if ((*flock).endTime() - (*flock).startTime() + 1 >= flockLength) {
             results.push_back(*flock);
             // This is valid flock, so let's increment its start time to check for a new flock starting in the
             // subsequent time slot
-            (*flock).setStartTime((*flock).startTime() + timeSlot);
-            if ((*flock).startTime() == (*flock).endTime()) {
+            (*flock).setStartTime((*flock).startTime() + 1);
+            if ((*flock).startTime() > (*flock).endTime()) {
                 // Empty flock
                 flock = m_flocks.erase(flock);
                 continue;
