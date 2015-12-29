@@ -14,6 +14,7 @@ uint32_t Config::m_timeSlotSize = 1;
 Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
+bool Config::m_interpolate = false;
 
 void Config::reset()
 {
@@ -28,6 +29,7 @@ void Config::reset()
     Config::m_coordinateSystem = Config::Metric;
     Config::m_compatibilityMode = false;
     Config::m_automaticTimeSlot = false;
+    Config::m_interpolate = false;
 }
 void Config::setDecoder(char const* decoderName)
 {

@@ -16,7 +16,6 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     uint64_t timestamp;
     std::tie(tID, latitude, longitude, timestamp) = gpsTuple;
 
-    uint64_t index = timestamp / Config::timeSlotSize();
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
     if (Config::automaticTimeSlot()) {
         auto iter = m_lastTimestampPerTrajectory.find(tID);
@@ -32,11 +31,12 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
             m_timeDiffsSum += diff;
         }
 
-        m_lastTimestampPerTrajectory[tID] = timestamp;
         m_points.push_back(point);
     } else {
-        insertPointInMap(point, index);
+        uint64_t index = timestamp / Config::timeSlotSize();
+        insertPointInMap(point, index, Config::interpolate());
     }
+    m_lastTimestampPerTrajectory[tID] = timestamp;
 }
 
 void GPSPointTemporalProcessor::removeOutliers()
@@ -81,21 +81,35 @@ void GPSPointTemporalProcessor::postProcessPoints()
     for (const std::shared_ptr<GPSPoint>& point : m_points) {
         uint64_t index = point->timestamp() / Config::timeSlotSize();
 
-        insertPointInMap(point, index);
+        insertPointInMap(point, index, Config::interpolate());
     }
     m_points.clear();
 }
 
-void GPSPointTemporalProcessor::insertPointInMap(const std::shared_ptr<GPSPoint>& point, uint64_t timeSlot)
+void GPSPointTemporalProcessor::insertPointInMap(const std::shared_ptr<GPSPoint>& point, uint64_t timeSlot,
+    bool tryInterpolate)
 {
-    if (m_pointsPerTimeSlot.find(timeSlot) == m_pointsPerTimeSlot.end())
-        m_pointsPerTimeSlot[timeSlot] = std::unordered_map<uint32_t, std::vector<std::shared_ptr<GPSPoint>>>();
+    uint32_t trajectoryId = point->trajectoryId();
+    m_pointsPerTimeSlot[timeSlot][trajectoryId].push_back(point);
 
-    auto& pointMapInTimeSlot = m_pointsPerTimeSlot[timeSlot];
-    if (pointMapInTimeSlot.find(point->trajectoryId()) == pointMapInTimeSlot.end())
-        pointMapInTimeSlot[point->trajectoryId()] = std::vector<std::shared_ptr<GPSPoint>>();
+    if (!tryInterpolate || timeSlot < 2)
+        return;
 
-    pointMapInTimeSlot[point->trajectoryId()].push_back(point);
+    timeSlot -= 2;
+    const auto& lastTimestampIter = m_lastTimestampPerTrajectory.find(trajectoryId);
+    if (lastTimestampIter == m_lastTimestampPerTrajectory.end() ||
+        (lastTimestampIter->second / Config::timeSlotSize()) != timeSlot)
+        return;
+
+    const auto& points2TimesBeforeIter = m_pointsPerTimeSlot.find(timeSlot);
+    if (points2TimesBeforeIter == m_pointsPerTimeSlot.end())
+        return;
+
+    const std::shared_ptr<GPSPoint>& basePoint = points2TimesBeforeIter->second[trajectoryId].back();
+    std::shared_ptr<GPSPoint> interpolated = Utils::interpolate(*point, *basePoint);
+
+    ++timeSlot;
+    m_pointsPerTimeSlot[timeSlot][trajectoryId].push_back(interpolated);
 }
 
 void GPSPointTemporalProcessor::dumpPointsMap()

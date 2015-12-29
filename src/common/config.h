@@ -42,6 +42,8 @@ public:
     static bool isInCompatibilityMode() { return m_compatibilityMode; }
     static void setAutomaticTimeSlot(bool automatic) { m_automaticTimeSlot = automatic; }
     static bool automaticTimeSlot() { return m_automaticTimeSlot; }
+    static void setInterpolate(bool interpolate) { m_interpolate = interpolate; }
+    static bool interpolate() { return m_interpolate; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -55,6 +57,7 @@ private:
     static CoordinateSystem m_coordinateSystem;
     static bool m_compatibilityMode;
     static bool m_automaticTimeSlot;
+    static bool m_interpolate;
 };
 
 #endif  // CONFIG_H
