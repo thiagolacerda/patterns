@@ -13,7 +13,7 @@ std::vector<std::tuple<int, int, double, int>> loadParams()
     std::vector<double> gridSize {0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5};
     std::vector<std::tuple<int, int, double, int>> params;
 
-    std::ifstream file("test_data/thorough_result", std::ifstream::in);
+    std::ifstream file("data/thorough_result", std::ifstream::in);
     std::string line;
 
     for (int n : numberOfTrajectories) {
@@ -29,7 +29,7 @@ std::vector<std::tuple<int, int, double, int>> loadParams()
 
 class ThoroughTest : public ::testing::TestWithParam<std::tuple<int, int, double, int>> {
     void SetUp() override {
-        Config::setDecoderParameters(std::vector<std::string>{"test_data/trucks_by_time.txt"});
+        Config::setDecoderParameters(std::vector<std::string>{"data/trucks_by_time.txt"});
         Config::setDecoder("truckspaper");
         Config::setTimeSlotSize(1);
         Config::setCompatibilityMode(true);
@@ -70,7 +70,7 @@ TEST(System, Find_35218_Flocks)
     Config::setDecoder("truckspaper");
     Config::setCompatibilityMode(true);
     Config::setCoordinateSystem(Config::Metric);
-    Config::setDecoderParameters(std::vector<std::string>{"test_data/trucks_by_time.txt"});
+    Config::setDecoderParameters(std::vector<std::string>{"data/trucks_by_time.txt"});
 
     // when
     Manager manager;
