@@ -3,6 +3,13 @@
 #include <iostream>
 #include "config.h"
 
+std::atomic_ullong Flock::m_globalIds(0);
+
+unsigned long long Flock::nextId()
+{
+    return m_globalIds++;
+}
+
 void Flock::setTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
 {
     m_trajectories = trajectories;

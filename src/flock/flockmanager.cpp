@@ -123,6 +123,7 @@ std::vector<Flock> FlockManager::reportFlocks()
     uint32_t flockLength = Config::flockLength();
     for (auto flock = m_flocks.begin(); flock != m_flocks.end();) {
         if ((*flock).endTime() - (*flock).startTime() + 1 >= flockLength) {
+            (*flock).assignId();
             results.push_back(*flock);
             // This is valid flock, so let's increment its start time to check for a new flock starting in the
             // subsequent time slot
@@ -132,6 +133,7 @@ std::vector<Flock> FlockManager::reportFlocks()
                 flock = m_flocks.erase(flock);
                 continue;
             }
+            (*flock).assignId();
             // Remove the points that belong to the first time slot of this flock
             (*flock).clearFirstPoints();
         }
