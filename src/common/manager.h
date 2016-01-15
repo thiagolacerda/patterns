@@ -29,6 +29,7 @@ public:
     int foundFlocks() const { return m_flocks.size(); }
 
 private:
+    void flushFlocksToResultFile();
     void validateAndTryStoreDisk(Disk* disk);
     void computeFlocks(const std::unordered_map<uint32_t,
         std::vector<std::shared_ptr<GPSPoint>>>& points, uint64_t timestamp);

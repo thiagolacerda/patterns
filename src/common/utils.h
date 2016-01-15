@@ -21,6 +21,8 @@ public:
     static bool fuzzyLessEqual(double, double);
     static bool fuzzyGreatEqual(double, double);
     static std::shared_ptr<GPSPoint> interpolate(const GPSPoint& p1, const GPSPoint& p2);
+    template<typename T>
+    static std::string toString(T value, unsigned precision);
 
 private:
     static constexpr double m_epsilon = 0.001;

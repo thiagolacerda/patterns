@@ -1,6 +1,8 @@
 #include "utils.h"
 
 #include <cmath>
+#include <iomanip>
+#include <sstream>
 #include "config.h"
 #include "gpspoint.h"
 
@@ -152,3 +154,13 @@ std::shared_ptr<GPSPoint> Utils::interpolate(const GPSPoint& p1, const GPSPoint&
     return std::shared_ptr<GPSPoint>(new GPSPoint(Utils::radiansToDegrees(finalLat),
         Utils::radiansToDegrees(finalLong), (p1.timestamp() + p2.timestamp()) / 2, p1.trajectoryId()));
 }
+
+template<typename T>
+std::string Utils::toString(T value, unsigned precision)
+{
+    std::ostringstream out;
+    out << std::setprecision(precision) << value;
+    return out.str();
+}
+template std::string Utils::toString<double>(double T, unsigned precision);
+template std::string Utils::toString<float>(float T, unsigned precision);

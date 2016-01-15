@@ -1,5 +1,6 @@
 #include "manager.h"
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include "databasedecoder.h"
@@ -8,6 +9,7 @@
 #include "gpspoint.h"
 #include "grid.h"
 #include "trajectory.h"
+#include "utils.h"
 
 Manager::~Manager()
 {
@@ -34,6 +36,8 @@ void Manager::start()
         iter = pointsPerTimeSlot.erase(iter);
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
+    if (Config::flushFlocksToFile())
+        flushFlocksToResultFile();
 }
 
 void Manager::dumpFoundFlocks() const
@@ -99,8 +103,29 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     m_diskManager.clear();
 }
 
+void Manager::flushFlocksToResultFile()
+{
+    std::string fileName = m_dbDecoder->decoderName() + "_n" + std::to_string(Config::numberOfTrajectoriesPerFlock()) +
+        "_l" + std::to_string(Config::flockLength()) + "_g" + Utils::toString<double>(Config::gridSize(), 2) + "_t" +
+        (Config::automaticTimeSlot() ? "a" : "") + Utils::toString<double>(Config::timeSlotSize(), 2) +
+        (Config::interpolate() ? "_i" : "") +
+        (Config::outlierSpeedCutOff() != -1 ? ("_o" + Utils::toString(Config::outlierSpeedCutOff(), 2)) : "") + ".txt";
+
+    std::ofstream out(fileName, std::ofstream::out);
+    for (const Flock& f : m_flocks) {
+        const auto& trajectories = f.trajectories();
+        for (const auto& trajectoryPair : trajectories) {
+            const auto& points = trajectoryPair.second.points();
+            for (const auto& point : points) {
+                out << f.id() << ";" << point->trajectoryId() << ";" << point->latitude() << ";" <<
+                    point->longitude() << ";" << point->timestamp() << "\n";
+            }
+        }
+    }
+}
+
 /*
- * Checks if the disk fulfil the requirements to be a potential new flock
+ * Checks if the disk fulfills the requirements to be a potential new flock
  */
 void Manager::validateAndTryStoreDisk(Disk* disk)
 {

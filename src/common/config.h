@@ -46,6 +46,8 @@ public:
     static bool interpolate() { return m_interpolate; }
     static void setOutlierSpeedCutOff(double outlierCutOff) { m_outlierSpeedCutOff = outlierCutOff; }
     static double outlierSpeedCutOff() { return m_outlierSpeedCutOff; }
+    static void setFlushFlocksToFile(bool flushToFile) { m_flushFlocksToFile = flushToFile; }
+    static bool flushFlocksToFile() { return m_flushFlocksToFile; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -61,6 +63,7 @@ private:
     static bool m_automaticTimeSlot;
     static bool m_interpolate;
     static double m_outlierSpeedCutOff;
+    static bool m_flushFlocksToFile;
 };
 
 #endif  // CONFIG_H
