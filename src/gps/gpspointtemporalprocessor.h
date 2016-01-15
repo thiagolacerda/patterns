@@ -27,6 +27,7 @@ public:
 
 private:
     void insertPointInMap(const std::shared_ptr<GPSPoint>& point, uint64_t timeSlot, bool tryInterpolate);
+    bool isOutlier(const std::shared_ptr<GPSPoint>& point);
     void removeOutliers();
     std::map<uint64_t, std::unordered_map<uint32_t, std::vector<std::shared_ptr<GPSPoint>>>> m_pointsPerTimeSlot;
     std::vector<std::shared_ptr<GPSPoint>> m_points;

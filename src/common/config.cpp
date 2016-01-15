@@ -15,6 +15,7 @@ Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
 bool Config::m_interpolate = false;
+double Config::m_outlierSpeedCutOff = -1;
 
 void Config::reset()
 {
@@ -30,6 +31,7 @@ void Config::reset()
     Config::m_compatibilityMode = false;
     Config::m_automaticTimeSlot = false;
     Config::m_interpolate = false;
+    Config::m_outlierSpeedCutOff = -1;
 }
 void Config::setDecoder(char const* decoderName)
 {

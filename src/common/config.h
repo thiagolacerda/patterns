@@ -44,6 +44,8 @@ public:
     static bool automaticTimeSlot() { return m_automaticTimeSlot; }
     static void setInterpolate(bool interpolate) { m_interpolate = interpolate; }
     static bool interpolate() { return m_interpolate; }
+    static void setOutlierSpeedCutOff(double outlierCutOff) { m_outlierSpeedCutOff = outlierCutOff; }
+    static double outlierSpeedCutOff() { return m_outlierSpeedCutOff; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -58,6 +60,7 @@ private:
     static bool m_compatibilityMode;
     static bool m_automaticTimeSlot;
     static bool m_interpolate;
+    static double m_outlierSpeedCutOff;
 };
 
 #endif  // CONFIG_H

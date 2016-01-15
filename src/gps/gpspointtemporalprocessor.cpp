@@ -17,6 +17,9 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     std::tie(tID, latitude, longitude, timestamp) = gpsTuple;
 
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
+    if (isOutlier(point))
+        return;
+
     if (Config::automaticTimeSlot()) {
         auto iter = m_lastTimestampPerTrajectory.find(tID);
         if (iter != m_lastTimestampPerTrajectory.end()) {
@@ -84,6 +87,29 @@ void GPSPointTemporalProcessor::postProcessPoints()
         insertPointInMap(point, index, Config::interpolate());
     }
     m_points.clear();
+}
+
+bool GPSPointTemporalProcessor::isOutlier(const std::shared_ptr<GPSPoint>& point)
+{
+    if (Config::outlierSpeedCutOff() == -1)
+        return false;
+
+    auto lastTimestampIter = m_lastTimestampPerTrajectory.find(point->trajectoryId());
+    if (lastTimestampIter == m_lastTimestampPerTrajectory.end())
+        return false;
+
+    uint64_t index = lastTimestampIter->second / Config::timeSlotSize();
+    auto pointsMapIter = m_pointsPerTimeSlot.find(index);
+    if (pointsMapIter == m_pointsPerTimeSlot.end())
+        return false;
+
+    const std::shared_ptr<GPSPoint>& latest = pointsMapIter->second[point->trajectoryId()].back();
+    double distance = point->distanceToPoint(*latest);
+    double timeDiff = point->timestamp() == latest->timestamp() ? 1 : (point->timestamp() - latest->timestamp());
+    if (distance / timeDiff >= Config::outlierSpeedCutOff())
+        return true;
+
+    return false;
 }
 
 void GPSPointTemporalProcessor::insertPointInMap(const std::shared_ptr<GPSPoint>& point, uint64_t timeSlot,

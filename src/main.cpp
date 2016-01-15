@@ -17,6 +17,8 @@ void dumpParameters()
         std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
     std::cout << "* Used Coordinate System: " << Config::coordinateSystemName(Config::coordinateSystem()) << std::endl;
     std::cout << "* Interpolate: " << (Config::interpolate() ? "true" : "false") << std::endl;
+    std::cout << "* Outlier speed cutoff: " << (Config::outlierSpeedCutOff() == -1 ? "No" :
+        std::to_string(Config::outlierSpeedCutOff())) << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -25,13 +27,14 @@ int main(int argc, char** argv)
         std::cerr << "Error: you must run as follows:" << std::endl;
         std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_time_slot_units> " <<
             "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
-            "[-c] (to set compatibility mode) [-i] (interpolate points) [list_of_decoder_parameters]" << std::endl;
+            "[-c] (to set compatibility mode) [-i] (interpolate points) [-o <outlier_speed_cutoff>] " <<
+            "[list_of_decoder_parameters]" << std::endl;
         return -1;
     }
 
     clock_t begin = clock();
     int option;
-    while ((option = getopt(argc, argv, "n:l:g:t:d:s:ci")) != -1) {
+    while ((option = getopt(argc, argv, "n:l:g:t:d:s:cio:")) != -1) {
         switch (option) {
         case 'n':
             Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
@@ -62,9 +65,12 @@ int main(int argc, char** argv)
         case 'i':
             Config::setInterpolate(true);
             break;
+        case 'o':
+            Config::setOutlierSpeedCutOff(atof(optarg));
+            break;
         default:
-            if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't'
-                || optopt == 'd' || optopt == 's' || optopt == 'c' || optopt == 'i')
+            if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't' || optopt == 'd' ||
+                optopt == 's' || optopt == 'c' || optopt == 'i' || optopt == 'o')
                 return -2;
 
             std::cout << "Unknown parameter: " << optopt << std::endl;
