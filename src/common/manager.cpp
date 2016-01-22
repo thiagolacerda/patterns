@@ -142,21 +142,19 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess, GPSPoint* diskGeneratorPoint1,
     GPSPoint* diskGeneratorPoint2)
 {
-    double radius = Config::radius();
     for (std::shared_ptr<GPSPoint> point : pointsToProcess) {
         if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2)
             // diskGeneratorPoint1 and diskGeneratorPoint2 already belong to the disk
             continue;
 
-        double latMeters = point->latitudeMeters();
-        double longMeters = point->longitudeMeters();
-        double distance = Utils::distance(disk1->centerX(), disk1->centerY(), longMeters, latMeters);
-        if (Utils::fuzzyLessEqual(distance, radius))
-            createTrajectoryAndAddToDisks(point, disk1);
+        Trajectory trajectory(point->trajectoryId());
+        trajectory.addPoint(point);
 
-        distance = Utils::distance(disk2->centerX(), disk2->centerY(), longMeters, latMeters);
-        if (Utils::fuzzyLessEqual(distance, radius))
-            createTrajectoryAndAddToDisks(point, disk2);
+        if (disk1->isPointInDisk(point))
+            disk1->addTrajectory(trajectory);
+
+        if (disk2->isPointInDisk(point))
+            disk2->addTrajectory(trajectory);
     }
 }
 

@@ -90,9 +90,8 @@ void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint6
             ((tmp - twoY1Y2 + 2.0 * y1Squared) / twoY2MinusY1);
     double delta = B * B - 4.0 * A * C;
 
-    if (delta < 0) return;
-    if (Utils::fuzzyEqual(A, 0)) return;
-    if (Utils::fuzzyEqual(y2, y1)) return;
+    if (delta < 0 || Utils::fuzzyEqual(A, 0) || Utils::fuzzyEqual(y2, y1))
+        return;
 
     // calculating x
     double cX1 = (-B + sqrt(delta)) / (2.0 * A);

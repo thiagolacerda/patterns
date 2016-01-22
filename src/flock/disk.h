@@ -21,6 +21,8 @@ public:
     double centerY() const { return m_centerY; }
     double centerLatitude() const { return m_centerLatitude; }
 
+    bool isPointInDisk(const std::shared_ptr<GPSPoint>& point);
+
     uint64_t timestamp() const { return m_timestamp; }
     void addTrajectory(const Trajectory&);
     uint32_t numberOfTrajectories() const { return m_trajectories.size(); }
@@ -34,6 +36,7 @@ private:
     double m_centerLongitude;
     double m_centerY;
     double m_centerLatitude;
+    double m_radius;
     uint64_t m_timestamp;
     std::map<uint32_t, Trajectory> m_trajectories;
 };

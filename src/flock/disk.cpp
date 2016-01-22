@@ -3,15 +3,12 @@
 #include <algorithm>
 #include <iostream>
 #include "config.h"
+#include "gpspoint.h"
 #include "grid.h"
 #include "utils.h"
 
 Disk::Disk()
-    : m_centerX(0)
-    , m_centerLongitude(0)
-    , m_centerY(0)
-    , m_centerLatitude(0)
-    , m_timestamp(0)
+    : Disk(0, 0, 0)
 {
 }
 
@@ -20,6 +17,7 @@ Disk::Disk(double centerX, double centerY, uint64_t timestamp)
     , m_centerLongitude(0)
     , m_centerY(centerY)
     , m_centerLatitude(0)
+    , m_radius(Config::radius())
     , m_timestamp(timestamp)
 {
     if (Config::coordinateSystem() == Config::Metric) {
@@ -28,6 +26,12 @@ Disk::Disk(double centerX, double centerY, uint64_t timestamp)
     } else {
         Utils::metersToLatLong(m_centerY, m_centerX, &m_centerLatitude, &m_centerLongitude);
     }
+}
+
+bool Disk::isPointInDisk(const std::shared_ptr<GPSPoint>& point)
+{
+    double distance = Utils::distance(m_centerX, m_centerY, point->longitudeMeters(), point->latitudeMeters());
+    return Utils::fuzzyLessEqual(distance, m_radius);
 }
 
 void Disk::addTrajectory(const Trajectory& trajectory)
