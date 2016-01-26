@@ -50,6 +50,9 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
             Disk* disk = *diskIter;
             for (auto existingFlock = m_flocks.begin(); existingFlock != m_flocks.end(); ++existingFlock) {
                 std::map<uint32_t, Trajectory> inter;
+                if (disk->timestamp() - (*existingFlock).endTime() > 1)
+                    continue;
+
                 intersection((*existingFlock).trajectories(), disk->trajectories(), &inter);
                 if (inter.size() >= Config::numberOfTrajectoriesPerFlock()) {
                     // We have a pontential increment for a previous flock
