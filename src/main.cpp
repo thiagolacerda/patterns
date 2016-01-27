@@ -28,6 +28,7 @@ int main(int argc, char** argv)
         return -1;
     }
 
+    clock_t begin = clock();
     int option;
     while ((option = getopt(argc, argv, "n:l:g:t:d:s:c")) != -1) {
         switch (option) {
@@ -74,5 +75,7 @@ int main(int argc, char** argv)
     Config::setDecoderParameters(decoderParams);
     Manager manager;
     manager.start();
+    double elapsedTime = double(clock() - begin) / CLOCKS_PER_SEC;
+    std::cout << "Total time: " << elapsedTime << std::endl;
     return 0;
 }
