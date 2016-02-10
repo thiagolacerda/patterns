@@ -42,6 +42,7 @@ void Flock::dump() const
 {
     std::cout << "Flock's startTime: " << m_startTime << ", endTime: " << m_endTime << ", number of trajectories: "
         << m_trajectories.size() << std::endl;
+    dumpTrajectories();
 }
 
 void Flock::dumpTrajectories() const
