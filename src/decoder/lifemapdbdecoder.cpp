@@ -81,13 +81,13 @@ void LifeMapDBDecoder::doDecodeRow(void* row)
 uint64_t LifeMapDBDecoder::doRetrievePoints(int64_t batchSize)
 {
     uint64_t retrieved = 0;
-    while (m_currentDbFileIndex < m_dbFiles.size() && (batchSize == -1 || retrieved < batchSize)) {
+    while (m_currentDbFileIndex < m_dbFiles.size() && (batchSize == -1 || retrieved < uint64_t(batchSize))) {
         connectToDB();
         int periodPos = m_dbFiles[m_currentDbFileIndex].find_last_of(".");
         int dbPrefixLen = m_path.size() + m_dbFilesPrefix.size() + 1;
         m_currentId = atoi(m_dbFiles[m_currentDbFileIndex].substr(dbPrefixLen, periodPos - dbPrefixLen).c_str());
         retrieved += m_manager->retrievePoints(m_selectQuery, batchSize);
-        if (batchSize == -1 || retrieved < batchSize) {
+        if (batchSize == -1 || retrieved < uint64_t(batchSize)) {
             m_manager->disconnect();
             ++m_currentDbFileIndex;
         }

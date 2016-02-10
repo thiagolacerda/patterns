@@ -21,7 +21,7 @@ public:
     bool isConnected() override { return m_db && true; } // TODO: implement!!
     bool connect(const std::string& address, const std::string& user, const std::string& password) override;
     void disconnect() override;
-    uint64_t retrievePoints(const std::string& query, uint64_t batchSize) override;
+    uint64_t retrievePoints(const std::string& query, int64_t batchSize) override;
     double getColumnAsDouble(void* row, int colIndex) override;
     std::string getColumnAsString(void* row, int colIndex) override;
     uint32_t getColumnAsUInt32(void* row, int colIndex) override;
