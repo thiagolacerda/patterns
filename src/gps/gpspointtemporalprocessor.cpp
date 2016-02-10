@@ -16,7 +16,7 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     uint64_t timestamp;
     std::tie(tID, latitude, longitude, timestamp) = gpsTuple;
 
-    uint64_t index = Config::timeSlotSize() > 0 ? timestamp / Config::timeSlotSize() : timestamp;
+    uint64_t index = timestamp / Config::timeSlotSize();
     std::shared_ptr<GPSPoint> point(new GPSPoint(latitude, longitude, timestamp, tID));
     if (Config::automaticTimeSlot()) {
         auto iter = m_lastTimestampPerTrajectory.find(tID);
@@ -79,7 +79,7 @@ void GPSPointTemporalProcessor::postProcessPoints()
     m_timeDiffs.clear();
 
     for (const std::shared_ptr<GPSPoint>& point : m_points) {
-        uint64_t index = Config::timeSlotSize() > 0 ? point->timestamp() / Config::timeSlotSize() : point->timestamp();
+        uint64_t index = point->timestamp() / Config::timeSlotSize();
 
         insertPointInMap(point, index);
     }

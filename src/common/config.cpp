@@ -10,7 +10,7 @@ uint32_t Config::m_trajectoriesPerFlock = 0;
 double Config::m_gridSize = 0;
 double Config::m_radiusSquared = 0;
 double Config::m_radius = 0;
-uint32_t Config::m_timeSlotSize = 0;
+uint32_t Config::m_timeSlotSize = 1;
 Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
 bool Config::m_automaticTimeSlot = false;
@@ -24,7 +24,7 @@ void Config::reset()
     Config::m_gridSize = 0;
     Config::m_radiusSquared = 0;
     Config::m_radius = 0;
-    Config::m_timeSlotSize = 0;
+    Config::m_timeSlotSize = 1;
     Config::m_coordinateSystem = Config::Metric;
     Config::m_compatibilityMode = false;
     Config::m_automaticTimeSlot = false;
