@@ -5,12 +5,7 @@
 #include "trajectory.h"
 
 GPSPoint::GPSPoint()
-    : m_latitude(0)
-    , m_latitudeMeters(0)
-    , m_longitude(0)
-    , m_longitudeMeters(0)
-    , m_timestamp(0)
-    , m_trajectoryId(0)
+    : GPSPoint(0, 0, 0, 0)
 { }
 
 GPSPoint::GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32_t trajectoryId)
@@ -52,7 +47,7 @@ bool GPSPoint::operator==(const GPSPoint& other) const
 
 void GPSPoint::dump()
 {
-    std::cout << this << std::endl;
+    std::cout << *this << std::endl;
 }
 
 std::ostream& operator<<(std::ostream& stream, const GPSPoint& point)
