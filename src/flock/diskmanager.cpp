@@ -16,10 +16,13 @@ bool DiskManager::tryInsertDisk(Disk* disk)
         if (disk->numberOfTrajectories() == count)
             return false; // disk is a subset of disk already in disk manager, do not insert
 
-        if ((*iter)->numberOfTrajectories() != count)
+        if ((*iter)->numberOfTrajectories() != count) {
             ++iter; // Different disks... do nothing
-        else
+        } else {
+            Disk* toDelete = (*iter);
             iter = m_disks.erase(iter); // disk is a superset of *iter
+            delete toDelete;
+        }
     }
 
     m_disks.push_back(disk);
