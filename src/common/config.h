@@ -13,6 +13,7 @@ public:
     };
 
     enum DBDecoder {
+        BerlinMOD,
         LifeMap,
         SortedFile,
         TDrive,

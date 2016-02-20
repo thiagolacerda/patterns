@@ -1,5 +1,6 @@
 #include "factory.h"
 
+#include "berlinmoddecoder.h"
 #include "lifemapdbdecoder.h"
 #include "sortedfiledecoder.h"
 #include "tdrivedecoder.h"
@@ -8,6 +9,8 @@
 
 DatabaseDecoder* Factory::dbDecoderInstance(Config::DBDecoder decoder)
 {
+    if (decoder == Config::BerlinMOD)
+        return new BerlinMODDecoder(Config::decoderParameters());
     if (decoder == Config::LifeMap)
         return new LifeMapDBDecoder(Config::decoderParameters());
     if (decoder == Config::SortedFile)

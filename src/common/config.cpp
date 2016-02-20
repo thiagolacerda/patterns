@@ -46,6 +46,8 @@ void Config::setDecoder(char const* decoderName)
         Config::m_decoderInUse = Config::SortedFile;
     else if (decoder.compare("tdrive") == 0)
         Config::m_decoderInUse = Config::TDrive;
+    else if (decoder.compare("berlinmod") == 0)
+        Config::m_decoderInUse = Config::BerlinMOD;
 }
 
 void Config::setGridSize(double size)

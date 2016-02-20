@@ -20,6 +20,7 @@ set(DATABASE_SRCS
 
 set(DECODER_SRCS
     ${DECODER_DIR}/basegpsfiledecoder.cpp
+    ${DECODER_DIR}/berlinmoddecoder.cpp
     ${DECODER_DIR}/lifemapdbdecoder.cpp
     ${DECODER_DIR}/sortedfiledecoder.cpp
     ${DECODER_DIR}/tdrivedecoder.cpp
