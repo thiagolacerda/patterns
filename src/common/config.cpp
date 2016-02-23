@@ -48,6 +48,8 @@ void Config::setDecoder(char const* decoderName)
         Config::m_decoderInUse = Config::TDrive;
     else if (decoder.compare("berlinmod") == 0)
         Config::m_decoderInUse = Config::BerlinMOD;
+    else if (decoder.compare("brinkhoffmntg") == 0)
+        Config::m_decoderInUse = Config::BrinkhoffMNTG;
 }
 
 void Config::setGridSize(double size)

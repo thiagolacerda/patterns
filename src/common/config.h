@@ -14,6 +14,7 @@ public:
 
     enum DBDecoder {
         BerlinMOD,
+        BrinkhoffMNTG,
         LifeMap,
         SortedFile,
         TDrive,
