@@ -8,6 +8,7 @@ add_subdirectory(sorter)
 
 set(COMMON_SRCS
     ${COMMON_DIR}/config.cpp
+    ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/factory.cpp
     ${COMMON_DIR}/manager.cpp
     ${COMMON_DIR}/utils.cpp
