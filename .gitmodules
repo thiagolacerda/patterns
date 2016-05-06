@@ -1,6 +1,3 @@
-[submodule "QtMapKit"]
-	path = QtMapKit
-	url = https://github.com/thiagolacerda/QtMapKit.git
 [submodule "googletest"]
 	path = googletest
 	url = https://github.com/google/googletest.git
