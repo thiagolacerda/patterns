@@ -24,7 +24,7 @@ Disk::Disk(double centerX, double centerY, uint64_t timestamp)
         m_centerLongitude = m_centerX;
         m_centerLatitude = m_centerY;
     } else {
-        Utils::metersToLatLong(m_centerY, m_centerX, &m_centerLatitude, &m_centerLongitude);
+        Utils::metersToLatLong(m_centerY, m_centerX, m_centerLatitude, m_centerLongitude);
     }
 }
 

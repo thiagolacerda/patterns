@@ -53,14 +53,14 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     double y1 = point1->latitudeMeters();
     double x2 = point2->longitudeMeters();
     double y2 = point2->latitudeMeters();
-    Utils::midPoint(x1, y1, x2, y2, &midX, &midY);
-    Utils::toVector(x1, y1, x2, y2, &vectorX, &vectorY);
+    Utils::midPoint(x1, y1, x2, y2, midX, midY);
+    Utils::toVector(x1, y1, x2, y2, vectorX, vectorY);
     double pointsDistance = Utils::vectorLength(vectorX, vectorY);
     double powMultiplyParameter = Config::radiusSquared() - ((pointsDistance / 2.0) * (pointsDistance / 2.0));
     if (powMultiplyParameter < 0)
         return;
 
-    Utils::normalizedVector(vectorY, -vectorX, &perpNormVectorX, &perpNormVectorY);
+    Utils::normalizedVector(vectorY, -vectorX, perpNormVectorX, perpNormVectorY);
     double multiplyParameter = sqrt(powMultiplyParameter);
     double c1X = midX + multiplyParameter * perpNormVectorX;
     double c1Y = midY + multiplyParameter * perpNormVectorY;

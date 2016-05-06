@@ -26,16 +26,16 @@ double Utils::radiansToDegrees(double radians)
     return (radians * 180.0) / M_PI;
 }
 
-void Utils::midPoint(double x1, double y1, double x2, double y2, double* midX, double* midY)
+void Utils::midPoint(double x1, double y1, double x2, double y2, double& midX, double& midY)
 {
-    *midX = (x1 + x2) / 2.0;
-    *midY = (y1 + y2) / 2.0;
+    midX = (x1 + x2) / 2.0;
+    midY = (y1 + y2) / 2.0;
 }
 
-void Utils::toVector(double x1, double y1, double x2, double y2, double* vectorX, double* vectorY)
+void Utils::toVector(double x1, double y1, double x2, double y2, double& vectorX, double& vectorY)
 {
-    *vectorX = x2 - x1;
-    *vectorY = y2 - y1;
+    vectorX = x2 - x1;
+    vectorY = y2 - y1;
 }
 
 double Utils::vectorLength(double vectorX, double vectorY)
@@ -43,14 +43,14 @@ double Utils::vectorLength(double vectorX, double vectorY)
     return sqrt(pow(vectorX, 2.0) + pow(vectorY, 2.0));
 }
 
-void Utils::normalizedVector(double vectorX, double vectorY, double* normX, double* normY)
+void Utils::normalizedVector(double vectorX, double vectorY, double& normX, double& normY)
 {
     double length = Utils::vectorLength(vectorX, vectorY);
-    *normX = vectorX / length;
-    *normY = vectorY / length;
+    normX = vectorX / length;
+    normY = vectorY / length;
 }
 
-void Utils::latLongToMeters(double latitude, double longitude, double* latMeters, double* longMeters)
+void Utils::latLongToMeters(double latitude, double longitude, double& latMeters, double& longMeters)
 {
     /*
        This code is based in the routines found in http://www.whoi.edu/marine/ndsf/utility/NDSFutility.html
@@ -82,11 +82,11 @@ void Utils::latLongToMeters(double latitude, double longitude, double* latMeters
         x = r * (x / r);
         y = r * (y / r);
     }
-    *latMeters = y;
-    *longMeters = x;
+    latMeters = y;
+    longMeters = x;
 }
 
-void Utils::metersToLatLong(double latMeters, double longMeters, double *latitude, double *longitude)
+void Utils::metersToLatLong(double latMeters, double longMeters, double& latitude, double& longitude)
 {
     /*
        This code is based in the routines found in http://www.whoi.edu/marine/ndsf/utility/NDSFutility.html
@@ -119,8 +119,8 @@ void Utils::metersToLatLong(double latMeters, double longMeters, double *latitud
         x = r * (x / r);
         y = r * (y / r);
     }
-    *latitude = y / m_latDegMeterLen;
-    *longitude = x / m_longDegMeterLen;
+    latitude = y / m_latDegMeterLen;
+    longitude = x / m_longDegMeterLen;
 }
 
 double Utils::distance(double p1X, double p1Y, double p2X, double p2Y)

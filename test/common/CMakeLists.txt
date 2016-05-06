@@ -4,4 +4,4 @@ set(TEST_UTILS_DEPENDENCIES
     ${GPS_DIR}/gpspoint.cpp
 )
 
-create_test_target(test_utils test_utils.cpp "${TEST_UTILS_DEPENDENCIES}" "")
+create_test_target(test_utils utilstest.cpp "${TEST_UTILS_DEPENDENCIES}" "")

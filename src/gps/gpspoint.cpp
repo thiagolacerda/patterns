@@ -20,7 +20,7 @@ GPSPoint::GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32
         m_latitudeMeters = m_latitude;
         m_longitudeMeters = m_longitude;
     } else {
-        Utils::latLongToMeters(m_latitude, m_longitude, &m_latitudeMeters, &m_longitudeMeters);
+        Utils::latLongToMeters(m_latitude, m_longitude, m_latitudeMeters, m_longitudeMeters);
     }
 }
 

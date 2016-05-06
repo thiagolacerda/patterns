@@ -35,7 +35,7 @@ TEST(UtilsTest, latLongToMeters)
     double longMeters = 0;
 
     // when
-    Utils::latLongToMeters(LATITUDE_TEST, LONGITUDE_TEST, &latMeters, &longMeters);
+    Utils::latLongToMeters(LATITUDE_TEST, LONGITUDE_TEST, latMeters, longMeters);
 
     // then
     ASSERT_EQ(LATITUDE_METERS_TEST, roundToDecimalPlaces(latMeters, 1));
@@ -49,7 +49,7 @@ TEST(UtilsTest, latLongToMeters_negativeLatitude)
     double longMeters = 0;
 
     // when
-    Utils::latLongToMeters(-LATITUDE_TEST, LONGITUDE_TEST, &latMeters, &longMeters);
+    Utils::latLongToMeters(-LATITUDE_TEST, LONGITUDE_TEST, latMeters, longMeters);
 
     // then
     ASSERT_EQ(-LATITUDE_METERS_TEST, roundToDecimalPlaces(latMeters, 1));
@@ -63,7 +63,7 @@ TEST(UtilsTest, latLongToMeters_negativeLongitude)
     double longMeters = 0;
 
     // when
-    Utils::latLongToMeters(LATITUDE_TEST, -LONGITUDE_TEST, &latMeters, &longMeters);
+    Utils::latLongToMeters(LATITUDE_TEST, -LONGITUDE_TEST, latMeters, longMeters);
 
     // then
     ASSERT_EQ(LATITUDE_METERS_TEST, roundToDecimalPlaces(latMeters, 1));
@@ -77,7 +77,7 @@ TEST(UtilsTest, latLongToMeters_allNegative)
     double longMeters = 0;
 
     // when
-    Utils::latLongToMeters(-LATITUDE_TEST, -LONGITUDE_TEST, &latMeters, &longMeters);
+    Utils::latLongToMeters(-LATITUDE_TEST, -LONGITUDE_TEST, latMeters, longMeters);
 
     // then
     ASSERT_EQ(-LATITUDE_METERS_TEST, roundToDecimalPlaces(latMeters, 1));
@@ -91,7 +91,7 @@ TEST(UtilsTest, metersToLatLong)
     double longitude = 0;
 
     // when
-    Utils::metersToLatLong(LATITUDE_METERS_TEST, LONGITUDE_METERS_TEST, &latitude, &longitude);
+    Utils::metersToLatLong(LATITUDE_METERS_TEST, LONGITUDE_METERS_TEST, latitude, longitude);
 
     // then
     ASSERT_EQ(LATITUDE_TEST, roundToDecimalPlaces(latitude, 6));
@@ -105,7 +105,7 @@ TEST(UtilsTest, metersToLatLong_negativeLatitude)
     double longitude = 0;
 
     // when
-    Utils::metersToLatLong(-LATITUDE_METERS_TEST, LONGITUDE_METERS_TEST, &latitude, &longitude);
+    Utils::metersToLatLong(-LATITUDE_METERS_TEST, LONGITUDE_METERS_TEST, latitude, longitude);
 
     // then
     ASSERT_EQ(-LATITUDE_TEST, roundToDecimalPlaces(latitude, 6));
@@ -119,7 +119,7 @@ TEST(UtilsTest, metersToLatLong_negativeLongitude)
     double longitude = 0;
 
     // when
-    Utils::metersToLatLong(LATITUDE_METERS_TEST, -LONGITUDE_METERS_TEST, &latitude, &longitude);
+    Utils::metersToLatLong(LATITUDE_METERS_TEST, -LONGITUDE_METERS_TEST, latitude, longitude);
 
     // then
     ASSERT_EQ(LATITUDE_TEST, roundToDecimalPlaces(latitude, 6));
@@ -133,7 +133,7 @@ TEST(UtilsTest, metersToLatLong_allNegative)
     double longitude = 0;
 
     // when
-    Utils::metersToLatLong(-LATITUDE_METERS_TEST, -LONGITUDE_METERS_TEST, &latitude, &longitude);
+    Utils::metersToLatLong(-LATITUDE_METERS_TEST, -LONGITUDE_METERS_TEST, latitude, longitude);
 
     // then
     ASSERT_EQ(-LATITUDE_TEST, roundToDecimalPlaces(latitude, 6));
@@ -164,3 +164,4 @@ TEST(UtilsTest, interpolate)
     // then
     ASSERT_EQ(expected, *actual.get());
 }
+
