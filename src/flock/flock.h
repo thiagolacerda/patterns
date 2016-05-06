@@ -19,7 +19,8 @@ public:
         : Flock(0, 0)
     { }
 
-    void setTrajectories(const std::map<uint32_t, Trajectory>&);
+    void setTrajectoriesFromPoints(const std::map<uint32_t, std::shared_ptr<GPSPoint>>&);
+    void setTrajectories(const std::map<uint32_t, Trajectory>& trajectories);
     void mergeTrajectories(const std::map<uint32_t, Trajectory>&);
     const std::map<uint32_t, Trajectory>& trajectories() const { return m_trajectories; }
     uint64_t startTime() const { return m_startTime; }

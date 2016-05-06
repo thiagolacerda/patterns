@@ -85,8 +85,6 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
                     if (!disk1 || !disk2)
                         continue;
 
-                    createTrajectoryAndAddToDisks(*it1, disk1, disk2);
-                    createTrajectoryAndAddToDisks(*it2, disk1, disk2);
                     clusterPointsIntoDisks(disk1, disk2, pointsToProcess, (*it1).get(), (*it2).get());
                     validateAndTryStoreDisk(disk1);
                     validateAndTryStoreDisk(disk2);
@@ -127,7 +125,7 @@ void Manager::flushFlocksToResultFile()
  */
 void Manager::validateAndTryStoreDisk(Disk* disk)
 {
-    if (disk->numberOfTrajectories() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
+    if (disk->numberOfPoints() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
         // Invalid disk, free it
         delete disk;
 }
@@ -140,27 +138,17 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess, GPSPoint* diskGeneratorPoint1,
     GPSPoint* diskGeneratorPoint2)
 {
-    for (std::shared_ptr<GPSPoint> point : pointsToProcess) {
-        if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2)
-            // diskGeneratorPoint1 and diskGeneratorPoint2 already belong to the disk
-            continue;
+    for (const std::shared_ptr<GPSPoint>& point : pointsToProcess) {
+        if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2) {
+            disk1->addPoint(point);
+            disk2->addPoint(point);
+        } else {
+            if (disk1->isPointInDisk(point))
+                disk1->addPoint(point);
 
-        Trajectory trajectory(point->trajectoryId());
-        trajectory.addPoint(point);
-
-        if (disk1->isPointInDisk(point))
-            disk1->addTrajectory(trajectory);
-
-        if (disk2->isPointInDisk(point))
-            disk2->addTrajectory(trajectory);
+            if (disk2->isPointInDisk(point))
+                disk2->addPoint(point);
+        }
     }
 }
 
-void Manager::createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2)
-{
-    Trajectory trajectory(point->trajectoryId());
-    trajectory.addPoint(point);
-    disk1->addTrajectory(trajectory);
-    if (disk2)
-        disk2->addTrajectory(trajectory);
-}

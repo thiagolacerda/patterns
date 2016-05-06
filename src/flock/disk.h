@@ -24,11 +24,11 @@ public:
     bool isPointInDisk(const std::shared_ptr<GPSPoint>& point);
 
     uint64_t timestamp() const { return m_timestamp; }
-    void addTrajectory(const Trajectory&);
-    uint32_t numberOfTrajectories() const { return m_trajectories.size(); }
+    void addPoint(const std::shared_ptr<GPSPoint>&);
+    uint32_t numberOfPoints() const { return m_points.size(); }
     uint32_t countIntersection(Disk* other) const;
-    const std::map<uint32_t, Trajectory>& trajectories() const { return m_trajectories; }
-    void dumpTrajectories() const;
+    const std::map<uint32_t, std::shared_ptr<GPSPoint>>& points() const { return m_points; }
+    void dumpPoints() const;
     void dump() const;
 
 private:
@@ -38,7 +38,7 @@ private:
     double m_centerLatitude;
     double m_radius;
     uint64_t m_timestamp;
-    std::map<uint32_t, Trajectory> m_trajectories;
+    std::map<uint32_t, std::shared_ptr<GPSPoint>> m_points;
 };
 
 #endif  // DISK_H

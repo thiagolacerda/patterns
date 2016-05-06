@@ -17,6 +17,7 @@ public:
     void computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2);
     bool tryInsertDisk(Disk* disk);
     const std::vector<Disk*>& disks() const { return m_disks; }
+    uint32_t size() const { return m_disks.size(); }
     void clear();
     void dump() const;
 

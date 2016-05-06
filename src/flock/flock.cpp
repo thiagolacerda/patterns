@@ -10,9 +10,20 @@ unsigned long long Flock::nextId()
     return m_globalIds++;
 }
 
+void Flock::setTrajectoriesFromPoints(const std::map<uint32_t, std::shared_ptr<GPSPoint>>& points)
+{
+    m_trajectories.clear();
+    for (const auto& pointPair : points) {
+        m_trajectories.emplace(std::make_pair(pointPair.first,
+            std::move(Trajectory(pointPair.first, pointPair.second))));
+    }
+}
+
 void Flock::setTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
 {
-    m_trajectories = trajectories;
+    m_trajectories.clear();
+    for (const auto& trajPair : trajectories)
+        m_trajectories.emplace(std::make_pair(trajPair.first, trajPair.second));
 }
 
 /*

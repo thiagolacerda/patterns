@@ -37,7 +37,6 @@ private:
         GPSPoint* diskGeneratorPoint1, GPSPoint* diskGeneratorPoint2);
     void clusterGridPoints(Disk* disk1, Disk* disk2, Grid* grid, GPSPoint* diskGeneratorPoint1,
         GPSPoint* diskGeneratorPoint2);
-    void createTrajectoryAndAddToDisks(const std::shared_ptr<GPSPoint>& point, Disk* disk1, Disk* disk2 = nullptr);
     DatabaseDecoder* m_dbDecoder;
     DiskManager m_diskManager;
     GridManager m_gridManager;

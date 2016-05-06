@@ -13,10 +13,10 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
         uint32_t count = (*iter)->countIntersection(disk);
-        if (disk->numberOfTrajectories() == count)
+        if (disk->numberOfPoints() == count)
             return false; // disk is a subset of disk already in disk manager, do not insert
 
-        if ((*iter)->numberOfTrajectories() != count) {
+        if ((*iter)->numberOfPoints() != count) {
             ++iter; // Different disks... do nothing
         } else {
             Disk* toDelete = (*iter);
@@ -117,6 +117,6 @@ void DiskManager::dump() const
 {
     for (Disk* disk : m_disks) {
         disk->dump();
-        disk->dumpTrajectories();
+        disk->dumpPoints();
     }
 }

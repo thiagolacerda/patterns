@@ -34,17 +34,17 @@ bool Disk::isPointInDisk(const std::shared_ptr<GPSPoint>& point)
     return Utils::fuzzyLessEqual(distance, m_radius);
 }
 
-void Disk::addTrajectory(const Trajectory& trajectory)
+void Disk::addPoint(const std::shared_ptr<GPSPoint>& point)
 {
-    m_trajectories[trajectory.id()] = trajectory;
+    m_points[point->trajectoryId()] = point;
 }
 
 uint32_t Disk::countIntersection(Disk* other) const
 {
-    auto begin1 = m_trajectories.begin();
-    auto begin2 = other->m_trajectories.begin();
-    auto end1 = m_trajectories.end();
-    auto end2 = other->m_trajectories.end();
+    auto begin1 = m_points.begin();
+    auto begin2 = other->m_points.begin();
+    auto end1 = m_points.end();
+    auto end2 = other->m_points.end();
     --end1;
     --end2;
     if ((begin1->first < begin2->first && end1->first < begin2->first) ||
@@ -52,7 +52,7 @@ uint32_t Disk::countIntersection(Disk* other) const
         return 0;
 
     uint32_t count = 0;
-    while (begin1 != m_trajectories.end() && begin2 != other->m_trajectories.end()) {
+    while (begin1 != m_points.end() && begin2 != other->m_points.end()) {
         if (begin1->first < begin2->first) {
             ++begin1;
         } else if (begin2->first < begin1->first) {
@@ -67,21 +67,21 @@ uint32_t Disk::countIntersection(Disk* other) const
     return count;
 }
 
-void Disk::dumpTrajectories() const
+void Disk::dumpPoints() const
 {
-    if (m_trajectories.empty())
+    if (m_points.empty())
         return;
 
-    auto iter = m_trajectories.begin();
-    std::cout << iter->second.id();
+    auto iter = m_points.begin();
+    std::cout << iter->second->trajectoryId();
     ++iter;
-    for (; iter != m_trajectories.end(); ++iter)
-        std::cout << ", " << iter->second.id();
+    for (; iter != m_points.end(); ++iter)
+        std::cout << ", " << iter->second->trajectoryId();
     std::cout << std::endl;
 }
 
 void Disk::dump() const
 {
     std::cout << "Disk, x: " << m_centerX << ", y: " << m_centerY << " trajectories: "
-        << m_trajectories.size() << std::endl;
+        << m_points.size() << std::endl;
 }
