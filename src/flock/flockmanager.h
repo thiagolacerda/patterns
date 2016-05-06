@@ -20,6 +20,7 @@ public:
     void tryMergeFlocks(const std::vector<Disk*>&);
     std::vector<Flock> reportFlocks();
     void dump() const;
+    uint32_t size() const { return m_flocks.size(); }
 private:
     void mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock);
     void checkDuplicateAnswer();

@@ -16,6 +16,7 @@ bool Config::m_compatibilityMode = false;
 bool Config::m_interpolate = false;
 double Config::m_outlierSpeedCutOff = -1;
 bool Config::m_flushFlocksToFile = false;
+bool Config::m_reportPerformance = false;
 
 void Config::reset()
 {
@@ -32,7 +33,9 @@ void Config::reset()
     Config::m_interpolate = false;
     Config::m_outlierSpeedCutOff = -1;
     Config::m_flushFlocksToFile = false;
+    Config::m_reportPerformance = false;
 }
+
 void Config::setDecoder(char const* decoderName)
 {
     std::string decoder(decoderName);

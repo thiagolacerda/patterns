@@ -48,6 +48,8 @@ public:
     static double outlierSpeedCutOff() { return m_outlierSpeedCutOff; }
     static void setFlushFlocksToFile(bool flushToFile) { m_flushFlocksToFile = flushToFile; }
     static bool flushFlocksToFile() { return m_flushFlocksToFile; }
+    static void setReportPerformance(bool report) { m_reportPerformance = report; }
+    static bool reportPerformance() { return m_reportPerformance; }
 
 private:
     static DBDecoder m_decoderInUse;
@@ -63,6 +65,7 @@ private:
     static bool m_interpolate;
     static double m_outlierSpeedCutOff;
     static bool m_flushFlocksToFile;
+    static bool m_reportPerformance;
 };
 
 #endif  // CONFIG_H

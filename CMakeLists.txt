@@ -29,6 +29,7 @@ set(DATABASE_DIR ${PROJECT_SRC_DIR}/database)
 set(DECODER_DIR ${PROJECT_SRC_DIR}/decoder)
 set(FLOCK_DIR ${PROJECT_SRC_DIR}/flock)
 set(GPS_DIR ${PROJECT_SRC_DIR}/gps)
+set(PERFORMANCE_DIR ${PROJECT_SRC_DIR}/performance)
 
 include_directories(
     ${COMMON_DIR}
@@ -36,6 +37,7 @@ include_directories(
     ${DECODER_DIR}
     ${FLOCK_DIR}
     ${GPS_DIR}
+    ${PERFORMANCE_DIR}
 )
 
 add_subdirectory(src)

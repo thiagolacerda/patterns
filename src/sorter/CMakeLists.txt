@@ -13,6 +13,8 @@ set(SORTER_SOURCES
     ${DECODER_DIR}/truckspaperdbdecoder.cpp
     ${GPS_DIR}/gpspoint.cpp
     ${COMMON_DIR}/utils.cpp
+    ${PERFORMANCE_DIR}/memoryreporter.cpp
+    ${PERFORMANCE_DIR}/performancelogger.cpp
     sorter.cpp
     main.cpp
 )

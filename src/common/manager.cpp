@@ -8,6 +8,8 @@
 #include "factory.h"
 #include "gpspoint.h"
 #include "grid.h"
+#include "memoryreporter.h"
+#include "performancelogger.h"
 #include "trajectory.h"
 #include "utils.h"
 
@@ -22,6 +24,9 @@ void Manager::start()
     m_dbDecoder = Factory::dbDecoderInstance(Config::decoder());
     if (!m_dbDecoder)
         return;
+
+    if (Config::reportPerformance())
+        PerformanceLogger::initLogger("Timestamp;Memory;Disks;Flocks");
 
     m_dbDecoder->setListenerFunction(std::bind(&GPSPointTemporalProcessor::processGPSTuple, &m_pointProcessor, std::placeholders::_1));
     m_dbDecoder->retrievePoints();
@@ -95,6 +100,11 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     m_flockManager.tryMergeFlocks(m_diskManager.disks());
     std::vector<Flock> flocks = m_flockManager.reportFlocks();
     m_flocks.insert(m_flocks.end(), flocks.begin(), flocks.end());
+    if (Config::reportPerformance()) {
+        PerformanceLogger::log(std::to_string(timestamp) + ";" +
+            std::to_string(MemoryReporter::getMemoryConsumption()) + ";" + std::to_string(m_diskManager.size()) + ";" +
+            std::to_string(m_flockManager.size()));
+    }
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
     m_diskManager.clear();

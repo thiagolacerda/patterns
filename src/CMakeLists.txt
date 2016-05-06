@@ -44,12 +44,18 @@ set(GPS_SRCS
     ${GPS_DIR}/trajectory.cpp
 )
 
+set(PERFORMANCE_SRCS
+    ${PERFORMANCE_DIR}/memoryreporter.cpp
+    ${PERFORMANCE_DIR}/performancelogger.cpp
+)
+
 set(PATTERNS_SOURCES
     ${COMMON_SRCS}
     ${DATABASE_SRCS}
     ${DECODER_SRCS}
     ${FLOCK_SRCS}
     ${GPS_SRCS}
+    ${PERFORMANCE_SRCS}
     main.cpp
 )
 

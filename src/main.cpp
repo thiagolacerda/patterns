@@ -27,13 +27,14 @@ int main(int argc, char** argv)
         std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_time_slot_units> " <<
             "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
             "[-c] (to set compatibility mode) [-i] (interpolate points) [-o <outlier_speed_cutoff>] " <<
-            "[-r (tell to flush found flocks to file)] [list_of_decoder_parameters]" << std::endl;
+            "[-r (tell to flush found flocks to file)] [-m (report performance)] " <<
+            "[list_of_decoder_params]" << std::endl;
         return -1;
     }
 
     clock_t begin = clock();
     int option;
-    while ((option = getopt(argc, argv, "n:l:g:t:d:s:cio:r")) != -1) {
+    while ((option = getopt(argc, argv, "n:l:g:t:d:s:cmio:r")) != -1) {
         switch (option) {
         case 'n':
             Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
@@ -64,6 +65,9 @@ int main(int argc, char** argv)
             break;
         case 'r':
             Config::setFlushFlocksToFile(true);
+            break;
+        case 'm':
+            Config::setReportPerformance(true);
             break;
         default:
             if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't' || optopt == 'd' ||

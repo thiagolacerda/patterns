@@ -28,6 +28,8 @@ set(TEST_SYSTEM_DEPENDENCIES
     ${GPS_DIR}/gpspoint.cpp
     ${GPS_DIR}/gpspointtemporalprocessor.cpp
     ${GPS_DIR}/trajectory.cpp
+    ${PERFORMANCE_DIR}/memoryreporter.cpp
+    ${PERFORMANCE_DIR}/performancelogger.cpp
 )
 
 if(TEST_THOROUGH)
