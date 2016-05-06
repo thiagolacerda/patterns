@@ -24,10 +24,27 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
         return;
 
     uint64_t index = timestamp / Config::timeSlotSize();
+    if (Config::onlineProcessing()) {
+        if (index > m_lastTimeSlotSeen) {
+            const auto& firstMapPair = m_pointsPerTimeSlot.begin();
+            m_listener(firstMapPair->second, firstMapPair->first);
+            m_pointsPerTimeSlot.clear();
+            m_lastTimeSlotSeen = index;
+        }
+    }
     insertPointInMap(point, index, Config::interpolate());
     m_lastTimestampPerTrajectory[tID] = timestamp;
 }
 
+void GPSPointTemporalProcessor::complete()
+{
+    for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ) {
+        m_listener(iter->second, iter->first);
+        iter = m_pointsPerTimeSlot.erase(iter);
+    }
+    m_pointsPerTimeSlot.clear();
+    m_lastTimestampPerTrajectory.clear();
+}
 
 bool GPSPointTemporalProcessor::isOutlier(const std::shared_ptr<GPSPoint>& point)
 {

@@ -1,7 +1,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <map>
 #include <memory>
 #include <vector>
 #include "config.h"

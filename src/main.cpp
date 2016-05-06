@@ -18,6 +18,7 @@ void dumpParameters()
     std::cout << "* Interpolate: " << (Config::interpolate() ? "true" : "false") << std::endl;
     std::cout << "* Outlier speed cutoff: " << (Config::outlierSpeedCutOff() == -1 ? "No" :
         std::to_string(Config::outlierSpeedCutOff())) << std::endl;
+    std::cout << "* Online processing: " << (Config::onlineProcessing() ? "true" : "false") << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -26,15 +27,15 @@ int main(int argc, char** argv)
         std::cerr << "Error: you must run as follows:" << std::endl;
         std::cerr << "./patterns -n <number_of_trajectories_per_flock> -l <flock_length_in_time_slot_units> " <<
             "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
-            "[-c] (to set compatibility mode) [-i] (interpolate points) [-o <outlier_speed_cutoff>] " <<
-            "[-r (tell to flush found flocks to file)] [-m (report performance)] " <<
+            "[-c] (to set compatibility mode) [-i] (interpolate points) [-f <outlier_speed_cutoff>] " <<
+            "[-r (tell to flush found flocks to file)] [-o (online processing)] [-m (report performance)] " <<
             "[list_of_decoder_params]" << std::endl;
         return -1;
     }
 
     clock_t begin = clock();
     int option;
-    while ((option = getopt(argc, argv, "n:l:g:t:d:s:cmio:r")) != -1) {
+    while ((option = getopt(argc, argv, ":ciormn:l:g:t:d:s:f:")) != -1) {
         switch (option) {
         case 'n':
             Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
@@ -60,21 +61,30 @@ int main(int argc, char** argv)
         case 'i':
             Config::setInterpolate(true);
             break;
-        case 'o':
+        case 'f':
             Config::setOutlierSpeedCutOff(atof(optarg));
             break;
         case 'r':
             Config::setFlushFlocksToFile(true);
             break;
+        case 'o':
+            Config::setOnlineProcessing(true);
+            break;
         case 'm':
             Config::setReportPerformance(true);
             break;
-        default:
-            if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't' || optopt == 'd' ||
-                optopt == 's' || optopt == 'c' || optopt == 'i' || optopt == 'o' || optopt == 'r')
-                return -2;
-
+        case '?':
             std::cout << "Unknown parameter: " << optopt << std::endl;
+            break;
+        default:
+            if (optopt == 'n' || optopt == 'l' || optopt == 'g' || optopt == 't' ||
+                optopt == 'd' || optopt == 's' || optopt == 'f') {
+                std::cout << "parameter " << char(optopt) << " requires an argument" << std::endl;
+                return -2;
+            }
+
+            std::cout << "should not be here, getopt returned " << char(optopt) << std::endl;
+            return -3;
         }
     }
 

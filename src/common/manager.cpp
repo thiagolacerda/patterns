@@ -25,19 +25,26 @@ void Manager::start()
     if (!m_dbDecoder)
         return;
 
+    if (Config::onlineProcessing())
+        m_pointProcessor.registerCallback(std::bind(&Manager::computeFlocks, this, std::placeholders::_1, std::placeholders::_2));
+
     if (Config::reportPerformance())
         PerformanceLogger::initLogger("Timestamp;Memory;Disks;Flocks");
 
     m_dbDecoder->setListenerFunction(std::bind(&GPSPointTemporalProcessor::processGPSTuple, &m_pointProcessor, std::placeholders::_1));
     m_dbDecoder->retrievePoints();
     m_dbDecoder->done();
-    auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
-    m_pointProcessor.releasePoints();
-    for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
-        // For each time instance, we get all points belonging to that and try to find flocks
-        computeFlocks(iter->second, iter->first);
-        // They can be discarded after that, all points were already computed
-        iter = pointsPerTimeSlot.erase(iter);
+    if (!Config::onlineProcessing()) {
+        auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
+        m_pointProcessor.releasePoints();
+        for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
+            // For each time instance, we get all points belonging to that and try to find flocks
+            computeFlocks(iter->second, iter->first);
+            // They can be discarded after that, all points were already computed
+            iter = pointsPerTimeSlot.erase(iter);
+        }
+    } else {
+        m_pointProcessor.complete();
     }
     std::cout << "Flocks found: " << m_flocks.size() << std::endl;
     if (Config::flushFlocksToFile())
