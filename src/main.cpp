@@ -13,8 +13,7 @@ void dumpParameters()
     std::cout << "* Number of trajectories per flock: " << Config::numberOfTrajectoriesPerFlock() << std::endl;
     std::cout << "* Length of flocks (time slot units): " << Config::flockLength() << std::endl;
     std::cout << "* Grid size (meters): " << Config::gridSize() << std::endl;
-    if (!Config::automaticTimeSlot())
-        std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
+    std::cout << "* Time slot size (seconds): " << Config::timeSlotSize() << std::endl;
     std::cout << "* Used Coordinate System: " << Config::coordinateSystemName(Config::coordinateSystem()) << std::endl;
     std::cout << "* Interpolate: " << (Config::interpolate() ? "true" : "false") << std::endl;
     std::cout << "* Outlier speed cutoff: " << (Config::outlierSpeedCutOff() == -1 ? "No" :
@@ -46,12 +45,7 @@ int main(int argc, char** argv)
             Config::setGridSize(atof(optarg));
             break;
         case 't':
-            if (strcmp(optarg, "a") == 0) {
-                Config::setAutomaticTimeSlot(true);
-                Config::setTimeSlotSize(0);
-            } else {
-                Config::setTimeSlotSize(atof(optarg));
-            }
+            Config::setTimeSlotSize(atof(optarg));
             break;
         case 'd':
             Config::setDecoder(optarg);

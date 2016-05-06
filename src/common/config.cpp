@@ -13,7 +13,6 @@ double Config::m_radius = 0;
 uint32_t Config::m_timeSlotSize = 1;
 Config::CoordinateSystem Config::m_coordinateSystem = Config::Metric;
 bool Config::m_compatibilityMode = false;
-bool Config::m_automaticTimeSlot = false;
 bool Config::m_interpolate = false;
 double Config::m_outlierSpeedCutOff = -1;
 bool Config::m_flushFlocksToFile = false;
@@ -30,7 +29,6 @@ void Config::reset()
     Config::m_timeSlotSize = 1;
     Config::m_coordinateSystem = Config::Metric;
     Config::m_compatibilityMode = false;
-    Config::m_automaticTimeSlot = false;
     Config::m_interpolate = false;
     Config::m_outlierSpeedCutOff = -1;
     Config::m_flushFlocksToFile = false;

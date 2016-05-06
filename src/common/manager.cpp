@@ -26,7 +26,6 @@ void Manager::start()
     m_dbDecoder->setListenerFunction(std::bind(&GPSPointTemporalProcessor::processGPSTuple, &m_pointProcessor, std::placeholders::_1));
     m_dbDecoder->retrievePoints();
     m_dbDecoder->done();
-    m_pointProcessor.postProcessPoints();
     auto pointsPerTimeSlot = m_pointProcessor.pointsPerTimeSlot();
     m_pointProcessor.releasePoints();
     for (auto iter = pointsPerTimeSlot.begin(); iter != pointsPerTimeSlot.end();) {
@@ -107,8 +106,7 @@ void Manager::flushFlocksToResultFile()
 {
     std::string fileName = m_dbDecoder->decoderName() + "_n" + std::to_string(Config::numberOfTrajectoriesPerFlock()) +
         "_l" + std::to_string(Config::flockLength()) + "_g" + Utils::toString<double>(Config::gridSize(), 2) + "_t" +
-        (Config::automaticTimeSlot() ? "a" : "") + Utils::toString<double>(Config::timeSlotSize(), 2) +
-        (Config::interpolate() ? "_i" : "") +
+        Utils::toString<double>(Config::timeSlotSize(), 2) + (Config::interpolate() ? "_i" : "") +
         (Config::outlierSpeedCutOff() != -1 ? ("_o" + Utils::toString(Config::outlierSpeedCutOff(), 2)) : "") + ".txt";
 
     std::ofstream out(fileName, std::ofstream::out);

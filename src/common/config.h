@@ -42,8 +42,6 @@ public:
     static std::string coordinateSystemName(CoordinateSystem);
     static void setCompatibilityMode(bool compatibility) { m_compatibilityMode = compatibility; }
     static bool isInCompatibilityMode() { return m_compatibilityMode; }
-    static void setAutomaticTimeSlot(bool automatic) { m_automaticTimeSlot = automatic; }
-    static bool automaticTimeSlot() { return m_automaticTimeSlot; }
     static void setInterpolate(bool interpolate) { m_interpolate = interpolate; }
     static bool interpolate() { return m_interpolate; }
     static void setOutlierSpeedCutOff(double outlierCutOff) { m_outlierSpeedCutOff = outlierCutOff; }
@@ -62,7 +60,6 @@ private:
     static uint32_t m_timeSlotSize;
     static CoordinateSystem m_coordinateSystem;
     static bool m_compatibilityMode;
-    static bool m_automaticTimeSlot;
     static bool m_interpolate;
     static double m_outlierSpeedCutOff;
     static bool m_flushFlocksToFile;
