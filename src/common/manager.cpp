@@ -64,9 +64,9 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     Disk* disk1;
     Disk* disk2;
     const std::unordered_map<std::string, Grid*>& grids = m_gridManager.grids();
-    double gridSize = Config::gridSize();
+    const double& gridSize = Config::gridSize();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
-        std::string key = iter->first;
+        const std::string& key = iter->first;
         std::vector<std::shared_ptr<GPSPoint>> pointsToProcess;
         m_gridManager.extendedGridPoints(key, &pointsToProcess);
         if (pointsToProcess.size() < Config::numberOfTrajectoriesPerFlock())
