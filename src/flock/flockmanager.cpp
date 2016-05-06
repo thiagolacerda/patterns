@@ -2,6 +2,7 @@
 
 #include "config.h"
 #include "disk.h"
+#include "manager.h"
 
 /*
  * Computes the intersection between two set of trajectories.
@@ -108,13 +109,30 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
         newFlock.setTrajectoriesFromPoints((*diskIter)->points());
         newFlock.setStartTime((*diskIter)->timestamp());
         newFlock.setEndTime((*diskIter)->timestamp());
-        if (!hasFlocks)
+        if (!hasFlocks) {
             m_flocks.push_back(newFlock);
-        else
+            updateBuffers(newFlock);
+        } else {
             mergeFlocks(&flocksFromDisks, newFlock);
+        }
     }
     if (hasFlocks)
         m_flocks = flocksFromDisks;
+}
+
+void FlockManager::updateBuffers(const Flock& flock)
+{
+    if (!Config::buffering())
+        return;
+
+    const auto& trajectories = flock.trajectories();
+    for (const auto& trajPair : trajectories) {
+        if (m_updated.find(trajPair.first) != m_updated.end())
+           continue;
+
+        m_manager->addSequenceEntry(trajPair.first);
+        m_updated.insert(trajPair.first);
+    }
 }
 
 /*
@@ -149,6 +167,7 @@ void FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock
         }
     }
     flocks->push_back(newFlock);
+    updateBuffers(newFlock);
 }
 
 /*
@@ -181,6 +200,7 @@ std::vector<Flock> FlockManager::reportFlocks()
         // the same start time and end time, so we need to clear that duplicated results
         checkDuplicateAnswer();
 
+    m_updated.clear();
     return results;
 }
 

@@ -17,6 +17,7 @@ bool Config::m_interpolate = false;
 double Config::m_outlierSpeedCutOff = -1;
 bool Config::m_flushFlocksToFile = false;
 bool Config::m_onlineProcessing = false;
+bool Config::m_buffering = false;
 bool Config::m_reportPerformance = false;
 
 void Config::reset()
@@ -35,7 +36,14 @@ void Config::reset()
     Config::m_outlierSpeedCutOff = -1;
     Config::m_flushFlocksToFile = false;
     Config::m_onlineProcessing = false;
+    Config::m_buffering = false;
     Config::m_reportPerformance = false;
+}
+
+void Config::setBuffering(bool buf)
+{
+    m_buffering = buf;
+    m_onlineProcessing = buf ? buf : m_onlineProcessing;
 }
 
 void Config::setDecoder(char const* decoderName)

@@ -19,6 +19,7 @@ void dumpParameters()
     std::cout << "* Outlier speed cutoff: " << (Config::outlierSpeedCutOff() == -1 ? "No" :
         std::to_string(Config::outlierSpeedCutOff())) << std::endl;
     std::cout << "* Online processing: " << (Config::onlineProcessing() ? "true" : "false") << std::endl;
+    std::cout << "* Buffering: " << (Config::buffering() ? "true" : "false") << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -29,13 +30,13 @@ int main(int argc, char** argv)
             "-g <grid_size_in_meters> -t <time_slot_size_in_seconds> -d <decoder_name> -s <coordinate_system_code> " <<
             "[-c] (to set compatibility mode) [-i] (interpolate points) [-f <outlier_speed_cutoff>] " <<
             "[-r (tell to flush found flocks to file)] [-o (online processing)] [-m (report performance)] " <<
-            "[list_of_decoder_params]" << std::endl;
+            "[-b (buffering processing (toggles online processing too))] [list_of_decoder_params]" << std::endl;
         return -1;
     }
 
     clock_t begin = clock();
     int option;
-    while ((option = getopt(argc, argv, ":ciormn:l:g:t:d:s:f:")) != -1) {
+    while ((option = getopt(argc, argv, ":bciormn:l:g:t:d:s:f:")) != -1) {
         switch (option) {
         case 'n':
             Config::setNumberOfTrajectoriesPerFlock(atoi(optarg));
@@ -69,6 +70,9 @@ int main(int argc, char** argv)
             break;
         case 'o':
             Config::setOnlineProcessing(true);
+            break;
+        case 'b':
+            Config::setBuffering(true);
             break;
         case 'm':
             Config::setReportPerformance(true);

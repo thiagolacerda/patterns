@@ -26,9 +26,22 @@ void GPSPointTemporalProcessor::processGPSTuple(const std::tuple<uint32_t, doubl
     uint64_t index = timestamp / Config::timeSlotSize();
     if (Config::onlineProcessing()) {
         if (index > m_lastTimeSlotSeen) {
-            const auto& firstMapPair = m_pointsPerTimeSlot.begin();
-            m_listener(firstMapPair->second, firstMapPair->first);
-            m_pointsPerTimeSlot.clear();
+            if (!Config::buffering()) {
+                const auto& firstMapPair = m_pointsPerTimeSlot.begin();
+                m_listener(firstMapPair->second, firstMapPair->first);
+                m_pointsPerTimeSlot.clear();
+            } else {
+                if (index - m_lastTimeSlotSeen > 1) {
+                    complete();
+                } else {
+                    if (m_pointsPerTimeSlot.size() >= Config::flockLength()) {
+                        const auto& firstMapPair = m_pointsPerTimeSlot.begin();
+                        m_listener(firstMapPair->second, firstMapPair->first);
+                        m_pointsPerTimeSlot.erase(firstMapPair->first);
+                        shiftSequences();
+                    }
+                }
+            }
             m_lastTimeSlotSeen = index;
         }
     }
@@ -41,9 +54,28 @@ void GPSPointTemporalProcessor::complete()
     for (auto iter = m_pointsPerTimeSlot.begin(); iter != m_pointsPerTimeSlot.end(); ) {
         m_listener(iter->second, iter->first);
         iter = m_pointsPerTimeSlot.erase(iter);
+        shiftSequences();
     }
+    m_sequences.clear();
     m_pointsPerTimeSlot.clear();
     m_lastTimestampPerTrajectory.clear();
+}
+
+void GPSPointTemporalProcessor::addSequence(uint32_t tID, uint64_t n)
+{
+    m_sequences[tID] |= (1 << n);
+}
+
+void GPSPointTemporalProcessor::shiftSequences()
+{
+    for (auto iter = m_sequences.begin(); iter != m_sequences.end();) {
+        if (iter->second) {
+            iter->second >>= 1;
+            ++iter;
+        } else {
+            iter = m_sequences.erase(iter);
+        }
+    }
 }
 
 bool GPSPointTemporalProcessor::isOutlier(const std::shared_ptr<GPSPoint>& point)
@@ -74,6 +106,8 @@ void GPSPointTemporalProcessor::insertPointInMap(const std::shared_ptr<GPSPoint>
 {
     uint32_t trajectoryId = point->trajectoryId();
     m_pointsPerTimeSlot[timeSlot][trajectoryId].push_back(point);
+    if (Config::onlineProcessing() && Config::buffering())
+        addSequence(trajectoryId, m_pointsPerTimeSlot.size() - 1);
 
     if (!tryInterpolate || timeSlot < 2)
         return;
@@ -93,6 +127,8 @@ void GPSPointTemporalProcessor::insertPointInMap(const std::shared_ptr<GPSPoint>
 
     ++timeSlot;
     m_pointsPerTimeSlot[timeSlot][trajectoryId].push_back(interpolated);
+    if (Config::onlineProcessing() && Config::buffering())
+        addSequence(trajectoryId, m_pointsPerTimeSlot.size() - 2);
 }
 
 void GPSPointTemporalProcessor::dumpPointsMap()

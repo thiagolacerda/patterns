@@ -50,6 +50,8 @@ public:
     static bool flushFlocksToFile() { return m_flushFlocksToFile; }
     static void setOnlineProcessing(bool online) { m_onlineProcessing = online; }
     static bool onlineProcessing() { return m_onlineProcessing; }
+    static void setBuffering(bool buf);
+    static bool buffering() { return m_buffering; }
     static void setReportPerformance(bool report) { m_reportPerformance = report; }
     static bool reportPerformance() { return m_reportPerformance; }
 
@@ -68,6 +70,7 @@ private:
     static double m_outlierSpeedCutOff;
     static bool m_flushFlocksToFile;
     static bool m_onlineProcessing;
+    static bool m_buffering;
     static bool m_reportPerformance;
 };
 

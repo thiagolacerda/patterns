@@ -25,6 +25,7 @@ void Manager::start()
     if (!m_dbDecoder)
         return;
 
+    m_flockManager.setManager(this);
     if (Config::onlineProcessing())
         m_pointProcessor.registerCallback(std::bind(&Manager::computeFlocks, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -59,6 +60,36 @@ void Manager::dumpFoundFlocks() const
     }
 }
 
+bool Manager::shouldInsert(uint32_t trajectoryId)
+{
+    if (!Config::onlineProcessing() || !Config::buffering())
+        return true;
+
+    const auto& iter = m_shouldInsertCache.find(trajectoryId);
+    if (iter != m_shouldInsertCache.end())
+        return iter->second;
+
+    uint64_t mask = m_mask;
+    uint64_t pointProcessorBuffer = m_pointProcessor.buffered();
+    uint64_t size = pointProcessorBuffer + m_buffered;
+    if (size < Config::flockLength())
+        mask = m_mask >> (Config::flockLength() - size);
+
+    uint64_t bufferCheck = (m_pointProcessor.getMask(trajectoryId) << m_buffered) | (m_bufferMask & m_sequences[trajectoryId]);
+    uint64_t checks = std::max(uint64_t(1), size - Config::flockLength() + 1);
+    while (checks > 0) {
+        if (((bufferCheck & mask) ^ mask) == 0) {
+            m_shouldInsertCache.emplace(std::make_pair(trajectoryId, true));
+            return true;
+        }
+
+        mask = mask << 1;
+        --checks;
+    }
+    m_shouldInsertCache.emplace(std::make_pair(trajectoryId, false));
+    return false;
+}
+
 void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::shared_ptr<GPSPoint>>>& points, uint64_t timestamp)
 {
     // If the number of points to be processed for this time instance is less than the minimum number of trajectories
@@ -66,6 +97,19 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     if (points.size() < Config::numberOfTrajectoriesPerFlock())
         return;
 
+    if (Config::onlineProcessing() && Config::buffering()) {
+        if (m_bufferStart == UINT64_MAX || (timestamp - (m_bufferStart + m_buffered - 1)) > 1) {
+            m_bufferStart = timestamp;
+            m_buffered = 0;
+            m_sequences.clear();
+            m_flockManager.clear();
+        } else if (m_buffered >= Config::flockLength()) {
+            shiftBuffer();
+            ++m_bufferStart;
+            --m_buffered;
+        }
+    }
+    m_bufferMask = (1 << m_buffered) - 1;
     // Build the grid for this time slot
     for (const auto& pointMapVectorEntry : points) {
         const auto& pointEntries = pointMapVectorEntry.second;
@@ -107,6 +151,7 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     m_flockManager.tryMergeFlocks(m_diskManager.disks());
     std::vector<Flock> flocks = m_flockManager.reportFlocks();
     m_flocks.insert(m_flocks.end(), flocks.begin(), flocks.end());
+    m_shouldInsertCache.clear();
     if (Config::reportPerformance()) {
         PerformanceLogger::log(std::to_string(timestamp) + ";" +
             std::to_string(MemoryReporter::getMemoryConsumption()) + ";" + std::to_string(m_diskManager.size()) + ";" +
@@ -115,6 +160,24 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
     m_diskManager.clear();
+    ++m_buffered;
+}
+
+void Manager::shiftBuffer()
+{
+    for (auto iter = m_sequences.begin(); iter != m_sequences.end();) {
+        if (iter->second) {
+            iter->second >>= 1;
+            ++iter;
+        } else {
+            iter = m_sequences.erase(iter);
+        }
+    }
+}
+
+void Manager::addSequenceEntry(uint32_t trajectoryId)
+{
+    m_sequences[trajectoryId] |= (1 << m_buffered);
 }
 
 void Manager::flushFlocksToResultFile()
@@ -156,6 +219,10 @@ void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     GPSPoint* diskGeneratorPoint2)
 {
     for (const std::shared_ptr<GPSPoint>& point : pointsToProcess) {
+        bool toInsert = shouldInsert(point->trajectoryId());
+        if (!toInsert)
+            continue;
+
         if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2) {
             disk1->addPoint(point);
             disk2->addPoint(point);
