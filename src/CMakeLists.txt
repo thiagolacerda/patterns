@@ -8,7 +8,6 @@ add_subdirectory(sorter)
 
 set(COMMON_SRCS
     ${COMMON_DIR}/config.cpp
-    ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/factory.cpp
     ${COMMON_DIR}/manager.cpp
     ${COMMON_DIR}/utils.cpp
@@ -61,6 +60,32 @@ set(PATTERNS_SOURCES
 )
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+
+## new Patterns design
+set(DATACONNECTORS_DIR ${PROJECT_SRC_DIR}/dataconnectors)
+set(DATADECODERS_DIR ${PROJECT_SRC_DIR}/datadecoders)
+set(DATALISTENERS_DIR ${PROJECT_SRC_DIR}/datalisteners)
+set(DATAMODEL_DIR ${PROJECT_SRC_DIR}/datamodel)
+set(DATAPROCESSORS_DIR ${PROJECT_SRC_DIR}/dataprocessors)
+
+set(PATTERNSNG_SOURCES
+    ${COMMON_DIR}/configparser.cpp
+    ${COMMON_DIR}/utils.cpp
+    ${GPS_DIR}/gpspoint.cpp
+    mainng.cpp
+)
+
+add_executable(patternsng ${PATTERNSNG_SOURCES})
+target_compile_definitions(patternsng PRIVATE NEWDESIGN=1)
+
+target_include_directories(patternsng PRIVATE
+    ${DATACONNECTORS_DIR}
+    ${DATADECODERS_DIR}
+    ${DATALISTENERS_DIR}
+    ${DATAMODEL_DIR}
+    ${DATAPROCESSORS_DIR}
+)
+# End
 
 add_executable(patterns ${PATTERNS_SOURCES})
 target_link_libraries(patterns ${SQLite3_LIBRARIES})

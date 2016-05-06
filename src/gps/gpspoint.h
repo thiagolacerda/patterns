@@ -1,7 +1,5 @@
-#ifndef GPSPOINT_H
-#define GPSPOINT_H
+#pragma once
 
-#include <cstdint>
 #include <iostream>
 #include "utils.h"
 
@@ -9,7 +7,12 @@ class GPSPoint {
 public:
     GPSPoint();
 
+#if defined(NEWDESIGN)
+    GPSPoint(double latitude, double longitude, double latitudeMeters, double longitudeMeters, uint64_t timestamp,
+        uint32_t trajectoryId);
+#else
     GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32_t trajectoryId);
+#endif
 
     double latitude() const { return m_latitude; }
     double latitudeMeters() const { return m_latitudeMeters; }
@@ -39,4 +42,3 @@ private:
     uint32_t m_trajectoryId;
 };
 
-#endif  // GPSPOINT_H

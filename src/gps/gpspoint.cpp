@@ -1,12 +1,31 @@
 #include "gpspoint.h"
 
 #include <time.h>
+#if !defined(NEWDESIGN)
 #include "config.h"
-#include "trajectory.h"
+#endif
 
 GPSPoint::GPSPoint()
+#if defined(NEWDESIGN)
+    : GPSPoint(0, 0, 0, 0, 0, 0)
+#else
     : GPSPoint(0, 0, 0, 0)
+#endif
 { }
+
+#if defined(NEWDESIGN)
+GPSPoint::GPSPoint(double latitude, double longitude, double latitudeMeters, double longitudeMeters, uint64_t timestamp,
+    uint32_t trajectoryId)
+    : m_latitude(latitude)
+    , m_latitudeMeters(latitudeMeters)
+    , m_longitude(longitude)
+    , m_longitudeMeters(longitudeMeters)
+    , m_timestamp(timestamp)
+    , m_trajectoryId(trajectoryId)
+{
+}
+
+#else
 
 GPSPoint::GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32_t trajectoryId)
     : m_latitude(latitude)
@@ -23,6 +42,7 @@ GPSPoint::GPSPoint(double latitude, double longitude, uint64_t timestamp, uint32
         Utils::latLongToMeters(m_latitude, m_longitude, m_latitudeMeters, m_longitudeMeters);
     }
 }
+#endif
 
 double GPSPoint::distanceToPoint(const GPSPoint& other)
 {

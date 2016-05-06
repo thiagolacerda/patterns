@@ -151,8 +151,18 @@ std::shared_ptr<GPSPoint> Utils::interpolate(const GPSPoint& p1, const GPSPoint&
         sqrt((cos(lat1Radians) + bx) * (cos(lat1Radians) + bx) + by * by));
     double finalLong = long1Radians + atan2(by, cos(lat1Radians) + bx);
 
+#if defined(NEWDESIGN)
+    finalLat = Utils::radiansToDegrees(finalLat);
+    finalLong = Utils::radiansToDegrees(finalLong);
+    double finalLatMeters = 0;
+    double finalLongMeters = 0;
+    Utils::latLongToMeters(finalLat, finalLong, finalLatMeters, finalLongMeters);
+    return std::make_shared<GPSPoint>(finalLat, finalLong, finalLatMeters, finalLongMeters,
+        (p1.timestamp() + p2.timestamp()) / 2, p1.trajectoryId());
+#else
     return std::shared_ptr<GPSPoint>(new GPSPoint(Utils::radiansToDegrees(finalLat),
         Utils::radiansToDegrees(finalLong), (p1.timestamp() + p2.timestamp()) / 2, p1.trajectoryId()));
+#endif
 }
 
 template<typename T>
