@@ -164,3 +164,19 @@ std::string Utils::toString(T value, unsigned precision)
 }
 template std::string Utils::toString<double>(double T, unsigned precision);
 template std::string Utils::toString<float>(float T, unsigned precision);
+
+std::string Utils::trim(const std::string& str)
+{
+    std::string result = str;
+    std::string whitespaces (" \t\f\v\n\r");
+
+    std::size_t found = result.find_first_not_of(whitespaces);
+    if (found != std::string::npos)
+        result.erase(0, found);
+
+    found = result.find_last_not_of(whitespaces);
+    if (found != std::string::npos)
+        result.erase(found + 1);
+
+    return result;
+}

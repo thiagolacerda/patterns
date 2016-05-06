@@ -15,7 +15,7 @@ double roundToDecimalPlaces(double number, int decimalPlaces)
     return round(number * multiplier) / multiplier;
 }
 
-class UtilsTest : public ::testing::Test {
+class UtilsTest : public ::testing::TestWithParam<std::pair<std::string, std::string>> {
 public:
     void TearDown() override
     {
@@ -165,3 +165,26 @@ TEST(UtilsTest, interpolate)
     ASSERT_EQ(expected, *actual.get());
 }
 
+TEST_P(UtilsTest, testTrimWithParam)
+{
+    const auto& leftRightExtra = GetParam();
+    const std::string tested = "nospaces";
+    const std::string withExtra = std::get<0>(leftRightExtra) + tested + std::get<1>(leftRightExtra);
+    ASSERT_EQ(tested, Utils::trim(withExtra));
+}
+
+std::vector<std::pair<std::string, std::string>> loadParams()
+{
+    const auto toTrim = {"", " ", "\n", "\f", "\t", "\v", "\r"};
+    std::vector<std::pair<std::string, std::string>> params;
+    for (const auto& p1 : toTrim) {
+        for (const auto& p2 : toTrim)
+            params.push_back(std::make_pair(p1, p2));
+    }
+
+    // some more
+    params.push_back(std::make_pair(" \t\f\v\n\r", " \t\f\v\n\r"));
+    return params;
+}
+
+INSTANTIATE_TEST_CASE_P(trimTest, UtilsTest, ::testing::ValuesIn(loadParams()));
