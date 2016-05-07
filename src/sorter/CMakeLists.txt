@@ -24,3 +24,12 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 add_executable(sorter ${SORTER_SOURCES})
 target_link_libraries(sorter ${SQLite3_LIBRARIES})
 
+target_include_directories(sorter PRIVATE
+    ${COMMON_DIR}
+    ${DATABASE_DIR}
+    ${DECODER_DIR}
+    ${FLOCK_DIR}
+    ${GPS_DIR}
+    ${PERFORMANCE_DIR}
+)
+

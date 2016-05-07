@@ -1,8 +1,6 @@
-#ifndef FLOCK_H
-#define FLOCK_H
+#pragma once
 
 #include <atomic>
-#include <cstdint>
 #include <map>
 #include "trajectory.h"
 
@@ -19,20 +17,21 @@ public:
         : Flock(0, 0)
     { }
 
-    void setTrajectoriesFromPoints(const std::map<uint32_t, std::shared_ptr<GPSPoint>>&);
+    void setTrajectoriesFromPoints(const std::map<uint32_t, std::shared_ptr<GPSPoint>>& trajectories);
     void setTrajectories(const std::map<uint32_t, Trajectory>& trajectories);
-    void mergeTrajectories(const std::map<uint32_t, Trajectory>&);
     const std::map<uint32_t, Trajectory>& trajectories() const { return m_trajectories; }
     uint64_t startTime() const { return m_startTime; }
     void setStartTime(uint64_t startTime) { m_startTime = startTime; }
     uint64_t endTime() const { return m_endTime; }
     void setEndTime(uint64_t endTime) { m_endTime = endTime; }
     void clearFirstPoints();
-    void dump() const;
-    void dumpTrajectories() const;
     void assignId() { m_id = Flock::nextId(); }
     uint64_t id() const { return m_id; }
     static unsigned long long nextId();
+#if !defined(NEWDESIGN)
+    void dump() const;
+    void dumpTrajectories() const;
+#endif
 
 private:
     uint64_t m_startTime;
@@ -43,4 +42,3 @@ private:
     uint64_t m_id;
 };
 
-#endif  // FLOCK_H

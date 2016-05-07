@@ -31,15 +31,6 @@ set(FLOCK_DIR ${PROJECT_SRC_DIR}/flock)
 set(GPS_DIR ${PROJECT_SRC_DIR}/gps)
 set(PERFORMANCE_DIR ${PROJECT_SRC_DIR}/performance)
 
-include_directories(
-    ${COMMON_DIR}
-    ${DATABASE_DIR}
-    ${DECODER_DIR}
-    ${FLOCK_DIR}
-    ${GPS_DIR}
-    ${PERFORMANCE_DIR}
-)
-
 add_subdirectory(src)
 enable_testing()
 add_subdirectory(test)

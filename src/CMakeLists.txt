@@ -34,13 +34,11 @@ set(FLOCK_SRCS
     ${FLOCK_DIR}/diskmanager.cpp
     ${FLOCK_DIR}/flock.cpp
     ${FLOCK_DIR}/flockmanager.cpp
-    ${FLOCK_DIR}/grid.cpp
     ${FLOCK_DIR}/gridmanager.cpp
 )
 
 set(GPS_SRCS
     ${GPS_DIR}/gpspoint.cpp
-    ${GPS_DIR}/gpspointtemporalprocessor.cpp
     ${GPS_DIR}/trajectory.cpp
 )
 
@@ -54,7 +52,9 @@ set(PATTERNS_SOURCES
     ${DATABASE_SRCS}
     ${DECODER_SRCS}
     ${FLOCK_SRCS}
+    ${FLOCK_DIR}/grid.cpp
     ${GPS_SRCS}
+    ${GPS_DIR}/gpspointtemporalprocessor.cpp
     ${PERFORMANCE_SRCS}
     main.cpp
 )
@@ -82,13 +82,19 @@ set(DATALISTENERS_SRCS
     ${DATALISTENERS_DIR}/gpspointbuffererlistener.cpp
 )
 
+set(DATAPROCESSORS_SRCS
+    ${DATAPROCESSORS_DIR}/flockprocessor.cpp
+)
+
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/utils.cpp
     ${DATACONNECTORS_SRCS}
     ${DATADECODERS_SRCS}
     ${DATALISTENERS_SRCS}
-    ${GPS_DIR}/gpspoint.cpp
+    ${DATAPROCESSORS_SRCS}
+    ${FLOCK_SRCS}
+    ${GPS_SRCS}
     mainng.cpp
 )
 
@@ -96,13 +102,25 @@ add_executable(patternsng ${PATTERNSNG_SOURCES})
 target_compile_definitions(patternsng PRIVATE NEWDESIGN=1)
 
 target_include_directories(patternsng PRIVATE
+    ${COMMON_DIR}
     ${DATACONNECTORS_DIR}
     ${DATADECODERS_DIR}
     ${DATALISTENERS_DIR}
     ${DATAMODEL_DIR}
     ${DATAPROCESSORS_DIR}
+    ${FLOCK_DIR}
+    ${GPS_DIR}
 )
 # End
 
 add_executable(patterns ${PATTERNS_SOURCES})
 target_link_libraries(patterns ${SQLite3_LIBRARIES})
+
+target_include_directories(patterns PRIVATE
+    ${COMMON_DIR}
+    ${DATABASE_DIR}
+    ${DECODER_DIR}
+    ${FLOCK_DIR}
+    ${GPS_DIR}
+    ${PERFORMANCE_DIR}
+)

@@ -1,10 +1,10 @@
 #include "diskmanager.h"
 
-#include <math.h>
 #include <algorithm>
-#include <iomanip>
-#include <sstream>
+#include <cmath>
+#if !defined(NEWDESIGN)
 #include "config.h"
+#endif
 #include "disk.h"
 #include "gpspoint.h"
 #include "utils.h"
@@ -31,10 +31,13 @@ bool DiskManager::tryInsertDisk(Disk* disk)
 
 void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
 {
-    if (Utils::fuzzyEqual(point1->latitudeMeters(), point2->latitudeMeters()) &&
-        Utils::fuzzyEqual(point1->longitudeMeters(), point2->longitudeMeters()))
+    const double latMeters1 = point1->latitudeMeters();
+    const double longMeters1 = point1->longitudeMeters();
+    const double latMeters2 = point2->latitudeMeters();
+    const double longMeters2 = point2->longitudeMeters();
+    if (Utils::fuzzyEqual(latMeters1, latMeters2) && Utils::fuzzyEqual(longMeters1, longMeters2))
         return;
-
+#if !defined(NEWDESIGN)
     if (Config::isInCompatibilityMode())
         getDisksPaperVersion(point1, point2, timestamp, disk1, disk2);
     else
@@ -43,33 +46,44 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t time
 
 void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
 {
+    double latMeters1 = point1->latitudeMeters();
+    double longMeters1 = point1->longitudeMeters();
+    double latMeters2 = point2->latitudeMeters();
+    double longMeters2 = point2->longitudeMeters();
+#endif
     double midX;
     double midY;
     double vectorX;
     double vectorY;
     double perpNormVectorX;
     double perpNormVectorY;
-    double x1 = point1->longitudeMeters();
-    double y1 = point1->latitudeMeters();
-    double x2 = point2->longitudeMeters();
-    double y2 = point2->latitudeMeters();
-    Utils::midPoint(x1, y1, x2, y2, midX, midY);
-    Utils::toVector(x1, y1, x2, y2, vectorX, vectorY);
+    Utils::midPoint(longMeters1, latMeters1, longMeters2, latMeters2, midX, midY);
+    Utils::toVector(longMeters1, latMeters1, longMeters2, latMeters2, vectorX, vectorY);
     double pointsDistance = Utils::vectorLength(vectorX, vectorY);
+#if defined(NEWDESIGN)
+    double powMultiplyParameter = (m_radius * m_radius) - ((pointsDistance / 2.0) * (pointsDistance / 2.0));
+#else
     double powMultiplyParameter = Config::radiusSquared() - ((pointsDistance / 2.0) * (pointsDistance / 2.0));
+#endif
     if (powMultiplyParameter < 0)
         return;
 
     Utils::normalizedVector(vectorY, -vectorX, perpNormVectorX, perpNormVectorY);
-    double multiplyParameter = sqrt(powMultiplyParameter);
+    double multiplyParameter = std::sqrt(powMultiplyParameter);
     double c1X = midX + multiplyParameter * perpNormVectorX;
     double c1Y = midY + multiplyParameter * perpNormVectorY;
     double c2X = midX - multiplyParameter * perpNormVectorX;
     double c2Y = midY - multiplyParameter * perpNormVectorY;
+#if defined(NEWDESIGN)
+    *disk1 = new Disk(m_radius, c1X, c1Y, timestamp);
+    *disk2 = new Disk(m_radius, c2X, c2Y, timestamp);
+#else
     *disk1 = new Disk(c1X, c1Y, timestamp);
     *disk2 = new Disk(c2X, c2Y, timestamp);
+#endif
 }
 
+#if !defined(NEWDESIGN)
 // This code was copied from the paper as is! (changed only some names of variables)
 void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp,
     Disk** disk1, Disk** disk2)
@@ -107,12 +121,6 @@ void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint6
     *disk2 = new Disk(cX2, cY2, timestamp);
 }
 
-void DiskManager::clear()
-{
-    std::for_each(m_disks.begin(), m_disks.end(), [](Disk* disk) { delete disk; });
-    m_disks.clear();
-}
-
 void DiskManager::dump() const
 {
     for (Disk* disk : m_disks) {
@@ -120,3 +128,11 @@ void DiskManager::dump() const
         disk->dumpPoints();
     }
 }
+#endif
+
+void DiskManager::clear()
+{
+    std::for_each(m_disks.begin(), m_disks.end(), [](Disk* disk) { delete disk; });
+    m_disks.clear();
+}
+

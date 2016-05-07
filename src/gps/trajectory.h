@@ -1,7 +1,5 @@
-#ifndef TRAJECTORY_H
-#define TRAJECTORY_H
+#pragma once
 
-#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -21,16 +19,17 @@ public:
         addPoint(point);
     }
 
-    void addPoint(const std::shared_ptr<GPSPoint>&);
+    void addPoint(const std::shared_ptr<GPSPoint>& point);
     const std::vector<std::shared_ptr<GPSPoint>>& points() const { return m_points; }
     uint32_t id() const { return m_id; }
     void mergePoints(const Trajectory&);
     void clearFirstPoints();
+#if !defined(NEWDESIGN)
     void dump();
+#endif
 
 private:
     uint32_t m_id;
     std::vector<std::shared_ptr<GPSPoint>> m_points;
 };
 
-#endif  // TRAJECTORY_H

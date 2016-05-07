@@ -1,6 +1,8 @@
 #include "flockmanager.h"
 
+#if !defined(NEWDESIGN)
 #include "config.h"
+#endif
 #include "disk.h"
 #include "manager.h"
 
@@ -76,7 +78,11 @@ uint32_t FlockManager::intersection(const Flock& flock1, const Flock& flock2)
     return count;
 }
 
+#if defined(NEWDESIGN)
+void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks, uint64_t timestamp)
+#else
 void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
+#endif
 {
     bool hasFlocks = !m_flocks.empty();
     std::vector<Flock> flocksFromDisks;
@@ -90,7 +96,11 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
 
                 std::map<uint32_t, Trajectory> inter;
                 intersection(*existingFlock, disk, &inter);
+#if defined(NEWDESIGN)
+                if (inter.size() >= m_trajectoriesPerFlock) {
+#else
                 if (inter.size() >= Config::numberOfTrajectoriesPerFlock()) {
+#endif
                     // We have a pontential increment for a previous flock
                     Flock newFlock;
                     newFlock.setTrajectories(inter);
@@ -118,19 +128,29 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
     }
     if (hasFlocks)
         m_flocks = flocksFromDisks;
+
+#if defined(NEWDESIGN)
+    m_lastTimestamp = timestamp;
+#endif
 }
 
 void FlockManager::updateBuffers(const Flock& flock)
 {
+#if !defined(NEWDESIGN)
     if (!Config::buffering())
         return;
+#endif
 
     const auto& trajectories = flock.trajectories();
     for (const auto& trajPair : trajectories) {
         if (m_updated.find(trajPair.first) != m_updated.end())
            continue;
 
+#if defined(NEWDESIGN)
+        updatePresenceMap(trajPair.first);
+#else
         m_manager->addSequenceEntry(trajPair.first);
+#endif
         m_updated.insert(trajPair.first);
     }
 }
@@ -176,9 +196,15 @@ void FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock
 std::vector<Flock> FlockManager::reportFlocks()
 {
     std::vector<Flock> results;
+#if !defined(NEWDESIGN)
     uint32_t flockLength = Config::flockLength();
+#endif
     for (auto flock = m_flocks.begin(); flock != m_flocks.end();) {
+#if defined(NEWDESIGN)
+        if ((*flock).endTime() - (*flock).startTime() + 1 >= m_flockLength) {
+#else
         if ((*flock).endTime() - (*flock).startTime() + 1 >= flockLength) {
+#endif
             (*flock).assignId();
             results.push_back(*flock);
             // This is valid flock, so let's increment its start time to check for a new flock starting in the
@@ -201,6 +227,13 @@ std::vector<Flock> FlockManager::reportFlocks()
         checkDuplicateAnswer();
 
     m_updated.clear();
+#if defined(NEWDESIGN)
+    ++m_buffered;
+    if (m_buffered >= m_flockLength) {
+        --m_buffered;
+        shiftPresenceMaps();
+    }
+#endif
     return results;
 }
 
@@ -242,6 +275,38 @@ void FlockManager::checkDuplicateAnswer()
     m_flocks = flocks;
 }
 
+#if defined(NEWDESIGN)
+void FlockManager::updatePresenceMap(uint32_t trajectoryId)
+{
+    m_presenceMap[trajectoryId] |= (1 << m_buffered);
+}
+
+void FlockManager::shiftPresenceMaps()
+{
+    for (auto iter = m_presenceMap.begin(); iter != m_presenceMap.end();) {
+        if (iter->second) {
+            iter->second >>= 1;
+            ++iter;
+        } else {
+            iter = m_presenceMap.erase(iter);
+        }
+    }
+}
+
+void FlockManager::preProcessing(uint64_t timestamp)
+{
+    if (timestamp - m_lastTimestamp > 1)
+        clear();
+}
+
+void FlockManager::clear()
+{
+    m_flocks.clear();
+    m_presenceMap.clear();
+    m_updated.clear();
+    m_buffered = 0;
+}
+#else
 void FlockManager::dump() const
 {
     for (const Flock& flock : m_flocks) {
@@ -249,3 +314,4 @@ void FlockManager::dump() const
         flock.dumpTrajectories();
     }
 }
+#endif

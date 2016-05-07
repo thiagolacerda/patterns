@@ -1,6 +1,12 @@
 find_package(SQLite3 REQUIRED)
 
 include_directories(
+    ${COMMON_DIR}
+    ${DATABASE_DIR}
+    ${DECODER_DIR}
+    ${FLOCK_DIR}
+    ${GPS_DIR}
+    ${PERFORMANCE_DIR}
     ${SQLite3_INCLUDE_DIRS}
 )
 

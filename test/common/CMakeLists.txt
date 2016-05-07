@@ -1,3 +1,8 @@
+include_directories(
+    ${COMMON_DIR}
+    ${GPS_DIR}
+)
+
 set(TEST_COMMON_DEPENDENCIES
     ${COMMON_DIR}/config.cpp
     ${COMMON_DIR}/utils.cpp

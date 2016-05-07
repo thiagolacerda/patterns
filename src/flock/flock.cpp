@@ -1,7 +1,9 @@
 #include "flock.h"
 
+#if !defined(NEWDESIGN)
 #include <iostream>
 #include "config.h"
+#endif
 
 std::atomic_ullong Flock::m_globalIds(0);
 
@@ -13,10 +15,8 @@ unsigned long long Flock::nextId()
 void Flock::setTrajectoriesFromPoints(const std::map<uint32_t, std::shared_ptr<GPSPoint>>& points)
 {
     m_trajectories.clear();
-    for (const auto& pointPair : points) {
-        m_trajectories.emplace(std::make_pair(pointPair.first,
-            std::move(Trajectory(pointPair.first, pointPair.second))));
-    }
+    for (const auto& ptPair : points)
+        m_trajectories.emplace(std::make_pair(ptPair.first, std::move(Trajectory(ptPair.first, ptPair.second))));
 }
 
 void Flock::setTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
@@ -24,18 +24,6 @@ void Flock::setTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
     m_trajectories.clear();
     for (const auto& trajPair : trajectories)
         m_trajectories.emplace(std::make_pair(trajPair.first, trajPair.second));
-}
-
-/*
- * New trajectories for the next time slot are available for this flock, so we need to merge than with the old ones
- */
-void Flock::mergeTrajectories(const std::map<uint32_t, Trajectory>& trajectories)
-{
-    for (auto iter = m_trajectories.begin(); iter != m_trajectories.end(); ++iter) {
-        auto found = trajectories.find(iter->first);
-        if (found != trajectories.end())
-            iter->second.mergePoints(found->second);
-    }
 }
 
 /*
@@ -49,6 +37,7 @@ void Flock::clearFirstPoints()
         iter->second.clearFirstPoints();
 }
 
+#if !defined(NEWDESIGN)
 void Flock::dump() const
 {
     std::cout << "Flock's startTime: " << m_startTime << ", endTime: " << m_endTime << ", number of trajectories: "
@@ -68,3 +57,4 @@ void Flock::dumpTrajectories() const
         std::cout << ", " << iter->second.id();
     std::cout << std::endl;
 }
+#endif
