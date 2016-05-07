@@ -69,6 +69,7 @@ set(DATAMODEL_DIR ${PROJECT_SRC_DIR}/datamodel)
 set(DATAPROCESSORS_DIR ${PROJECT_SRC_DIR}/dataprocessors)
 
 set(DATACONNECTORS_SRCS
+    ${DATACONNECTORS_DIR}/fileconnector.cpp
     ${DATACONNECTORS_DIR}/rawdatastring.cpp
 )
 
