@@ -73,10 +73,16 @@ set(DATACONNECTORS_SRCS
     ${DATACONNECTORS_DIR}/rawdatastring.cpp
 )
 
+set(DATADECODERS_SRCS
+    ${DATADECODERS_DIR}/customdecoder.cpp
+    ${DATADECODERS_DIR}/truckspaperdecoder.cpp
+)
+
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/utils.cpp
     ${DATACONNECTORS_SRCS}
+    ${DATADECODERS_SRCS}
     ${GPS_DIR}/gpspoint.cpp
     mainng.cpp
 )
