@@ -78,11 +78,16 @@ set(DATADECODERS_SRCS
     ${DATADECODERS_DIR}/truckspaperdecoder.cpp
 )
 
+set(DATALISTENERS_SRCS
+    ${DATALISTENERS_DIR}/gpspointbuffererlistener.cpp
+)
+
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/utils.cpp
     ${DATACONNECTORS_SRCS}
     ${DATADECODERS_SRCS}
+    ${DATALISTENERS_SRCS}
     ${GPS_DIR}/gpspoint.cpp
     mainng.cpp
 )
