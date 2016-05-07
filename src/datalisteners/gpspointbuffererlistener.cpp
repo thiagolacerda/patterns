@@ -1,5 +1,6 @@
 #include "gpspointbuffererlistener.h"
 
+#include "componentfactory.h"
 #include "datamodel.h"
 #include "gpspoint.h"
 #include "gpspointbuffererlistenerdata.h"
@@ -142,4 +143,6 @@ void GPSPointBuffererListener::onDataProviderFinished()
     complete();
     endDataHandler();
 }
+
+REGISTER_DATA_LISTENER("gpspointbuffererlistener", GPSPointBuffererListener::instance);
 

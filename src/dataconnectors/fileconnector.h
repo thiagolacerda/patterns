@@ -17,6 +17,11 @@ public:
 
     void onDataProviderFinished() override {}
 
+    static FileConnector* instance(const std::unordered_map<std::string, std::string>& parameters)
+    {
+        return new FileConnector(parameters);
+    }
+
 private:
     void convertEscapedCharactersInSeparator();
 

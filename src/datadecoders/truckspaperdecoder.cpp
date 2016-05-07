@@ -1,6 +1,7 @@
 #include "truckspaperdecoder.h"
 
 #include <memory>
+#include "componentfactory.h"
 #include "datamodel.h"
 #include "gpspoint.h"
 #include "rawdata.h"
@@ -14,4 +15,6 @@ void TrucksPaperDecoder::decodeData(const RawData& data)
 
     sendDataToListeners(model);
 }
+
+REGISTER_DATA_DECODER("truckspaperdecoder", TrucksPaperDecoder::instance);
 

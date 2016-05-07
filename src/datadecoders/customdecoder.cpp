@@ -1,6 +1,7 @@
 #include "customdecoder.h"
 
 #include <memory>
+#include "componentfactory.h"
 #include "datamodel.h"
 #include "gpspoint.h"
 #include "rawdata.h"
@@ -17,4 +18,6 @@ void CustomDecoder::decodeData(const RawData& data)
 
     sendDataToListeners(model);
 }
+
+REGISTER_DATA_DECODER("customdecoder", CustomDecoder::instance);
 

@@ -1,6 +1,7 @@
 #include "flockprocessor.h"
 
 #include <iostream>
+#include "componentfactory.h"
 #include "disk.h"
 #include "gpspoint.h"
 #include "gpspointbuffererlistener.h"
@@ -131,4 +132,6 @@ void FlockProcessor::onDataProviderFinished()
     m_flockManager.clear();
     endDataHandler();
 }
+
+REGISTER_DATA_PROCESSOR("flockprocessor", FlockProcessor::instance);
 

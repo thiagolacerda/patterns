@@ -14,6 +14,11 @@ public:
 
     void onDataProviderFinished() override;
 
+    static GPSPointBuffererListener* instance(const std::unordered_map<std::string, std::string>& parameters)
+    {
+        return new GPSPointBuffererListener(parameters);
+    }
+
 private:
     void addPresence(uint32_t tID, uint64_t n);
     void complete();

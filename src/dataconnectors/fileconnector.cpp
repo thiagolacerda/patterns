@@ -69,3 +69,5 @@ void FileConnector::retrieveData()
     endDataHandler();
 }
 
+REGISTER_DATA_CONNECTOR("fileconnector", FileConnector::instance);
+

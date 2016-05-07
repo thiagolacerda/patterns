@@ -24,6 +24,11 @@ public:
 
     void onDataProviderFinished() override;
 
+    static FlockProcessor* instance(const std::unordered_map<std::string, std::string>& parameters)
+    {
+        return new FlockProcessor(parameters);
+    }
+
 private:
     void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, uint32_t t1ID, uint32_t t2ID,
         const std::vector<std::shared_ptr<GPSPoint>>& points, const GPSPointBuffererListenerData& data);
