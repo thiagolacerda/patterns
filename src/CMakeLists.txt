@@ -88,6 +88,7 @@ set(DATAPROCESSORS_SRCS
 
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
+    ${COMMON_DIR}/orchestrator.cpp
     ${COMMON_DIR}/utils.cpp
     ${DATACONNECTORS_SRCS}
     ${DATADECODERS_SRCS}
