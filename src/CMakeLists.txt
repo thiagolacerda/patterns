@@ -68,9 +68,14 @@ set(DATALISTENERS_DIR ${PROJECT_SRC_DIR}/datalisteners)
 set(DATAMODEL_DIR ${PROJECT_SRC_DIR}/datamodel)
 set(DATAPROCESSORS_DIR ${PROJECT_SRC_DIR}/dataprocessors)
 
+set(DATACONNECTORS_SRCS
+    ${DATACONNECTORS_DIR}/rawdatastring.cpp
+)
+
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
     ${COMMON_DIR}/utils.cpp
+    ${DATACONNECTORS_SRCS}
     ${GPS_DIR}/gpspoint.cpp
     mainng.cpp
 )
