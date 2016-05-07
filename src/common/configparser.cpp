@@ -68,7 +68,7 @@ bool ConfigParser::loadConfig(const std::string& path)
     bool valid = true;
     while (std::getline(file, line) && valid) {
         auto trimmed = Utils::trim(line);
-        if (trimmed.empty())
+        if (trimmed.empty() || trimmed.front() == '#') // comments start with #
             continue;
 
         if (isSectionValid(trimmed)) {
