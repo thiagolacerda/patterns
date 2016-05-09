@@ -5,6 +5,7 @@
 #include "dataconnector.h"
 #include "datadecoder.h"
 #include "dataprocessor.h"
+#include "utils.h"
 
 void Orchestrator::checkEmptyComponentSet(const std::unordered_set<std::string>& components, const std::string& message)
 {
@@ -26,7 +27,47 @@ void Orchestrator::registerComponents(const std::unordered_map<std::string, std:
     }
 }
 
-bool Orchestrator::loadConfig()
+bool Orchestrator::loadConfigFromMap(const std::unordered_map<std::string, std::string>& configMap)
+{
+    const auto& connector = ComponentFactory<DataConnector>::getFullName(configMap.at("connector"));
+    const auto& decoder = ComponentFactory<DataDecoder>::getFullName(configMap.at("decoder"));
+    const auto& listener = ComponentFactory<DataListener>::getFullName(configMap.at("listener"));
+    const auto& processor = ComponentFactory<DataProcessor>::getFullName(configMap.at("processor"));
+
+    std::string confString = "dataconnectors=" + connector + "\n";
+    confString += "datadecoders=" + decoder + "\n";
+    confString += "datalisteners=" + listener + "\n";
+    if (!processor.empty())
+        confString += "dataprocessors=" + processor + "\n";
+
+    appendParamsToConfString(confString, connector, "", "cp", configMap);
+    appendParamsToConfString(confString, decoder, "dataconnector=" + connector, "dp", configMap);
+    appendParamsToConfString(confString, listener, "datadecoder=" + decoder, "lp", configMap);
+    appendParamsToConfString(confString, processor, "datalistener=" + listener, "pp", configMap);
+
+    std::istringstream s(confString);
+    m_parser.loadConfig(s);
+
+    return warningsCheck();
+}
+
+void Orchestrator::appendParamsToConfString(std::string& conf, const std::string& sectionName, const std::string& reg,
+    const std::string& paramsKey, const std::unordered_map<std::string, std::string>& paramsMap)
+{
+    if (sectionName.empty())
+        return;
+
+    conf += "[" + sectionName + "]\n" + reg + "\n";
+
+    const auto& paramList = getList(paramsMap.at(paramsKey));
+    if (paramList.empty())
+        return;
+
+    for (const auto& param : paramList)
+        conf += param + "\n";
+}
+
+bool Orchestrator::loadConfigFromFile(const std::string& configPath)
 {
     m_parser.loadConfig(configPath);
 
@@ -80,6 +121,18 @@ std::unordered_set<std::string> Orchestrator::getList(const std::string& value)
         result.insert(token);
 
     return result;
+}
+
+std::unordered_map<std::string, std::string> Orchestrator::getParamsFromString(const std::string& s)
+{
+    std::unordered_map<std::string, std::string> paramsResult;
+    const auto& params = getList(s);
+    for (const auto& paramPair : params) {
+        auto index = paramPair.find_first_of("=");
+        paramsResult.emplace(std::make_pair(Utils::trim(paramPair.substr(0, index)),
+            Utils::trim(paramPair.substr(index + 1))));
+    }
+    return paramsResult;
 }
 
 template<class T>
