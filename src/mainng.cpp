@@ -1,6 +1,12 @@
 #include <iostream>
 #include "orchestrator.h"
 
+void printMessages(const std::vector<std::string>& messages, const std::string& prefix)
+{
+    for (const auto& message : messages)
+        std::cerr << prefix << ": " << message << std::endl;
+}
+
 int main(int argc, char** argv)
 {
     if (argc < 2) {
@@ -9,12 +15,12 @@ int main(int argc, char** argv)
     }
 
     Orchestrator orchestrator(argv[1]);
-    if (!orchestrator.start()) {
-        const auto& messages = orchestrator.errorMessages();
-        for (const auto& message : messages)
-            std::cerr << message << std::endl;
+    if (!orchestrator.loadConfig())
+        printMessages(orchestrator.warningMessages(), "warning");
 
-        return 1;
+    if (!orchestrator.start()) {
+        printMessages(orchestrator.errorMessages(), "error");
+        return 3;
     }
 
     return 0;

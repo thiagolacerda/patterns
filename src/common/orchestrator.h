@@ -16,7 +16,9 @@ public:
 
     bool start();
 
+    bool loadConfig();
     std::vector<std::string> errorMessages() { return m_errorMessages; }
+    std::vector<std::string> warningMessages() { return m_warningMessages; }
 
 private:
     void checkEmptyComponentSet(const std::unordered_set<std::string>& components, const std::string& message);
@@ -28,9 +30,16 @@ private:
     std::unordered_map<std::string, std::shared_ptr<T>> getComponents(const std::unordered_set<std::string>&
         componentNames);
 
-    std::unordered_map<std::string, std::string> getParameters();
     std::string m_configPath;
+    bool warningsCheck();
+
     ConfigParser m_parser;
     std::vector<std::string> m_errorMessages;
+    std::vector<std::string> m_warningMessages;
+
+    std::unordered_set<std::string> m_connectorNames;
+    std::unordered_set<std::string> m_decoderNames;
+    std::unordered_set<std::string> m_listenerNames;
+    std::unordered_set<std::string> m_processorNames;
 };
 

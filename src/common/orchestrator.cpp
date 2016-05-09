@@ -9,7 +9,7 @@
 void Orchestrator::checkEmptyComponentSet(const std::unordered_set<std::string>& components, const std::string& message)
 {
     if (components.empty())
-        m_errorMessages.push_back(message);
+        m_warningMessages.push_back(message);
 }
 
 template<class S, class T>
@@ -26,31 +26,39 @@ void Orchestrator::registerComponents(const std::unordered_map<std::string, std:
     }
 }
 
+bool Orchestrator::loadConfig()
+{
+    m_parser.loadConfig(configPath);
+
+    return warningsCheck();
+}
+
+bool Orchestrator::warningsCheck()
+{
+    m_connectorNames = getList(m_parser.getValue("", "dataconnectors"));
+    m_decoderNames = getList(m_parser.getValue("", "datadecoders"));
+    m_listenerNames = getList(m_parser.getValue("", "datalisteners"));
+    m_processorNames = getList(m_parser.getValue("", "dataprocessors"));
+
+    checkEmptyComponentSet(m_connectorNames, "No Data Connectors were specified");
+    checkEmptyComponentSet(m_decoderNames, "No Data Decoders were specified");
+    checkEmptyComponentSet(m_listenerNames, "No Data Listeners were specified");
+    checkEmptyComponentSet(m_processorNames, "No Data Processors were specified");
+
+    return m_warningMessages.empty();
+}
+
 bool Orchestrator::start()
 {
-    m_parser.loadConfig(m_configPath);
+    const auto& dataConnectors = getComponents<DataConnector>(m_connectorNames);
 
-    auto dataConnectorNames = getList(m_parser.getValue("", "dataconnectors"));
-    checkEmptyComponentSet(dataConnectorNames, "No Data Connectors were specified");
-
-    auto dataDecoderNames = getList(m_parser.getValue("", "datadecoders"));
-    checkEmptyComponentSet(dataDecoderNames, "No Data Decoders were specified");
-
-    auto dataListenerNames = getList(m_parser.getValue("", "datalisteners"));
-    checkEmptyComponentSet(dataListenerNames, "No Data Listeners were specified");
-
-    auto dataProcessorNames = getList(m_parser.getValue("", "dataprocessors"));
-    checkEmptyComponentSet(dataProcessorNames, "No Data Processors were specified");
-
-    const auto& dataConnectors = getComponents<DataConnector>(dataConnectorNames);
-
-    const auto& dataDecoders = getComponents<DataDecoder>(dataDecoderNames);
+    const auto& dataDecoders = getComponents<DataDecoder>(m_decoderNames);
     registerComponents<DataDecoder, DataConnector>(dataDecoders, "dataconnector", dataConnectors);
 
-    const auto& dataListeners = getComponents<DataListener>(dataListenerNames);
+    const auto& dataListeners = getComponents<DataListener>(m_listenerNames);
     registerComponents<DataListener, DataDecoder>(dataListeners, "datadecoder", dataDecoders);
 
-    const auto& dataProcessors = getComponents<DataProcessor>(dataProcessorNames);
+    const auto& dataProcessors = getComponents<DataProcessor>(m_processorNames);
     registerComponents<DataProcessor, DataListener>(dataProcessors, "datalistener", dataListeners);
 
     if (!m_errorMessages.empty())
