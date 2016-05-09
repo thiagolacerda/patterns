@@ -144,5 +144,5 @@ void GPSPointBuffererListener::onDataProviderFinished()
     endDataHandler();
 }
 
-REGISTER_DATA_LISTENER("gpspointbuffererlistener", GPSPointBuffererListener::instance);
+REGISTER_DATA_LISTENER("gpspointbuffererlistener", "g", GPSPointBuffererListener::instance);
 

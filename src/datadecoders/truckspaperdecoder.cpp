@@ -16,5 +16,5 @@ void TrucksPaperDecoder::decodeData(const RawData& data)
     sendDataToListeners(model);
 }
 
-REGISTER_DATA_DECODER("truckspaperdecoder", TrucksPaperDecoder::instance);
+REGISTER_DATA_DECODER("truckspaperdecoder", "t", TrucksPaperDecoder::instance);
 

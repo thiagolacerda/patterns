@@ -19,5 +19,5 @@ void CustomDecoder::decodeData(const RawData& data)
     sendDataToListeners(model);
 }
 
-REGISTER_DATA_DECODER("customdecoder", CustomDecoder::instance);
+REGISTER_DATA_DECODER("customdecoder", "c", CustomDecoder::instance);
 

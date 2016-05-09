@@ -133,5 +133,5 @@ void FlockProcessor::onDataProviderFinished()
     endDataHandler();
 }
 
-REGISTER_DATA_PROCESSOR("flockprocessor", FlockProcessor::instance);
+REGISTER_DATA_PROCESSOR("flockprocessor", "f", FlockProcessor::instance);
 
