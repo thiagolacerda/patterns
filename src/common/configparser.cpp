@@ -63,10 +63,15 @@ bool ConfigParser::loadConfig(const std::string& path)
     if (!file.is_open())
         return false;
 
+    return loadConfig(file);
+}
+
+bool ConfigParser::loadConfig(std::istream& inputStream)
+{
     std::string line;
     std::string currentSection = "";
     bool valid = true;
-    while (std::getline(file, line) && valid) {
+    while (std::getline(inputStream, line) && valid) {
         auto trimmed = Utils::trim(line);
         if (trimmed.empty() || trimmed.front() == '#') // comments start with #
             continue;

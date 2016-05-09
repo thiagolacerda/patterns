@@ -1,5 +1,6 @@
 #pragma once
 
+#include <istream>
 #include <string>
 #include <unordered_map>
 
@@ -10,6 +11,7 @@ public:
     std::unordered_map<std::string, std::unordered_map<std::string, std::string>> getConfig() const;
 
     bool loadConfig(const std::string& path);
+    bool loadConfig(std::istream& inputStream);
 
 private:
     bool isSectionValid(const std::string& section) const;
