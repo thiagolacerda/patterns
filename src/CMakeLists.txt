@@ -75,6 +75,7 @@ set(DATADECODERS_SRCS
     ${DATADECODERS_DIR}/berlinmoddecoder.cpp
     ${DATADECODERS_DIR}/brinkhoffmntgdecoder.cpp
     ${DATADECODERS_DIR}/customdecoder.cpp
+    ${DATADECODERS_DIR}/tdrivedecoder.cpp
     ${DATADECODERS_DIR}/truckspaperdecoder.cpp
 )
 
