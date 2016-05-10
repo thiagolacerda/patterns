@@ -1,12 +1,11 @@
 #include "diskmanager.h"
 
-#include <algorithm>
-#include <cmath>
 #if !defined(NEWDESIGN)
+#include <cmath>
 #include "config.h"
+#include "gpspoint.h"
 #endif
 #include "disk.h"
-#include "gpspoint.h"
 #include "utils.h"
 
 void DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
@@ -25,6 +24,7 @@ void DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
     m_disks.push_back(disk);
 }
 
+#if !defined(NEWDESIGN)
 void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
     std::shared_ptr<Disk>& disk2)
 {
@@ -34,7 +34,7 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t time
     const double longMeters2 = point2->longitudeMeters();
     if (Utils::fuzzyEqual(latMeters1, latMeters2) && Utils::fuzzyEqual(longMeters1, longMeters2))
         return;
-#if !defined(NEWDESIGN)
+
     if (Config::isInCompatibilityMode())
         getDisksPaperVersion(point1, point2, timestamp, disk1, disk2);
     else
@@ -48,7 +48,6 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     double longMeters1 = point1->longitudeMeters();
     double latMeters2 = point2->latitudeMeters();
     double longMeters2 = point2->longitudeMeters();
-#endif
     double midX;
     double midY;
     double vectorX;
@@ -58,11 +57,7 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     Utils::midPoint(longMeters1, latMeters1, longMeters2, latMeters2, midX, midY);
     Utils::toVector(longMeters1, latMeters1, longMeters2, latMeters2, vectorX, vectorY);
     double pointsDistance = Utils::vectorLength(vectorX, vectorY);
-#if defined(NEWDESIGN)
-    double powMultiplyParameter = (m_radius * m_radius) - ((pointsDistance / 2.0) * (pointsDistance / 2.0));
-#else
     double powMultiplyParameter = Config::radiusSquared() - ((pointsDistance / 2.0) * (pointsDistance / 2.0));
-#endif
     if (powMultiplyParameter < 0)
         return;
 
@@ -72,16 +67,10 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     double c1Y = midY + multiplyParameter * perpNormVectorY;
     double c2X = midX - multiplyParameter * perpNormVectorX;
     double c2Y = midY - multiplyParameter * perpNormVectorY;
-#if defined(NEWDESIGN)
-    disk1.reset(new Disk(m_radius, c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
-    disk2.reset(new Disk(m_radius, c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
-#else
     disk1.reset(new Disk(c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
     disk2.reset(new Disk(c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
-#endif
 }
 
-#if !defined(NEWDESIGN)
 // This code was copied from the paper as is! (changed only some names of variables)
 void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp,
     std::shared_ptr<Disk>& disk1, std::shared_ptr<Disk>& disk2)

@@ -28,7 +28,7 @@ public:
     void addPoint(const std::shared_ptr<GPSPoint>& point);
     uint32_t numberOfPoints() const { return m_points.size(); }
     uint32_t countIntersection(const std::shared_ptr<Disk>& other) const;
-    const std::map<uint32_t, std::shared_ptr<GPSPoint>>& points() const { return m_points; }
+    std::map<uint32_t, std::shared_ptr<GPSPoint>> points() const { return m_points; }
 #if !defined(NEWDESIGN)
     void dumpPoints() const;
     void dump() const;

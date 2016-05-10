@@ -2,9 +2,9 @@
 
 #if !defined(NEWDESIGN)
 #include "config.h"
+#include "manager.h"
 #endif
 #include "disk.h"
-#include "manager.h"
 
 /*
  * Computes the intersection between two set of trajectories.
@@ -85,6 +85,11 @@ void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disk
 void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks)
 #endif
 {
+#if defined(NEWDESIGN)
+    if (timestamp - m_lastTimestamp > 1)
+        clear();
+#endif
+
     bool hasFlocks = !m_flocks.empty();
     std::vector<Flock> flocksFromDisks;
     if (hasFlocks) {
@@ -148,7 +153,7 @@ void FlockManager::updateBuffers(const Flock& flock)
            continue;
 
 #if defined(NEWDESIGN)
-        updatePresenceMap(trajPair.first);
+        m_flockUtils->updatePresenceMap(trajPair.first);
 #else
         m_manager->addSequenceEntry(trajPair.first);
 #endif
@@ -232,8 +237,9 @@ std::vector<Flock> FlockManager::reportFlocks()
     ++m_buffered;
     if (m_buffered >= m_flockLength) {
         --m_buffered;
-        shiftPresenceMaps();
+        m_flockUtils->shiftPresenceMap();
     }
+    m_flockUtils->setPastBufferSize(m_buffered);
 #endif
     return results;
 }
@@ -277,35 +283,13 @@ void FlockManager::checkDuplicateAnswer()
 }
 
 #if defined(NEWDESIGN)
-void FlockManager::updatePresenceMap(uint32_t trajectoryId)
-{
-    m_presenceMap[trajectoryId] |= (1 << m_buffered);
-}
-
-void FlockManager::shiftPresenceMaps()
-{
-    for (auto iter = m_presenceMap.begin(); iter != m_presenceMap.end();) {
-        if (iter->second) {
-            iter->second >>= 1;
-            ++iter;
-        } else {
-            iter = m_presenceMap.erase(iter);
-        }
-    }
-}
-
-void FlockManager::preProcessing(uint64_t timestamp)
-{
-    if (timestamp - m_lastTimestamp > 1)
-        clear();
-}
-
 void FlockManager::clear()
 {
     m_flocks.clear();
-    m_presenceMap.clear();
     m_updated.clear();
     m_buffered = 0;
+    m_flockUtils->setPastBufferSize(0);
+    m_flockUtils->clearPresenceMap();
 }
 #else
 void FlockManager::dump() const

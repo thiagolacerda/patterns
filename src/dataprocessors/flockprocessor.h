@@ -4,6 +4,7 @@
 #include "diskmanager.h"
 #include "flock.h"
 #include "flockmanager.h"
+#include "flockutils.h"
 #include "gridmanager.h"
 
 class GPSPointBuffererListenerData;
@@ -12,13 +13,18 @@ class FlockProcessor : public DataProcessor {
 public:
     FlockProcessor(const std::unordered_map<std::string, std::string>& parameters)
         : DataProcessor(parameters)
+        , m_flockUtils(std::make_shared<FlockUtils>())
+        , m_flockManager(m_flockUtils)
     {
         m_gridManager.setGridSize(stod(m_parameters["gridSize"]));
         m_flockManager.setTrajectoriesPerFlock(stoul(m_parameters["trajectoriesPerFlock"]));
         m_flockManager.setFlockLength(stoul(m_parameters["flockLength"]));
-        m_diskManager.setRadius(stod(m_parameters["gridSize"]) / 2);
-        m_mask = (1 << m_flockManager.flockLength()) - 1;
+        m_flockUtils->setRadius(stod(m_parameters["gridSize"]) / 2);
+        m_flockUtils->setFlockLength(m_flockManager.flockLength());
+        m_flockUtils->setTrajectoriesPerFlock(m_flockManager.trajectoriesPerFlock());
     }
+
+    virtual ~FlockProcessor() {}
 
     void processData(const ProcessorData& data) override;
 
@@ -29,17 +35,15 @@ public:
         return new FlockProcessor(parameters);
     }
 
-private:
+protected:
     void clusterPointsIntoDisks(const std::shared_ptr<Disk>& disk1, const std::shared_ptr<Disk>& disk2,
-        const std::vector<std::shared_ptr<GPSPoint>>& points, const GPSPointBuffererListenerData& data);
-    bool shouldInsert(uint32_t trajectoryId, const GPSPointBuffererListenerData& data);
+        const std::vector<std::shared_ptr<GPSPoint>>& points);
+    virtual void onGridsReady();
 
+    std::shared_ptr<FlockUtils> m_flockUtils;
     FlockManager m_flockManager;
     GridManager m_gridManager;
     DiskManager m_diskManager;
-    std::unordered_map<uint32_t, bool> m_shouldInsertCache;
-    uint64_t m_mask;
-    uint64_t m_bufferMask;
     std::vector<Flock> m_flocks;
 };
 

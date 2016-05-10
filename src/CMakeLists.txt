@@ -85,6 +85,9 @@ set(DATALISTENERS_SRCS
 
 set(DATAPROCESSORS_SRCS
     ${DATAPROCESSORS_DIR}/flockprocessor.cpp
+    ${DATAPROCESSORS_DIR}/flockprocessorthread.cpp
+    ${DATAPROCESSORS_DIR}/flockutils.cpp
+    ${DATAPROCESSORS_DIR}/parallelflockprocessor.cpp
 )
 
 set(PATTERNSNG_SOURCES
