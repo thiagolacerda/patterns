@@ -33,7 +33,7 @@ private:
     void registerComponents(const std::unordered_map<std::string, std::shared_ptr<S>>& source,
         const std::string& bindKey, const std::unordered_map<std::string, std::shared_ptr<T>>& target);
 
-    std::unordered_set<std::string> getList(const std::string& value);
+    std::unordered_set<std::string> getList(const std::string& value, char separator=',');
 
     template<class T>
     std::unordered_map<std::string, std::shared_ptr<T>> getComponents(const std::unordered_set<std::string>&

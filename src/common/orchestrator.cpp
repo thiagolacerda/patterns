@@ -71,7 +71,7 @@ void Orchestrator::appendParamsToConfString(std::string& conf, const std::string
 
     conf += "[" + sectionName + "]\n" + reg + "\n";
 
-    const auto& paramList = getList(paramsMap.at(paramsKey));
+    const auto& paramList = getList(paramsMap.at(paramsKey), ' ');
     if (paramList.empty())
         return;
 
@@ -120,13 +120,13 @@ void Orchestrator::start()
         connectorPair.second->retrieveData();
 }
 
-std::unordered_set<std::string> Orchestrator::getList(const std::string& value)
+std::unordered_set<std::string> Orchestrator::getList(const std::string& value, char separator)
 {
     std::istringstream ss(value);
     std::string token;
 
     std::unordered_set<std::string> result;
-    while(std::getline(ss, token, ','))
+    while(std::getline(ss, token, separator))
         result.insert(token);
 
     return result;
