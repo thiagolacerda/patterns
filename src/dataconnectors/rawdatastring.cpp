@@ -16,22 +16,38 @@ std::string RawDataString::getColumnValue(int colIndex) const
 
 int RawDataString::getAsInt(int colIndex) const
 {
-    return stoi(getColumnValue(colIndex));
+    try {
+        return stoi(getColumnValue(colIndex));
+    } catch (const std::invalid_argument&) {
+        return 0;
+    }
 }
 
 double RawDataString::getAsDouble(int colIndex) const
 {
-    return stod(getColumnValue(colIndex));
+    try {
+        return stod(getColumnValue(colIndex));
+    } catch (const std::invalid_argument&) {
+        return 0;
+    }
 }
 
 uint32_t RawDataString::getAsUInt32_t(int colIndex) const
 {
-    return stoul(getColumnValue(colIndex), NULL, 10);
+    try {
+        return stoul(getColumnValue(colIndex), NULL, 10);
+    } catch (const std::invalid_argument&) {
+        return 0;
+    }
 }
 
 uint64_t RawDataString::getAsUInt64_t(int colIndex) const
 {
-    return stoull(getColumnValue(colIndex), NULL, 10);
+    try {
+        return stoull(getColumnValue(colIndex), NULL, 10);
+    } catch (const std::invalid_argument&) {
+        return 0;
+    }
 }
 
 std::string RawDataString::getAsString(int colIndex) const
