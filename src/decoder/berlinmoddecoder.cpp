@@ -1,5 +1,6 @@
 #include "berlinmoddecoder.h"
 
+#include <cstring>
 #include <stdlib.h>
 #include <string.h>
 
