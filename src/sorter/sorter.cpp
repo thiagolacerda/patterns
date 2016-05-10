@@ -1,75 +1,19 @@
 #include "sorter.h"
 
 #include <fstream>
-#include <sstream>
-#include "databasedecoder.h"
-#include "factory.h"
-#include "sortedfiledecoder.h"
+#include "componentfactory.h"
+#include "datamodel.h"
+#include "rawdatastring.h"
 
-void Sorter::processGPSTuple(const std::tuple<uint32_t, double, double, uint64_t>& gpsTuple)
+void Sorter::onDataReceived(const DataModel& dataModel)
 {
-    m_points.insert(GPSPoint(std::get<1>(gpsTuple), std::get<2>(gpsTuple),
-        std::get<3>(gpsTuple), std::get<0>(gpsTuple)));
+    m_points.insert(dataModel.get<GPSPoint>());
+    if (m_points.size() >= m_maxInMemory)
+        flushPointsToFile();
 }
 
-int64_t Sorter::fetchPoints(int64_t batchSize, const std::string& fileName, DatabaseDecoder* decoder)
+void Sorter::mergeFiles()
 {
-    int64_t fetched = decoder->retrievePoints(batchSize);
-    std::ofstream out(fileName, std::ofstream::out);
-    for (const GPSPoint& point : m_points)
-        printPointToFile(point, out);
-
-    out.close();
-    m_points.clear();
-    return fetched;
-}
-
-void Sorter::sortDB()
-{
-    DatabaseDecoder* dbDecoder = Factory::dbDecoderInstance(Config::decoder());
-    if (!dbDecoder)
-        return;
-
-    dbDecoder->setListenerFunction(std::bind(&Sorter::processGPSTuple, this, std::placeholders::_1));
-    m_numberOfRecords = dbDecoder->numberOfRecords();
-    if (m_numberOfRecords <= m_maxInMemory) {
-        fetchPoints(-1, dbDecoder->decoderName(), dbDecoder);
-    } else {
-        uint64_t counter = 0;
-        while (m_processedRecords < m_numberOfRecords) {
-            std::ostringstream oss;
-            oss << "tmp." << dbDecoder->decoderName() << "." << counter;
-            const std::string& fileName = oss.str();
-            m_processedRecords += fetchPoints(m_maxInMemory, fileName, dbDecoder);
-            m_temporaryFiles.push(fileName);
-            ++counter;
-        }
-        mergeFiles(dbDecoder->decoderName());
-    }
-    dbDecoder->done();
-    delete dbDecoder;
-}
-
-void Sorter::mergeFiles(const std::string& finalFileName)
-{
-    SortedFileDecoder* decoder1 = static_cast<SortedFileDecoder*>(Factory::dbDecoderInstance(Config::SortedFile));
-    SortedFileDecoder* decoder2 = static_cast<SortedFileDecoder*>(Factory::dbDecoderInstance(Config::SortedFile));
-    GPSPoint point1;
-    GPSPoint point2;
-    std::function<void (const std::tuple<uint32_t, double, double, uint64_t>&)> point1Func =
-        [&point1](const std::tuple<uint32_t, double, double, uint64_t>& gpsTuple) mutable
-        {
-            point1 = GPSPoint(std::get<1>(gpsTuple), std::get<2>(gpsTuple),
-                std::get<3>(gpsTuple), std::get<0>(gpsTuple));
-        };
-
-    std::function<void (const std::tuple<uint32_t, double, double, uint64_t>&)> point2Func =
-        [&point2](const std::tuple<uint32_t, double, double, uint64_t>& gpsTuple) mutable
-        {
-            point2 = GPSPoint(std::get<1>(gpsTuple), std::get<2>(gpsTuple),
-                std::get<3>(gpsTuple), std::get<0>(gpsTuple));
-        };
-
     uint64_t counter = 0;
     while (m_temporaryFiles.size() > 1) {
         const std::string& file1Name = m_temporaryFiles.front();
@@ -77,56 +21,80 @@ void Sorter::mergeFiles(const std::string& finalFileName)
         const std::string& file2Name = m_temporaryFiles.front();
         m_temporaryFiles.pop();
 
-        decoder1->setPath(file1Name);
-        decoder1->setListenerFunction(point1Func);
-        decoder2->setPath(file2Name);
-        decoder2->setListenerFunction(point2Func);
+        std::ifstream input1(file1Name, std::ifstream::in);
+        std::ifstream input2(file2Name, std::ifstream::in);
 
-        std::ostringstream oss;
-        oss << "merge." << counter;
-        const std::string& mergedFileName = oss.str();
+        const std::string& mergedFileName = "merge." + std::to_string(counter);
         std::ofstream mergedFile(mergedFileName, std::ofstream::out);
 
-        uint32_t retrieved1 = decoder1->retrievePoints(1);
-        uint32_t retrieved2 = decoder2->retrievePoints(1);
-        while (retrieved1 && retrieved2) {
-            printPointToFile(point1 < point2 ? point1 : point2, mergedFile);
+        std::string line1;
+        std::string line2;
+        RawDataString data1("", ";");
+        RawDataString data2("", ";");
+        while (!input1.eof() && !input2.eof()) {
 
-            if (point1 < point2)
-                retrieved1 = decoder1->retrievePoints(1);
-            else
-                retrieved2 = decoder2->retrievePoints(1);
+            if (line1.empty()) {
+                std::getline(input1, line1);
+                data1.setString(line1);
+            }
+
+            if (line2.empty()) {
+                std::getline(input2, line2);
+                data2.setString(line2);
+            }
+
+            const uint64_t t1 = data1.getAsUInt64_t(3);
+            const uint64_t t2 = data2.getAsUInt64_t(3);
+            if (t1 < t2 && !line1.empty()) {
+                mergedFile << line1 << "\n";
+                line1.clear();
+            } else if (!line2.empty()) {
+                mergedFile << line2 << "\n";
+                line2.clear();
+            }
         }
 
-        printPointToFile(retrieved1 ? point1 : point2, mergedFile);
+        if (!line1.empty())
+            mergedFile << line1 << "\n";
+        else if (!line2.empty())
+            mergedFile << line2 << "\n";
 
-        flushDecoderToFile(retrieved1 ? decoder1 : decoder2, mergedFile);
+        flushFileToFile(input1.eof() ? input2 : input1 , mergedFile);
         mergedFile.close();
 
         m_temporaryFiles.push(mergedFileName);
-        decoder1->done();
-        decoder2->done();
         std::remove(file1Name.c_str()); // delete fileName1
         std::remove(file2Name.c_str()); // delete fileName2
         ++counter;
     }
-    std::rename(m_temporaryFiles.front().c_str(), finalFileName.c_str());
+    std::rename(m_temporaryFiles.front().c_str(), m_finalName.c_str());
 }
 
-void Sorter::flushDecoderToFile(SortedFileDecoder* decoder, std::ofstream& file)
+void Sorter::onDataProviderFinished()
 {
-    decoder->setListenerFunction([this, &file](const std::tuple<uint32_t, double, double, uint64_t>& gpsTuple)
-        {
-            GPSPoint p(std::get<1>(gpsTuple), std::get<2>(gpsTuple), std::get<3>(gpsTuple), std::get<0>(gpsTuple));
-            printPointToFile(p, file);
-        }
-    );
-    decoder->retrievePoints();
+    flushPointsToFile();
+    mergeFiles();
 }
 
-void Sorter::printPointToFile(const GPSPoint& point, std::ofstream& file)
+void Sorter::flushPointsToFile()
 {
-    file << point.trajectoryId() << ";" << point.latitude() << ";" <<
-        point.longitude() << ";" << point.timestamp() << "\n";
+    const std::string fileName = "tmp.sorter." + std::to_string(m_currentFileIndex);
+    std::ofstream out(fileName, std::ofstream::out);
+    for (const auto& point : m_points) {
+        out << point->trajectoryId() << ";" << point->latitude() << ";" << point->longitude() << ";" <<
+            point->timestamp() << "\n";
+    }
+
+    m_points.clear();
+    ++m_currentFileIndex;
+    m_temporaryFiles.push(fileName);
 }
 
+void Sorter::flushFileToFile(std::ifstream& input, std::ofstream& output)
+{
+    std::string line;
+    while (std::getline(input, line))
+        output << line << "\n";
+}
+
+REGISTER_DATA_LISTENER("sorterlistener", "s", Sorter::instance);

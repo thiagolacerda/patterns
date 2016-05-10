@@ -4,8 +4,6 @@ include_directories(
     ${SQLite3_INCLUDE_DIRS}
 )
 
-add_subdirectory(sorter)
-
 set(COMMON_SRCS
     ${COMMON_DIR}/config.cpp
     ${COMMON_DIR}/factory.cpp
@@ -88,6 +86,7 @@ set(DATAPROCESSORS_SRCS
 
 set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/configparser.cpp
+    ${COMMON_DIR}/launcher.cpp
     ${COMMON_DIR}/orchestrator.cpp
     ${COMMON_DIR}/utils.cpp
     ${DATACONNECTORS_SRCS}
@@ -98,6 +97,8 @@ set(PATTERNSNG_SOURCES
     ${GPS_SRCS}
     mainng.cpp
 )
+
+add_subdirectory(sorter)
 
 add_executable(patternsng ${PATTERNSNG_SOURCES})
 target_compile_definitions(patternsng PRIVATE NEWDESIGN=1)
