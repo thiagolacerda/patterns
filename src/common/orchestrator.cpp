@@ -7,6 +7,17 @@
 #include "dataprocessor.h"
 #include "utils.h"
 
+void Orchestrator::reset()
+{
+    m_parser.reset();
+    m_errorMessages.clear();
+    m_warningMessages.clear();
+    m_connectors.clear();
+    m_decoders.clear();
+    m_listeners.clear();
+    m_processors.clear();
+}
+
 void Orchestrator::checkEmptyComponentSet(const std::unordered_set<std::string>& components, const std::string& message)
 {
     if (components.empty())
@@ -27,8 +38,9 @@ void Orchestrator::registerComponents(const std::unordered_map<std::string, std:
     }
 }
 
-bool Orchestrator::loadConfigFromMap(const std::unordered_map<std::string, std::string>& configMap)
+bool Orchestrator::loadConfigFromMapAndRegisterComponents(const std::unordered_map<std::string, std::string>& configMap)
 {
+    reset();
     const auto& connector = ComponentFactory<DataConnector>::getFullName(configMap.at("connector"));
     const auto& decoder = ComponentFactory<DataDecoder>::getFullName(configMap.at("decoder"));
     const auto& listener = ComponentFactory<DataListener>::getFullName(configMap.at("listener"));
@@ -48,7 +60,7 @@ bool Orchestrator::loadConfigFromMap(const std::unordered_map<std::string, std::
     std::istringstream s(confString);
     m_parser.loadConfig(s);
 
-    return warningsCheck();
+    return loadAndRegisterComponents();
 }
 
 void Orchestrator::appendParamsToConfString(std::string& conf, const std::string& sectionName, const std::string& reg,
@@ -67,48 +79,45 @@ void Orchestrator::appendParamsToConfString(std::string& conf, const std::string
         conf += param + "\n";
 }
 
-bool Orchestrator::loadConfigFromFile(const std::string& configPath)
+bool Orchestrator::loadConfigFromFileAndRegisterComponents(const std::string& configPath)
 {
+    reset();
     m_parser.loadConfig(configPath);
 
-    return warningsCheck();
+    return loadAndRegisterComponents();
 }
 
-bool Orchestrator::warningsCheck()
+bool Orchestrator::loadAndRegisterComponents()
 {
-    m_connectorNames = getList(m_parser.getValue("", "dataconnectors"));
-    m_decoderNames = getList(m_parser.getValue("", "datadecoders"));
-    m_listenerNames = getList(m_parser.getValue("", "datalisteners"));
-    m_processorNames = getList(m_parser.getValue("", "dataprocessors"));
+    const auto& connectorNames = getList(m_parser.getValue("", "dataconnectors"));
+    const auto& decoderNames = getList(m_parser.getValue("", "datadecoders"));
+    const auto& listenerNames = getList(m_parser.getValue("", "datalisteners"));
+    const auto& processorNames = getList(m_parser.getValue("", "dataprocessors"));
 
-    checkEmptyComponentSet(m_connectorNames, "No Data Connectors were specified");
-    checkEmptyComponentSet(m_decoderNames, "No Data Decoders were specified");
-    checkEmptyComponentSet(m_listenerNames, "No Data Listeners were specified");
-    checkEmptyComponentSet(m_processorNames, "No Data Processors were specified");
+    checkEmptyComponentSet(connectorNames, "No Data Connectors were specified");
+    checkEmptyComponentSet(decoderNames, "No Data Decoders were specified");
+    checkEmptyComponentSet(listenerNames, "No Data Listeners were specified");
+    checkEmptyComponentSet(processorNames, "No Data Processors were specified");
 
-    return m_warningMessages.empty();
+    m_connectors = getComponents<DataConnector>(connectorNames);
+
+    m_decoders = getComponents<DataDecoder>(decoderNames);
+    registerComponents<DataDecoder, DataConnector>(m_decoders, "dataconnector", m_connectors);
+
+    m_listeners = getComponents<DataListener>(listenerNames);
+    registerComponents<DataListener, DataDecoder>(m_listeners, "datadecoder", m_decoders);
+
+    m_processors = getComponents<DataProcessor>(processorNames);
+    registerComponents<DataProcessor, DataListener>(m_processors, "datalistener", m_listeners);
+
+    return m_warningMessages.empty() && m_errorMessages.empty();
 }
 
-bool Orchestrator::start()
+void Orchestrator::start()
 {
-    const auto& dataConnectors = getComponents<DataConnector>(m_connectorNames);
-
-    const auto& dataDecoders = getComponents<DataDecoder>(m_decoderNames);
-    registerComponents<DataDecoder, DataConnector>(dataDecoders, "dataconnector", dataConnectors);
-
-    const auto& dataListeners = getComponents<DataListener>(m_listenerNames);
-    registerComponents<DataListener, DataDecoder>(dataListeners, "datadecoder", dataDecoders);
-
-    const auto& dataProcessors = getComponents<DataProcessor>(m_processorNames);
-    registerComponents<DataProcessor, DataListener>(dataProcessors, "datalistener", dataListeners);
-
-    if (!m_errorMessages.empty())
-        return false;
-
-    for (const auto& connectorPair : dataConnectors)
+    // TODO: fix this!! We don't want it running sequentially
+    for (const auto& connectorPair : m_connectors)
         connectorPair.second->retrieveData();
-
-    return true;
 }
 
 std::unordered_set<std::string> Orchestrator::getList(const std::string& value)

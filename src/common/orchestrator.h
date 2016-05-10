@@ -7,16 +7,22 @@
 #include <vector>
 #include "configparser.h"
 
+class DataConnector;
+class DataDecoder;
+class DataListener;
+class DataProcessor;
+
 class Orchestrator {
 public:
-    bool start();
+    void start();
 
-    bool loadConfigFromFile(const std::string& configPath);
-    bool loadConfigFromMap(const std::unordered_map<std::string, std::string>& configMap);
+    bool loadConfigFromFileAndRegisterComponents(const std::string& configPath);
+    bool loadConfigFromMapAndRegisterComponents(const std::unordered_map<std::string, std::string>& configMap);
     std::vector<std::string> errorMessages() { return m_errorMessages; }
     std::vector<std::string> warningMessages() { return m_warningMessages; }
 
 private:
+    void reset();
     void appendParamsToConfString(std::string& conf, const std::string& sectionName, const std::string& reg,
         const std::string& paramsKey, const std::unordered_map<std::string, std::string>& paramsMap);
 
@@ -33,16 +39,16 @@ private:
     std::unordered_map<std::string, std::shared_ptr<T>> getComponents(const std::unordered_set<std::string>&
         componentNames);
 
-    bool warningsCheck();
+    bool loadAndRegisterComponents();
 
     ConfigParser m_parser;
 
     std::vector<std::string> m_errorMessages;
     std::vector<std::string> m_warningMessages;
 
-    std::unordered_set<std::string> m_connectorNames;
-    std::unordered_set<std::string> m_decoderNames;
-    std::unordered_set<std::string> m_listenerNames;
-    std::unordered_set<std::string> m_processorNames;
+    std::unordered_map<std::string, std::shared_ptr<DataConnector>> m_connectors;
+    std::unordered_map<std::string, std::shared_ptr<DataDecoder>> m_decoders;
+    std::unordered_map<std::string, std::shared_ptr<DataListener>> m_listeners;
+    std::unordered_map<std::string, std::shared_ptr<DataProcessor>> m_processors;
 };
 

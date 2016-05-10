@@ -122,17 +122,20 @@ int main(int argc, char** argv)
     Orchestrator orchestrator;
     bool success = true;
     if (options[ConfigFile])
-        success = orchestrator.loadConfigFromFile(options[ConfigFile].arg);
+        success = orchestrator.loadConfigFromFileAndRegisterComponents(options[ConfigFile].arg);
     else
-        success = orchestrator.loadConfigFromMap(buildConfig(options, usage));
+        success = orchestrator.loadConfigFromMapAndRegisterComponents(buildConfig(options, usage));
 
-    if (!success)
+    if (!success) {
         printMessages(orchestrator.warningMessages(), "warning");
-
-    if (!orchestrator.start()) {
-        printMessages(orchestrator.errorMessages(), "error");
-        return 3;
+        const auto& errorMessages = orchestrator.errorMessages();
+        if (!errorMessages.empty()) {
+            printMessages(errorMessages, "error");
+            return 3;
+        }
     }
+
+    orchestrator.start();
 
     return 0;
 }

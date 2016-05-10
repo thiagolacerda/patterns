@@ -13,6 +13,8 @@ public:
     bool loadConfig(const std::string& path);
     bool loadConfig(std::istream& inputStream);
 
+    void reset() { m_config.clear(); }
+
 private:
     bool isSectionValid(const std::string& section) const;
     bool validateConfig() const;
