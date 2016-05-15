@@ -11,6 +11,7 @@
 void DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
+        //TODO: figure out why using the function defined in Utils here causes so much degradation in performance
         uint32_t count = (*iter)->countIntersection(disk);
         if (disk->numberOfPoints() == count)
             return; // disk is a subset of disk already in disk manager, do not insert

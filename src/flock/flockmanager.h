@@ -30,8 +30,6 @@ public:
 #endif
     { }
 
-    uint32_t intersection(const Flock& set1, const std::shared_ptr<Disk>& disk, std::map<uint32_t, Trajectory>* inter);
-    uint32_t intersection(const Flock& flock1, const Flock& flock2);
 #if defined(NEWDESIGN)
     void tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks, uint64_t timestamp);
 #else

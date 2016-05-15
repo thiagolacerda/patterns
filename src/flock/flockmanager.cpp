@@ -5,79 +5,7 @@
 #include "manager.h"
 #endif
 #include "disk.h"
-
-/*
- * Computes the intersection between two set of trajectories.
- * By default we return the number of common trajectories between those two sets.
- * If the parameter 'inter' is a valid map, we also store the common trajectories on that map
- */
-uint32_t FlockManager::intersection(const Flock& flock, const std::shared_ptr<Disk>& disk,
-    std::map<uint32_t, Trajectory>* inter)
-{
-    const auto& flockTrajs = flock.trajectories();
-    const auto& diskPoints = disk->points();
-    auto begin1 = flockTrajs.begin();
-    auto begin2 = diskPoints.begin();
-    auto end1 = flockTrajs.end();
-    auto end2 = diskPoints.end();
-    --end1;
-    --end2;
-    // The trajectory map is ordered by the trajectory's id, so if set1 has its first element less than set2's first
-    // and its last element less than set2's last element, there is no intersection at all.
-    if ((begin1->first < begin2->first && end1->first < begin2->first) ||
-        (begin2->first < begin1->first && end2->first < begin1->first))
-        return 0;
-
-    uint32_t count = 0;
-    while (begin1 != flockTrajs.end() && begin2 != diskPoints.end()) {
-        if (begin1->first < begin2->first) {
-            ++begin1;
-        } else if (begin2->first < begin1->first) {
-            ++begin2;
-        } else {
-            if (inter) {
-                Trajectory t = begin1->second;
-                t.addPoint(begin2->second);
-                (*inter).emplace(std::make_pair(begin1->first, std::move(t)));
-            }
-            ++count;
-            ++begin1;
-            ++begin2;
-        }
-    }
-    return count;
-}
-
-uint32_t FlockManager::intersection(const Flock& flock1, const Flock& flock2)
-{
-    const auto& flock1Trajs = flock1.trajectories();
-    const auto& flock2Trajs = flock2.trajectories();
-    auto begin1 = flock1Trajs.begin();
-    auto begin2 = flock2Trajs.begin();
-    auto end1 = flock1Trajs.end();
-    auto end2 = flock2Trajs.end();
-    --end1;
-    --end2;
-    // The trajectory map is ordered by the trajectory's id, so if set1 has its first element less than set2's first
-    // and its last element less than set2's last element, there is no intersection at all.
-    if ((begin1->first < begin2->first && end1->first < begin2->first) ||
-        (begin2->first < begin1->first && end2->first < begin1->first))
-        return 0;
-
-    uint32_t count = 0;
-    while (begin1 != flock1Trajs.end() && begin2 != flock2Trajs.end()) {
-        if (begin1->first < begin2->first) {
-            ++begin1;
-        } else if (begin2->first < begin1->first) {
-            ++begin2;
-        } else {
-            ++count;
-            ++begin1;
-            ++begin2;
-        }
-    }
-    return count;
-}
+#include "utils.h"
 
 #if defined(NEWDESIGN)
 void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks, uint64_t timestamp)
@@ -101,7 +29,15 @@ void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disk
                     continue;
 
                 std::map<uint32_t, Trajectory> inter;
-                intersection(*existingFlock, disk, &inter);
+                const auto& trajs = (*existingFlock).trajectories();
+                const auto& points = disk->points();
+                Utils::intersection(trajs.begin(), trajs.end(), points.begin(), points.end(),
+                    [&inter](const std::map<uint32_t, Trajectory>::value_type& v1,
+                    const std::map<uint32_t, std::shared_ptr<GPSPoint>>::value_type& v2) {
+                        Trajectory t = v1.second;
+                        t.addPoint(v2.second);
+                        inter.emplace(std::make_pair(t.id(), std::move(t)));
+                    });
 #if defined(NEWDESIGN)
                 if (inter.size() >= m_trajectoriesPerFlock) {
 #else
@@ -167,7 +103,9 @@ void FlockManager::updateBuffers(const Flock& flock)
 void FlockManager::mergeFlocks(std::vector<Flock>* flocks, const Flock& newFlock)
 {
     for (auto existingFlock = flocks->begin(); existingFlock != flocks->end();) {
-        uint32_t count = intersection(*existingFlock, newFlock);
+        const auto& trajs1 = (*existingFlock).trajectories();
+        const auto& trajs2 = newFlock.trajectories();
+        uint32_t count = Utils::intersection(trajs1.begin(), trajs1.end(), trajs2.begin(), trajs2.end());
         if (newFlock.trajectories().size() == count) {
             // This new flock is, potentially, a subset of (*existingFlock)
             if ((*existingFlock).startTime() <= newFlock.startTime())
@@ -262,7 +200,9 @@ void FlockManager::checkDuplicateAnswer()
         for (auto it2 = flocks.begin(); insert && it2 != flocks.end();) {
             if (flock.startTime() == (*it2).startTime() && flock.endTime() == (*it2).endTime()) {
                 // Same start time and end time, let's look if they have the same trajectories
-                interCount = intersection(flock, *it2);
+                const auto& trajs1 = flock.trajectories();
+                const auto& trajs2 = (*it2).trajectories();
+                interCount = Utils::intersection(trajs1.begin(), trajs1.end(), trajs2.begin(), trajs2.end());
                 if (flock.trajectories().size() == interCount)
                     // flock is a subset of (*it2)
                     insert = false;

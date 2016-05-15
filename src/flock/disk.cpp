@@ -61,30 +61,7 @@ void Disk::addPoint(const std::shared_ptr<GPSPoint>& point)
 
 uint32_t Disk::countIntersection(const std::shared_ptr<Disk>& other) const
 {
-    auto begin1 = m_points.begin();
-    auto begin2 = other->m_points.begin();
-    auto end1 = m_points.end();
-    auto end2 = other->m_points.end();
-    --end1;
-    --end2;
-    if ((begin1->first < begin2->first && end1->first < begin2->first) ||
-        (begin2->first < begin1->first && end2->first < begin1->first))
-        return 0;
-
-    uint32_t count = 0;
-    while (begin1 != m_points.end() && begin2 != other->m_points.end()) {
-        if (begin1->first < begin2->first) {
-            ++begin1;
-        } else if (begin2->first < begin1->first) {
-            ++begin2;
-        } else {
-            ++count;
-            ++begin1;
-            ++begin2;
-        }
-    }
-
-    return count;
+    return Utils::intersection(m_points.begin(), m_points.end(), other->m_points.begin(), other->m_points.end());
 }
 
 #if !defined(NEWDESIGN)
