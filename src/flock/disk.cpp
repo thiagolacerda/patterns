@@ -59,7 +59,7 @@ void Disk::addPoint(const std::shared_ptr<GPSPoint>& point)
     m_points[point->trajectoryId()] = point;
 }
 
-uint32_t Disk::countIntersection(Disk* other) const
+uint32_t Disk::countIntersection(const std::shared_ptr<Disk>& other) const
 {
     auto begin1 = m_points.begin();
     auto begin2 = other->m_points.begin();

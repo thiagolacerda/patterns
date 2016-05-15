@@ -117,8 +117,6 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
             m_gridManager.addPointToGrid(std::shared_ptr<GPSPoint>(point));
     }
 
-    Disk* disk1;
-    Disk* disk2;
     const std::unordered_map<std::string, Grid*>& grids = m_gridManager.grids();
     const double& gridSize = Config::gridSize();
     for (auto iter = grids.begin(); iter != grids.end(); ++iter) {
@@ -135,9 +133,9 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
 
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (Utils::fuzzyLessEqual(distance, gridSize)) {
-                    disk1 = nullptr;
-                    disk2 = nullptr;
-                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    std::shared_ptr<Disk> disk1;
+                    std::shared_ptr<Disk> disk2;
+                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, disk1, disk2);
                     if (!disk1 || !disk2)
                         continue;
 
@@ -203,18 +201,17 @@ void Manager::flushFlocksToResultFile()
 /*
  * Checks if the disk fulfills the requirements to be a potential new flock
  */
-void Manager::validateAndTryStoreDisk(Disk* disk)
+void Manager::validateAndTryStoreDisk(const std::shared_ptr<Disk>& disk)
 {
-    if (disk->numberOfPoints() < Config::numberOfTrajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
-        // Invalid disk, free it
-        delete disk;
+    if (disk->numberOfPoints() >= Config::numberOfTrajectoriesPerFlock())
+        m_diskManager.tryInsertDisk(disk);
 }
 
 
 /*
  * This goes through all the points in the neighbor grids and try to put them inside the disks
  */
-void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
+void Manager::clusterPointsIntoDisks(const std::shared_ptr<Disk>& disk1, const std::shared_ptr<Disk>& disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess)
 {
     for (const std::shared_ptr<GPSPoint>& point : pointsToProcess) {

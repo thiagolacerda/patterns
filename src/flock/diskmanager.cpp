@@ -9,27 +9,24 @@
 #include "gpspoint.h"
 #include "utils.h"
 
-bool DiskManager::tryInsertDisk(Disk* disk)
+void DiskManager::tryInsertDisk(const std::shared_ptr<Disk>& disk)
 {
     for (auto iter = m_disks.begin(); iter != m_disks.end();) {
         uint32_t count = (*iter)->countIntersection(disk);
         if (disk->numberOfPoints() == count)
-            return false; // disk is a subset of disk already in disk manager, do not insert
+            return; // disk is a subset of disk already in disk manager, do not insert
 
-        if ((*iter)->numberOfPoints() != count) {
+        if ((*iter)->numberOfPoints() != count)
             ++iter; // Different disks... do nothing
-        } else {
-            Disk* toDelete = (*iter);
+        else
             iter = m_disks.erase(iter); // disk is a superset of *iter
-            delete toDelete;
-        }
     }
 
     m_disks.push_back(disk);
-    return true;
 }
 
-void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
+    std::shared_ptr<Disk>& disk2)
 {
     const double latMeters1 = point1->latitudeMeters();
     const double longMeters1 = point1->longitudeMeters();
@@ -44,7 +41,8 @@ void DiskManager::computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t time
         getDisks(point1, point2, timestamp, disk1, disk2);
 }
 
-void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2)
+void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
+    std::shared_ptr<Disk>& disk2)
 {
     double latMeters1 = point1->latitudeMeters();
     double longMeters1 = point1->longitudeMeters();
@@ -75,18 +73,18 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     double c2X = midX - multiplyParameter * perpNormVectorX;
     double c2Y = midY - multiplyParameter * perpNormVectorY;
 #if defined(NEWDESIGN)
-    *disk1 = new Disk(m_radius, c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
-    *disk2 = new Disk(m_radius, c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    disk1.reset(new Disk(m_radius, c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
+    disk2.reset(new Disk(m_radius, c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
 #else
-    *disk1 = new Disk(c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
-    *disk2 = new Disk(c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    disk1.reset(new Disk(c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
+    disk2.reset(new Disk(c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId()));
 #endif
 }
 
 #if !defined(NEWDESIGN)
 // This code was copied from the paper as is! (changed only some names of variables)
 void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp,
-    Disk** disk1, Disk** disk2)
+    std::shared_ptr<Disk>& disk1, std::shared_ptr<Disk>& disk2)
 {
     double x1 = point1->trajectoryId() < point2->trajectoryId() ? point1->longitudeMeters() : point2->longitudeMeters();
     double y1 = point1->trajectoryId() < point2->trajectoryId() ? point1->latitudeMeters() : point2->latitudeMeters();
@@ -117,13 +115,13 @@ void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint6
     double cY1 = (2.0 * x1 * cX1 - 2.0 * x2 * cX1 + tmp) / twoY2MinusY1;
     double cY2 = (2.0 * x1 * cX2 - 2.0 * x2 * cX2 + tmp) / twoY2MinusY1;
 
-    *disk1 = new Disk(cX1, cY1, timestamp, point1->trajectoryId(), point2->trajectoryId());
-    *disk2 = new Disk(cX2, cY2, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    disk1.reset(new Disk(cX1, cY1, timestamp, point1->trajectoryId(), point2->trajectoryId()));
+    disk2.reset(new Disk(cX2, cY2, timestamp, point1->trajectoryId(), point2->trajectoryId()));
 }
 
 void DiskManager::dump() const
 {
-    for (Disk* disk : m_disks) {
+    for (const auto& disk : m_disks) {
         disk->dump();
         disk->dumpPoints();
     }
@@ -132,7 +130,6 @@ void DiskManager::dump() const
 
 void DiskManager::clear()
 {
-    std::for_each(m_disks.begin(), m_disks.end(), [](Disk* disk) { delete disk; });
     m_disks.clear();
 }
 

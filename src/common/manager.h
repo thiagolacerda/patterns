@@ -37,10 +37,11 @@ private:
     bool shouldInsert(uint32_t trajectoryId);
     void shiftBuffer();
     void flushFlocksToResultFile();
-    void validateAndTryStoreDisk(Disk* disk);
+    void validateAndTryStoreDisk(const std::shared_ptr<Disk>& disk);
     void computeFlocks(const std::unordered_map<uint32_t,
         std::vector<std::shared_ptr<GPSPoint>>>& points, uint64_t timestamp);
-    void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess);
+    void clusterPointsIntoDisks(const std::shared_ptr<Disk>& disk1, const std::shared_ptr<Disk>& disk2,
+        const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess);
     DatabaseDecoder* m_dbDecoder;
     DiskManager m_diskManager;
     GridManager m_gridManager;

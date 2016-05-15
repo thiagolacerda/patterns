@@ -72,15 +72,18 @@ void FlockProcessor::processData(const ProcessorData& data)
 
                 double distance = (*it1)->distanceToPoint(*(*it2));
                 if (Utils::fuzzyLessEqual(distance, gridSize)) {
-                    Disk* disk1 = nullptr;
-                    Disk* disk2 = nullptr;
-                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, &disk1, &disk2);
+                    std::shared_ptr<Disk> disk1;
+                    std::shared_ptr<Disk> disk2;
+                    m_diskManager.computeDisks((*it1).get(), (*it2).get(), timestamp, disk1, disk2);
                     if (!disk1 || !disk2)
                         continue;
 
                     clusterPointsIntoDisks(disk1, disk2, extendedGrid, gpsData);
-                    validateAndTryStoreDisk(disk1);
-                    validateAndTryStoreDisk(disk2);
+                    if (disk1->numberOfPoints() >= m_flockManager.trajectoriesPerFlock())
+                        m_diskManager.tryInsertDisk(disk1);
+
+                    if (disk2->numberOfPoints() >= m_flockManager.trajectoriesPerFlock())
+                        m_diskManager.tryInsertDisk(disk2);
                 }
             }
         }
@@ -95,7 +98,7 @@ void FlockProcessor::processData(const ProcessorData& data)
     m_diskManager.clear();
 }
 
-void FlockProcessor::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
+void FlockProcessor::clusterPointsIntoDisks(const std::shared_ptr<Disk>& disk1, const std::shared_ptr<Disk>& disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& points, const GPSPointBuffererListenerData& data)
 {
     for (const auto& point : points) {
@@ -112,13 +115,6 @@ void FlockProcessor::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
         if (disk2->isPointInDisk(id, x, y))
             disk2->addPoint(point);
     }
-}
-
-void FlockProcessor::validateAndTryStoreDisk(Disk* disk)
-{
-    if (disk->numberOfPoints() < m_flockManager.trajectoriesPerFlock() || !m_diskManager.tryInsertDisk(disk))
-        // Invalid disk, free it
-        delete disk;
 }
 
 void FlockProcessor::onDataProviderFinished()

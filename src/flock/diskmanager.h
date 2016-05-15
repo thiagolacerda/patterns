@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 class Disk;
@@ -14,9 +15,10 @@ public:
 #endif
     { }
 
-    void computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2);
-    bool tryInsertDisk(Disk* disk);
-    const std::vector<Disk*>& disks() const { return m_disks; }
+    void computeDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
+        std::shared_ptr<Disk>& disk2);
+    void tryInsertDisk(const std::shared_ptr<Disk>& disk);
+    const std::vector<std::shared_ptr<Disk>>& disks() const { return m_disks; }
     uint32_t size() const { return m_disks.size(); }
     void clear();
 #if defined(NEWDESIGN)
@@ -27,11 +29,13 @@ public:
 
 private:
 #if !defined(NEWDESIGN)
-    void getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2);
-    void getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, Disk** disk1, Disk** disk2);
+    void getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
+        std::shared_ptr<Disk>& disk2);
+    void getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint64_t timestamp, std::shared_ptr<Disk>& disk1,
+        std::shared_ptr<Disk>& disk2);
 #else
     double m_radius;
 #endif
-    std::vector<Disk*> m_disks;
+    std::vector<std::shared_ptr<Disk>> m_disks;
 };
 

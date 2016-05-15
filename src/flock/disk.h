@@ -27,7 +27,7 @@ public:
     uint64_t timestamp() const { return m_timestamp; }
     void addPoint(const std::shared_ptr<GPSPoint>& point);
     uint32_t numberOfPoints() const { return m_points.size(); }
-    uint32_t countIntersection(Disk* other) const;
+    uint32_t countIntersection(const std::shared_ptr<Disk>& other) const;
     const std::map<uint32_t, std::shared_ptr<GPSPoint>>& points() const { return m_points; }
 #if !defined(NEWDESIGN)
     void dumpPoints() const;

@@ -11,7 +11,8 @@
  * By default we return the number of common trajectories between those two sets.
  * If the parameter 'inter' is a valid map, we also store the common trajectories on that map
  */
-uint32_t FlockManager::intersection(const Flock& flock, Disk* disk, std::map<uint32_t, Trajectory>* inter)
+uint32_t FlockManager::intersection(const Flock& flock, const std::shared_ptr<Disk>& disk,
+    std::map<uint32_t, Trajectory>* inter)
 {
     const auto& flockTrajs = flock.trajectories();
     const auto& diskPoints = disk->points();
@@ -79,9 +80,9 @@ uint32_t FlockManager::intersection(const Flock& flock1, const Flock& flock2)
 }
 
 #if defined(NEWDESIGN)
-void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks, uint64_t timestamp)
+void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks, uint64_t timestamp)
 #else
-void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
+void FlockManager::tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks)
 #endif
 {
     bool hasFlocks = !m_flocks.empty();
@@ -89,7 +90,7 @@ void FlockManager::tryMergeFlocks(const std::vector<Disk*>& disks)
     if (hasFlocks) {
         // There are some flocks from previuos time instance, so we try to merge the computed disks with them
         for (auto diskIter = disks.begin(); diskIter != disks.end(); ++diskIter) {
-            Disk* disk = *diskIter;
+            std::shared_ptr<Disk> disk = *diskIter;
             for (auto existingFlock = m_flocks.begin(); existingFlock != m_flocks.end(); ++existingFlock) {
                 if (disk->timestamp() - (*existingFlock).endTime() > 1)
                     continue;

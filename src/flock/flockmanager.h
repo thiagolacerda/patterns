@@ -25,12 +25,12 @@ public:
 #endif
     { }
 
-    uint32_t intersection(const Flock& set1, Disk* disk, std::map<uint32_t, Trajectory>* inter);
+    uint32_t intersection(const Flock& set1, const std::shared_ptr<Disk>& disk, std::map<uint32_t, Trajectory>* inter);
     uint32_t intersection(const Flock& flock1, const Flock& flock2);
 #if defined(NEWDESIGN)
-    void tryMergeFlocks(const std::vector<Disk*>& disks, uint64_t timestamp);
+    void tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks, uint64_t timestamp);
 #else
-    void tryMergeFlocks(const std::vector<Disk*>& disks);
+    void tryMergeFlocks(const std::vector<std::shared_ptr<Disk>>& disks);
 #endif
     std::vector<Flock> reportFlocks();
     uint32_t size() const { return m_flocks.size(); }
