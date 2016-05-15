@@ -9,17 +9,17 @@
 
 Disk::Disk()
 #if defined(NEWDESIGN)
-    : Disk(0, 0, 0, 0)
+    : Disk(0, 0, 0, 0, 0, 0)
 #else
-    : Disk(0, 0, 0)
+    : Disk(0, 0, 0, 0, 0)
 #endif
 {
 }
 
 #if defined(NEWDESIGN)
-Disk::Disk(double radius, double centerX, double centerY, uint64_t timestamp)
+Disk::Disk(double radius, double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id)
 #else
-Disk::Disk(double centerX, double centerY, uint64_t timestamp)
+Disk::Disk(double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id)
 #endif
     : m_centerX(centerX)
     , m_centerLongitude(0)
@@ -31,6 +31,8 @@ Disk::Disk(double centerX, double centerY, uint64_t timestamp)
     , m_radius(Config::radius())
 #endif
     , m_timestamp(timestamp)
+    , m_p1Id(p1Id)
+    , m_p2Id(p2Id)
 {
 #if !defined(NEWDESIGN)
     if (Config::coordinateSystem() == Config::Metric) {
@@ -44,12 +46,12 @@ Disk::Disk(double centerX, double centerY, uint64_t timestamp)
 
 bool Disk::isPointInDisk(const std::shared_ptr<GPSPoint>& point)
 {
-    return isPointInDisk(point->longitudeMeters(), point->latitudeMeters());
+    return isPointInDisk(point->trajectoryId(), point->longitudeMeters(), point->latitudeMeters());
 }
 
-bool Disk::isPointInDisk(double x, double y) const
+bool Disk::isPointInDisk(uint32_t id, double x, double y) const
 {
-    return Utils::fuzzyLessEqual(Utils::distance(m_centerX, m_centerY, x, y), m_radius);
+    return id == m_p1Id || id == m_p2Id || Utils::fuzzyLessEqual(Utils::distance(m_centerX, m_centerY, x, y), m_radius);
 }
 
 void Disk::addPoint(const std::shared_ptr<GPSPoint>& point)

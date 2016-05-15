@@ -78,7 +78,7 @@ void FlockProcessor::processData(const ProcessorData& data)
                     if (!disk1 || !disk2)
                         continue;
 
-                    clusterPointsIntoDisks(disk1, disk2, p1Id, p2Id, extendedGrid, gpsData);
+                    clusterPointsIntoDisks(disk1, disk2, extendedGrid, gpsData);
                     validateAndTryStoreDisk(disk1);
                     validateAndTryStoreDisk(disk2);
                 }
@@ -95,7 +95,7 @@ void FlockProcessor::processData(const ProcessorData& data)
     m_diskManager.clear();
 }
 
-void FlockProcessor::clusterPointsIntoDisks(Disk* disk1, Disk* disk2, uint32_t t1ID, uint32_t t2ID,
+void FlockProcessor::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
     const std::vector<std::shared_ptr<GPSPoint>>& points, const GPSPointBuffererListenerData& data)
 {
     for (const auto& point : points) {
@@ -104,18 +104,13 @@ void FlockProcessor::clusterPointsIntoDisks(Disk* disk1, Disk* disk2, uint32_t t
         if (!toInsert)
             continue;
 
-        if (id == t1ID || id == t2ID) {
+        const double x = point->longitudeMeters();
+        const double y = point->latitudeMeters();
+        if (disk1->isPointInDisk(id, x, y))
             disk1->addPoint(point);
-            disk2->addPoint(point);
-        } else {
-            const double x = point->longitudeMeters();
-            const double y = point->latitudeMeters();
-            if (disk1->isPointInDisk(x, y))
-                disk1->addPoint(point);
 
-            if (disk2->isPointInDisk(x, y))
-                disk2->addPoint(point);
-        }
+        if (disk2->isPointInDisk(id, x, y))
+            disk2->addPoint(point);
     }
 }
 

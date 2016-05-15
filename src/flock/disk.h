@@ -10,9 +10,9 @@ class Disk {
 public:
     Disk();
 #if defined(NEWDESIGN)
-    Disk(double radius, double centerX, double centerY, uint64_t timestamp);
+    Disk(double radius, double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id);
 #else
-    Disk(double centerX, double centerY, uint64_t timestamp);
+    Disk(double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id);
 #endif
 
     double centerX() const { return m_centerX; }
@@ -22,7 +22,7 @@ public:
     double centerLatitude() const { return m_centerLatitude; }
 
     bool isPointInDisk(const std::shared_ptr<GPSPoint>& point);
-    bool isPointInDisk(double x, double y) const;
+    bool isPointInDisk(uint32_t id, double x, double y) const;
 
     uint64_t timestamp() const { return m_timestamp; }
     void addPoint(const std::shared_ptr<GPSPoint>& point);
@@ -41,6 +41,8 @@ private:
     double m_centerLatitude;
     double m_radius;
     uint64_t m_timestamp;
+    uint32_t m_p1Id;
+    uint32_t m_p2Id;
     std::map<uint32_t, std::shared_ptr<GPSPoint>> m_points;
 };
 

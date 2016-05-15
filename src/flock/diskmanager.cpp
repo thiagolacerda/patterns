@@ -75,11 +75,11 @@ void DiskManager::getDisks(GPSPoint* point1, GPSPoint* point2, uint64_t timestam
     double c2X = midX - multiplyParameter * perpNormVectorX;
     double c2Y = midY - multiplyParameter * perpNormVectorY;
 #if defined(NEWDESIGN)
-    *disk1 = new Disk(m_radius, c1X, c1Y, timestamp);
-    *disk2 = new Disk(m_radius, c2X, c2Y, timestamp);
+    *disk1 = new Disk(m_radius, c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    *disk2 = new Disk(m_radius, c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
 #else
-    *disk1 = new Disk(c1X, c1Y, timestamp);
-    *disk2 = new Disk(c2X, c2Y, timestamp);
+    *disk1 = new Disk(c1X, c1Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    *disk2 = new Disk(c2X, c2Y, timestamp, point1->trajectoryId(), point2->trajectoryId());
 #endif
 }
 
@@ -117,8 +117,8 @@ void DiskManager::getDisksPaperVersion(GPSPoint* point1, GPSPoint* point2, uint6
     double cY1 = (2.0 * x1 * cX1 - 2.0 * x2 * cX1 + tmp) / twoY2MinusY1;
     double cY2 = (2.0 * x1 * cX2 - 2.0 * x2 * cX2 + tmp) / twoY2MinusY1;
 
-    *disk1 = new Disk(cX1, cY1, timestamp);
-    *disk2 = new Disk(cX2, cY2, timestamp);
+    *disk1 = new Disk(cX1, cY1, timestamp, point1->trajectoryId(), point2->trajectoryId());
+    *disk2 = new Disk(cX2, cY2, timestamp, point1->trajectoryId(), point2->trajectoryId());
 }
 
 void DiskManager::dump() const

@@ -30,8 +30,8 @@ public:
     }
 
 private:
-    void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, uint32_t t1ID, uint32_t t2ID,
-        const std::vector<std::shared_ptr<GPSPoint>>& points, const GPSPointBuffererListenerData& data);
+    void clusterPointsIntoDisks(Disk* disk1, Disk* disk2, const std::vector<std::shared_ptr<GPSPoint>>& points,
+        const GPSPointBuffererListenerData& data);
     bool shouldInsert(uint32_t trajectoryId, const GPSPointBuffererListenerData& data);
     void validateAndTryStoreDisk(Disk* disk);
 

@@ -141,7 +141,7 @@ void Manager::computeFlocks(const std::unordered_map<uint32_t, std::vector<std::
                     if (!disk1 || !disk2)
                         continue;
 
-                    clusterPointsIntoDisks(disk1, disk2, pointsToProcess, (*it1).get(), (*it2).get());
+                    clusterPointsIntoDisks(disk1, disk2, pointsToProcess);
                     validateAndTryStoreDisk(disk1);
                     validateAndTryStoreDisk(disk2);
                 }
@@ -215,24 +215,18 @@ void Manager::validateAndTryStoreDisk(Disk* disk)
  * This goes through all the points in the neighbor grids and try to put them inside the disks
  */
 void Manager::clusterPointsIntoDisks(Disk* disk1, Disk* disk2,
-    const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess, GPSPoint* diskGeneratorPoint1,
-    GPSPoint* diskGeneratorPoint2)
+    const std::vector<std::shared_ptr<GPSPoint>>& pointsToProcess)
 {
     for (const std::shared_ptr<GPSPoint>& point : pointsToProcess) {
         bool toInsert = shouldInsert(point->trajectoryId());
         if (!toInsert)
             continue;
 
-        if (point.get() == diskGeneratorPoint1 || point.get() == diskGeneratorPoint2) {
+        if (disk1->isPointInDisk(point))
             disk1->addPoint(point);
-            disk2->addPoint(point);
-        } else {
-            if (disk1->isPointInDisk(point))
-                disk1->addPoint(point);
 
-            if (disk2->isPointInDisk(point))
-                disk2->addPoint(point);
-        }
+        if (disk2->isPointInDisk(point))
+            disk2->addPoint(point);
     }
 }
 
