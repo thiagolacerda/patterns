@@ -1,5 +1,6 @@
 #include "launcher.h"
 
+#include <chrono>
 #include <iostream>
 #include "optionparser.h"
 #include "orchestrator.h"
@@ -146,7 +147,11 @@ int launch(int argc, char** argv)
         }
     }
 
+    auto start = std::chrono::steady_clock::now();
     orchestrator.start();
+    auto end = std::chrono::steady_clock::now();
+    auto durationMilli = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Duration: " << durationMilli.count() << " ms" << std::endl;
 
     return 0;
 }
