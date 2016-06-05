@@ -1,0 +1,125 @@
+{
+    "threads": [5, 7],
+    "confs": [
+        {
+            "name": "tdrive_n",
+            "path": "/home/tlacerda/TDrive_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4, 6, 8, 10, 20],
+            "g": [100],
+            "l": [8],
+            "sep": ";"
+        },
+        {
+            "name": "tdrive_l",
+            "path": "/home/tlacerda/TDrive_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [100],
+            "l": [4, 6, 10, 20, 30],
+            "sep": ";"
+        },
+        {
+            "name": "tdrive_g",
+            "path": "/home/tlacerda/TDrive_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [10, 30, 50, 80],
+            "l": [8],
+            "sep": ";"
+        },
+        {
+            "name": "berlinmod_n",
+            "path": "/home/tlacerda/BerlinMOD",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4, 6, 8, 10, 20],
+            "g": [100],
+            "l": [8],
+            "sep": ";"
+        },
+        {
+            "name": "berlinmod_l",
+            "path": "/home/tlacerda/BerlinMOD",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [100],
+            "l": [4, 6, 10, 20, 30],
+            "sep": ";"
+        },
+        {
+            "name": "berlinmod_g",
+            "path": "/home/tlacerda/BerlinMOD",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [80, 120, 140, 200],
+            "l": [8],
+            "sep": ";"
+        },
+        {
+            "name": "trucks_n",
+            "path": "/home/tlacerda/patterns/test/system/data/trucks_by_time.txt",
+            "decoder": "t",
+            "timeSlotSize": 1,
+            "n": [4, 6, 8, 10, 12, 14, 16, 18, 20],
+            "g": [1.5],
+            "l": [20],
+            "sep": "\\t"
+        },
+        {
+            "name": "trucks_l",
+            "path": "/home/tlacerda/patterns/test/system/data/trucks_by_time.txt",
+            "decoder": "t",
+            "timeSlotSize": 1,
+            "n": [4],
+            "g": [1.5],
+            "l": [4, 6, 8, 10, 12, 14, 16, 18],
+            "sep": "\\t"
+        },
+        {
+            "name": "trucks_g",
+            "path": "/home/tlacerda/patterns/test/system/data/trucks_by_time.txt",
+            "decoder": "t",
+            "timeSlotSize": 1,
+            "n": [4],
+            "g": [0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4],
+            "l": [20],
+            "sep": "\\t"
+        },
+        {
+            "name": "brinkhoff_n",
+            "path": "/home/tlacerda/brinkhoff_LA_v2000_t1000_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4, 6, 8, 10, 20],
+            "g": [100],
+            "l": [8],
+            "sep": ";"
+        },
+        {
+            "name": "brinkhoff_l",
+            "path": "/home/tlacerda/brinkhoff_LA_v2000_t1000_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [100],
+            "l": [4, 6, 10, 20, 30],
+            "sep": ";"
+        },
+        {
+            "name": "brinkhoff_g",
+            "path": "/home/tlacerda/brinkhoff_LA_v2000_t1000_sorted.txt",
+            "decoder": "c",
+            "timeSlotSize": 295,
+            "n": [4],
+            "g": [10, 30, 50, 80],
+            "l": [8],
+            "sep": ";"
+        }
+    ]
+}
