@@ -9,6 +9,8 @@ public:
     {
     }
 
+    ~TDriveDecoder() override {}
+
     void decodeData(const RawData& data) override;
 
     static TDriveDecoder* instance(const std::unordered_map<std::string, std::string>&)

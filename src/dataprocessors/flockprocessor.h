@@ -27,7 +27,7 @@ public:
             m_logger.reset(ComponentFactory<Logger>::getComponent(iter->second, {}));
     }
 
-    virtual ~FlockProcessor() {}
+    ~FlockProcessor() override {}
 
     void processData(const ProcessorData& data) override;
 

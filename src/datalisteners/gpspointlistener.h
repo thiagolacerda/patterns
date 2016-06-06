@@ -10,6 +10,8 @@ class GPSPointListener : public DataListener {
 public:
     GPSPointListener(const std::unordered_map<std::string, std::string>& parameters);
 
+    ~GPSPointListener() override {}
+
     void onDataReceived(const DataModel& dataModel) override;
 
     void onDataProviderFinished() override;

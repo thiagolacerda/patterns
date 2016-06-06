@@ -10,7 +10,7 @@ class SQLiteDataConnector : public DataConnector {
 public:
     SQLiteDataConnector(const std::unordered_map<std::string, std::string>& parameters);
 
-    ~SQLiteDataConnector() override {}
+    ~SQLiteDataConnector() override { disconnect(); }
 
     bool connect() override;
     void disconnect() override;

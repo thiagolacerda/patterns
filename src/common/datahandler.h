@@ -10,6 +10,8 @@ public:
     {
     }
 
+    virtual ~DataHandler() {}
+
     virtual void onDataProviderFinished() = 0;
 
     bool done() const { return m_done; }

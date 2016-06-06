@@ -9,6 +9,8 @@ public:
     {
     }
 
+    ~BerlinMODDecoder() override{}
+
     void decodeData(const RawData& data) override;
 
     static BerlinMODDecoder* instance(const std::unordered_map<std::string, std::string>&)

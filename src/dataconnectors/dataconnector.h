@@ -14,7 +14,7 @@ public:
     {
     }
 
-    virtual ~DataConnector() {}
+    ~DataConnector() override {}
 
     void registerHandler(const std::shared_ptr<DataDecoder>& decoder) { m_handlers.push_back(decoder); }
 

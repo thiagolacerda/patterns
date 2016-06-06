@@ -14,6 +14,8 @@ public:
     {
     }
 
+    ~DataDecoder() override {}
+
     virtual void decodeData(const RawData& data) = 0;
 
     void registerHandler(const std::shared_ptr<DataListener>& listener) { m_handlers.push_back(listener); }

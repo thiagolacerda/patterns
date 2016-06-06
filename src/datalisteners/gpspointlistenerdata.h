@@ -27,6 +27,8 @@ public:
     {
     }
 
+    ~GPSPointListenerData() override {}
+
     const std::unordered_map<uint32_t, std::vector<std::shared_ptr<GPSPoint>>>& m_points;
     uint64_t m_timestamp;
     std::shared_ptr<GPSPointListenerExtraData> m_extra;

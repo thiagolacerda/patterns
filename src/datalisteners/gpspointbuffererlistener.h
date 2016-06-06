@@ -11,6 +11,8 @@ public:
     {
     }
 
+    ~GPSPointBuffererListener() override {}
+
     static GPSPointBuffererListener* instance(const std::unordered_map<std::string, std::string>& parameters)
     {
         return new GPSPointBuffererListener(parameters);

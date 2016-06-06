@@ -14,6 +14,8 @@ public:
     {
     }
 
+    ~DataProcessor() override {}
+
     virtual void processData(const ProcessorData& data) = 0;
 
     void registerHandler(const std::shared_ptr<DataHandler>& handler) { m_handlers.push_back(handler); }

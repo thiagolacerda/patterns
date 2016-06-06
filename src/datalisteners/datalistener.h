@@ -16,6 +16,8 @@ public:
     {
     }
 
+    ~DataListener() override {}
+
     virtual void onDataReceived(const DataModel& datamodel) = 0;
 
     void registerHandler(const std::shared_ptr<DataProcessor>& processor) { m_handlers.push_back(processor); }
