@@ -1,10 +1,5 @@
 #include "flock.h"
 
-#if !defined(NEWDESIGN)
-#include <iostream>
-#include "config.h"
-#endif
-
 std::atomic_ullong Flock::m_globalIds(0);
 
 unsigned long long Flock::nextId()
@@ -37,24 +32,3 @@ void Flock::clearFirstPoints()
         iter->second.clearFirstPoints();
 }
 
-#if !defined(NEWDESIGN)
-void Flock::dump() const
-{
-    std::cout << "Flock's startTime: " << m_startTime << ", endTime: " << m_endTime << ", number of trajectories: "
-        << m_trajectories.size() << std::endl;
-    dumpTrajectories();
-}
-
-void Flock::dumpTrajectories() const
-{
-    if (m_trajectories.empty())
-        return;
-
-    auto iter = m_trajectories.begin();
-    std::cout << iter->second.id();
-    ++iter;
-    for (; iter != m_trajectories.end(); ++iter)
-        std::cout << ", " << iter->second.id();
-    std::cout << std::endl;
-}
-#endif

@@ -1,17 +1,54 @@
 #include <fstream>
-#include <vector>
+#include <iostream>
+#include <regex>
+#include <sstream>
 #include <tuple>
-#include "config.h"
+#include <vector>
 #include "gtest/gtest.h"
-#include "manager.h"
+#include "orchestrator.h"
+
+void assertFlocks(unsigned n, unsigned l, double g, unsigned flocks)
+{
+    // get all stdout output
+    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+    std::ostringstream strCout;
+    std::cout.rdbuf(strCout.rdbuf());
+
+    std::unordered_map<std::string, std::string> confMap = {
+        {"connector", "f"},
+        {"decoder", "t"},
+        {"listener", "g"},
+        {"processor", "f"},
+        {"cp", "file=data/trucks_by_time.txt separator=\\t"},
+        {"dp", ""},
+        {"lp", "timeSlotSize=1 patternLength=" + std::to_string(l)},
+        {"pp", "gridSize=" + std::to_string(g) + " trajectoriesPerFlock=" + std::to_string(n) + " flockLength=" +
+            std::to_string(l)}
+    };
+
+    // when
+    Orchestrator orchestrator;
+    orchestrator.loadConfigFromMapAndRegisterComponents(confMap);
+    orchestrator.start();
+
+    // then
+    // restore old cout.
+    std::cout.rdbuf(oldCoutStreamBuf);
+
+    std::regex flocksRegex("Flocks found: (\\d+)");
+    std::smatch flockMatch;
+    std::regex_search(strCout.str(), flockMatch, flocksRegex);
+
+    ASSERT_EQ(flocks, std::stoul(flockMatch[1].str()));
+}
 
 #ifdef TEST_THOROUGH
-std::vector<std::tuple<int, int, double, int>> loadParams()
+std::vector<std::tuple<unsigned, unsigned, double, unsigned>> loadParams()
 {
-    std::vector<int> numberOfTrajectories {4, 6, 8, 10, 12, 14, 16, 18, 20};
-    std::vector<int> flockLength {4, 6, 8, 10, 12, 14, 16, 18, 20};
+    std::vector<unsigned> numberOfTrajectories {4, 6, 8, 10, 12, 14, 16, 18, 20};
+    std::vector<unsigned> flockLength {4, 6, 8, 10, 12, 14, 16, 18, 20};
     std::vector<double> gridSize {0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5};
-    std::vector<std::tuple<int, int, double, int>> params;
+    std::vector<std::tuple<unsigned, unsigned, double, unsigned>> params;
 
     std::ifstream file("data/thorough_result", std::ifstream::in);
     std::string line;
@@ -27,57 +64,39 @@ std::vector<std::tuple<int, int, double, int>> loadParams()
     return params;
 }
 
-class ThoroughTest : public ::testing::TestWithParam<std::tuple<int, int, double, int>> {
-    void SetUp() override {
-        Config::setDecoderParameters(std::vector<std::string>{"data/trucks_by_time.txt"});
-        Config::setDecoder("truckspaper");
-        Config::setTimeSlotSize(1);
-        Config::setCompatibilityMode(true);
-        Config::setCoordinateSystem(Config::Metric);
-    }
+// class is needed for parameter test
+class SystemTest : public ::testing::TestWithParam<std::tuple<unsigned, unsigned, double, unsigned>> {
 };
 
-TEST_P(ThoroughTest, Thoroughly) {
+TEST_P(SystemTest, thoroughTest) {
     // given
-    int numberOfTrajectoriesPerFlock;
-    int flockLength;
-    double gridSize;
-    int expectedResult;
-    std::tie(numberOfTrajectoriesPerFlock, flockLength, gridSize, expectedResult) = GetParam();
-    Config::setNumberOfTrajectoriesPerFlock(numberOfTrajectoriesPerFlock);
-    Config::setFlockLength(flockLength);
-    Config::setGridSize(gridSize);
+    unsigned n;
+    unsigned l;
+    double g;
+    unsigned expected;
+    std::tie(n, l, g, expected) = GetParam();
 
-    // when
-    Manager manager;
-    manager.start();
-
-    // then
-    ASSERT_EQ(expectedResult, manager.foundFlocks());
+    assertFlocks(n, l, g, expected);
 }
 
-INSTANTIATE_TEST_CASE_P(System, ThoroughTest, ::testing::ValuesIn(loadParams()));
+INSTANTIATE_TEST_CASE_P(ThoroughTest, SystemTest, ::testing::ValuesIn(loadParams()));
 
 #else
 
-TEST(System, Find_35218_Flocks)
+TEST(System, find_35218_Flocks)
 {
-    // given
-    Config::setNumberOfTrajectoriesPerFlock(4);
-    Config::setFlockLength(6);
-    Config::setGridSize(1.5);
-    Config::setTimeSlotSize(1);
-    Config::setDecoder("truckspaper");
-    Config::setCompatibilityMode(true);
-    Config::setCoordinateSystem(Config::Metric);
-    Config::setDecoderParameters(std::vector<std::string>{"data/trucks_by_time.txt"});
+    std::unordered_map<std::string, std::string> confMap = {
+        {"connector", "f"},
+        {"decoder", "t"},
+        {"listener", "g"},
+        {"processor", "f"},
+        {"cp", "file=data/trucks_by_time.txt separator=\\t"},
+        {"dp", ""},
+        {"lp", "timeSlotSize=1 patternLength=6"},
+        {"pp", "gridSize=1.5 trajectoriesPerFlock=4 flockLength=6"}
+    };
 
-    // when
-    Manager manager;
-    manager.start();
-
-    // then
-    ASSERT_EQ(35218, manager.foundFlocks());
+    assertFlocks(4, 6, 1.5, 35214);
 }
 
 #endif  // TEST_THOROUGH

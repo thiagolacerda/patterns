@@ -5,26 +5,11 @@ include_directories(
 )
 
 set(COMMON_SRCS
-    ${COMMON_DIR}/config.cpp
-    ${COMMON_DIR}/factory.cpp
-    ${COMMON_DIR}/manager.cpp
+    ${COMMON_DIR}/configparser.cpp
+    ${COMMON_DIR}/defaultlogger.cpp
+    ${COMMON_DIR}/launcher.cpp
+    ${COMMON_DIR}/orchestrator.cpp
     ${COMMON_DIR}/utils.cpp
-)
-
-set(DATABASE_SRCS
-    ${DATABASE_DIR}/filedbmanager.cpp
-    ${DATABASE_DIR}/sqlitedbmanager.cpp
-)
-
-set(DECODER_SRCS
-    ${DECODER_DIR}/basegpsfiledecoder.cpp
-    ${DECODER_DIR}/berlinmoddecoder.cpp
-    ${DECODER_DIR}/brinkhoffmntgdecoder.cpp
-    ${DECODER_DIR}/lifemapdbdecoder.cpp
-    ${DECODER_DIR}/sortedfiledecoder.cpp
-    ${DECODER_DIR}/tdrivedecoder.cpp
-    ${DECODER_DIR}/trucksdbdecoder.cpp
-    ${DECODER_DIR}/truckspaperdbdecoder.cpp
 )
 
 set(FLOCK_SRCS
@@ -39,32 +24,6 @@ set(GPS_SRCS
     ${GPS_DIR}/gpspoint.cpp
     ${GPS_DIR}/trajectory.cpp
 )
-
-set(PERFORMANCE_SRCS
-    ${PERFORMANCE_DIR}/memoryreporter.cpp
-    ${PERFORMANCE_DIR}/performancelogger.cpp
-)
-
-set(PATTERNS_SOURCES
-    ${COMMON_SRCS}
-    ${DATABASE_SRCS}
-    ${DECODER_SRCS}
-    ${FLOCK_SRCS}
-    ${FLOCK_DIR}/grid.cpp
-    ${GPS_SRCS}
-    ${GPS_DIR}/gpspointtemporalprocessor.cpp
-    ${PERFORMANCE_SRCS}
-    main.cpp
-)
-
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
-## new Patterns design
-set(DATACONNECTORS_DIR ${PROJECT_SRC_DIR}/dataconnectors)
-set(DATADECODERS_DIR ${PROJECT_SRC_DIR}/datadecoders)
-set(DATALISTENERS_DIR ${PROJECT_SRC_DIR}/datalisteners)
-set(DATAMODEL_DIR ${PROJECT_SRC_DIR}/datamodel)
-set(DATAPROCESSORS_DIR ${PROJECT_SRC_DIR}/dataprocessors)
 
 set(DATACONNECTORS_SRCS
     ${DATACONNECTORS_DIR}/fileconnector.cpp
@@ -93,28 +52,25 @@ set(DATAPROCESSORS_SRCS
     ${DATAPROCESSORS_DIR}/parallelflockprocessor.cpp
 )
 
-set(PATTERNSNG_SOURCES
-    ${COMMON_DIR}/configparser.cpp
-    ${COMMON_DIR}/launcher.cpp
-    ${COMMON_DIR}/orchestrator.cpp
-    ${COMMON_DIR}/utils.cpp
-    ${COMMON_DIR}/defaultlogger.cpp
+set(PATTERNS_SOURCES
+    ${COMMON_SRCS}
     ${DATACONNECTORS_SRCS}
     ${DATADECODERS_SRCS}
     ${DATALISTENERS_SRCS}
     ${DATAPROCESSORS_SRCS}
     ${FLOCK_SRCS}
     ${GPS_SRCS}
-    mainng.cpp
+    main.cpp
 )
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 add_subdirectory(sorter)
 
-add_executable(patternsng ${PATTERNSNG_SOURCES})
-target_link_libraries(patternsng ${SQLite3_LIBRARIES})
-target_compile_definitions(patternsng PRIVATE NEWDESIGN=1)
+add_executable(patterns ${PATTERNS_SOURCES})
+target_link_libraries(patterns ${SQLite3_LIBRARIES})
 
-target_include_directories(patternsng PRIVATE
+target_include_directories(patterns PRIVATE
     ${COMMON_DIR}
     ${DATACONNECTORS_DIR}
     ${DATADECODERS_DIR}
@@ -124,16 +80,4 @@ target_include_directories(patternsng PRIVATE
     ${FLOCK_DIR}
     ${GPS_DIR}
 )
-# End
 
-add_executable(patterns ${PATTERNS_SOURCES})
-target_link_libraries(patterns ${SQLite3_LIBRARIES})
-
-target_include_directories(patterns PRIVATE
-    ${COMMON_DIR}
-    ${DATABASE_DIR}
-    ${DECODER_DIR}
-    ${FLOCK_DIR}
-    ${GPS_DIR}
-    ${PERFORMANCE_DIR}
-)

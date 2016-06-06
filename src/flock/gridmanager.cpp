@@ -1,14 +1,7 @@
 #include "gridmanager.h"
 
 #include <cmath>
-#if defined(NEWDESIGN)
 #include <cstdlib>
-#else
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include "grid.h"
-#endif
 #include "gpspoint.h"
 #include "utils.h"
 
@@ -51,32 +44,12 @@ void GridManager::addPointToGrid(const std::shared_ptr<GPSPoint>& point)
     if (longMeters < 0)
         yIndex = -yIndex;
 
-#if defined(NEWDESIGN)
     std::string key = std::to_string(xIndex) + "_" + std::to_string(yIndex);
     m_grids[key].push_back(point);
-#else
-    std::ostringstream oss;
-    oss << xIndex << "_" << yIndex;
-    std::string key = oss.str();
-    Grid* grid;
-    auto iter = m_grids.find(key);
-    if (iter == m_grids.end()) {
-        grid = new Grid();
-        m_grids[key] = grid;
-    } else {
-        grid = iter->second;
-    }
-
-    grid->addPoint(point);
-#endif
 }
 
 void GridManager::clear()
 {
-#if !defined(NEWDESIGN)
-    std::for_each(m_grids.begin(), m_grids.end(),
-        [](const std::pair<std::string, Grid*>& elem) { delete elem.second; });
-#endif
     m_grids.clear();
 }
 
@@ -88,7 +61,6 @@ void GridManager::clear()
  * 1,1;1,2;1,3;2,1;2,2;2,3;3,1;3,2;3,3
  * In this method we return to the caller the vector of all eligible points.
  */
-#if defined(NEWDESIGN)
 std::vector<std::shared_ptr<GPSPoint>> GridManager::extendedGrid(const std::string& key) const
 {
     std::vector<std::shared_ptr<GPSPoint>> extendedGrid;
@@ -106,33 +78,4 @@ std::vector<std::shared_ptr<GPSPoint>> GridManager::extendedGrid(const std::stri
     }
     return extendedGrid;
 }
-#else
-void GridManager::extendedGridPoints(const std::string& key, std::vector<std::shared_ptr<GPSPoint>>* extendedPoints)
-{
-    std::unordered_map<std::string, Grid*>::const_iterator iter;
-    size_t underscoreIndex = key.find_first_of('_');
-    int xIndex = atoi(key.substr(0, underscoreIndex).c_str());
-    ++underscoreIndex;
-    int yIndex = atoi(key.substr(underscoreIndex, key.length() - underscoreIndex).c_str());
-    std::ostringstream oss;
-    for (int i = xIndex - 1; i <= xIndex + 1; ++i) {
-        for (int j = yIndex - 1; j <= yIndex + 1; ++j) {
-            oss.str(std::string());
-            oss << i << "_" << j;
-            if ((iter = m_grids.find(oss.str())) != m_grids.end()) {
-                const std::vector<std::shared_ptr<GPSPoint>>& gridPoints = iter->second->points();
-                extendedPoints->insert(extendedPoints->end(), gridPoints.begin(), gridPoints.end());
-            }
-        }
-    }
-}
 
-void GridManager::dump()
-{
-    std::cout << "Number of grids: " << m_grids.size() << std::endl;
-    for (auto iter = m_grids.begin(); iter != m_grids.end(); ++iter) {
-        std::cout << "Grid: " << iter->first << std::endl << "\t";
-        iter->second->dump();
-    }
-}
-#endif

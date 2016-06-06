@@ -9,11 +9,7 @@ class GPSPoint;
 class Disk {
 public:
     Disk();
-#if defined(NEWDESIGN)
     Disk(double radius, double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id);
-#else
-    Disk(double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id);
-#endif
 
     double centerX() const { return m_centerX; }
     double centerLongitude() const { return m_centerLongitude; }
@@ -29,10 +25,6 @@ public:
     uint32_t numberOfPoints() const { return m_points.size(); }
     uint32_t countIntersection(const std::shared_ptr<Disk>& other) const;
     std::map<uint32_t, std::shared_ptr<GPSPoint>> points() const { return m_points; }
-#if !defined(NEWDESIGN)
-    void dumpPoints() const;
-    void dump() const;
-#endif
 
 private:
     double m_centerX;

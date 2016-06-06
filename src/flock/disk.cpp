@@ -1,47 +1,23 @@
 #include "disk.h"
 
-#if !defined(NEWDESIGN)
-#include <iostream>
-#include "config.h"
-#endif
 #include "gpspoint.h"
 #include "utils.h"
 
 Disk::Disk()
-#if defined(NEWDESIGN)
     : Disk(0, 0, 0, 0, 0, 0)
-#else
-    : Disk(0, 0, 0, 0, 0)
-#endif
 {
 }
 
-#if defined(NEWDESIGN)
 Disk::Disk(double radius, double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id)
-#else
-Disk::Disk(double centerX, double centerY, uint64_t timestamp, uint32_t p1Id, uint32_t p2Id)
-#endif
     : m_centerX(centerX)
     , m_centerLongitude(0)
     , m_centerY(centerY)
     , m_centerLatitude(0)
-#if defined(NEWDESIGN)
     , m_radius(radius)
-#else
-    , m_radius(Config::radius())
-#endif
     , m_timestamp(timestamp)
     , m_p1Id(p1Id)
     , m_p2Id(p2Id)
 {
-#if !defined(NEWDESIGN)
-    if (Config::coordinateSystem() == Config::Metric) {
-        m_centerLongitude = m_centerX;
-        m_centerLatitude = m_centerY;
-    } else {
-        Utils::metersToLatLong(m_centerY, m_centerX, m_centerLatitude, m_centerLongitude);
-    }
-#endif
 }
 
 bool Disk::isPointInDisk(const std::shared_ptr<GPSPoint>& point)
@@ -64,23 +40,3 @@ uint32_t Disk::countIntersection(const std::shared_ptr<Disk>& other) const
     return Utils::intersection(m_points.begin(), m_points.end(), other->m_points.begin(), other->m_points.end());
 }
 
-#if !defined(NEWDESIGN)
-void Disk::dumpPoints() const
-{
-    if (m_points.empty())
-        return;
-
-    auto iter = m_points.begin();
-    std::cout << iter->second->trajectoryId();
-    ++iter;
-    for (; iter != m_points.end(); ++iter)
-        std::cout << ", " << iter->second->trajectoryId();
-    std::cout << std::endl;
-}
-
-void Disk::dump() const
-{
-    std::cout << "Disk, x: " << m_centerX << ", y: " << m_centerY << " trajectories: "
-        << m_points.size() << std::endl;
-}
-#endif

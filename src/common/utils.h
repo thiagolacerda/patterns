@@ -1,5 +1,4 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include <functional>
 #include <memory>
@@ -68,4 +67,3 @@ private:
     static constexpr double m_longDegMeterLen = 111320.7;
 };
 
-#endif  // UTILS_H

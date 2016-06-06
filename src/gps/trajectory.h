@@ -24,9 +24,6 @@ public:
     uint32_t id() const { return m_id; }
     void mergePoints(const Trajectory&);
     void clearFirstPoints();
-#if !defined(NEWDESIGN)
-    void dump();
-#endif
 
 private:
     uint32_t m_id;

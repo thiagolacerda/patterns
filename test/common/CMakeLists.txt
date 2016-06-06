@@ -4,7 +4,6 @@ include_directories(
 )
 
 set(TEST_COMMON_DEPENDENCIES
-    ${COMMON_DIR}/config.cpp
     ${COMMON_DIR}/utils.cpp
     ${GPS_DIR}/gpspoint.cpp
 )
