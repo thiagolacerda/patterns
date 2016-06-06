@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 class RawData {
 public:
     virtual int getAsInt(int colIndex) const = 0;

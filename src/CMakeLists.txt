@@ -69,6 +69,8 @@ set(DATAPROCESSORS_DIR ${PROJECT_SRC_DIR}/dataprocessors)
 set(DATACONNECTORS_SRCS
     ${DATACONNECTORS_DIR}/fileconnector.cpp
     ${DATACONNECTORS_DIR}/rawdatastring.cpp
+    ${DATACONNECTORS_DIR}/rawdatasqlite3_stmt.cpp
+    ${DATACONNECTORS_DIR}/sqlitedataconnector.cpp
 )
 
 set(DATADECODERS_SRCS
@@ -107,6 +109,7 @@ set(PATTERNSNG_SOURCES
 add_subdirectory(sorter)
 
 add_executable(patternsng ${PATTERNSNG_SOURCES})
+target_link_libraries(patternsng ${SQLite3_LIBRARIES})
 target_compile_definitions(patternsng PRIVATE NEWDESIGN=1)
 
 target_include_directories(patternsng PRIVATE

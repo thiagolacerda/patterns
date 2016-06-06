@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string>
 #include "rawdata.h"
 
 class RawDataString : public RawData {
