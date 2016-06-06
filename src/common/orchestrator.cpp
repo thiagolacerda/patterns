@@ -58,9 +58,11 @@ bool Orchestrator::loadConfigFromMapAndRegisterComponents(const std::unordered_m
     appendParamsToConfString(confString, processor, "datalistener=" + listener, "pp", configMap);
 
     std::istringstream s(confString);
-    m_parser.loadConfig(s);
+    if (m_parser.loadConfig(s))
+        return loadAndRegisterComponents();
 
-    return loadAndRegisterComponents();
+    m_errorMessages.push_back("Error parsing config. Generated string:\n" + confString);
+    return false;
 }
 
 void Orchestrator::appendParamsToConfString(std::string& conf, const std::string& sectionName, const std::string& reg,
