@@ -1,11 +1,13 @@
 #pragma once
 
+#include "componentfactory.h"
 #include "dataprocessor.h"
 #include "diskmanager.h"
 #include "flock.h"
 #include "flockmanager.h"
 #include "flockutils.h"
 #include "gridmanager.h"
+#include "logger.h"
 
 class GPSPointBuffererListenerData;
 
@@ -22,6 +24,9 @@ public:
         m_flockUtils->setRadius(stod(m_parameters["gridSize"]) / 2);
         m_flockUtils->setFlockLength(m_flockManager.flockLength());
         m_flockUtils->setTrajectoriesPerFlock(m_flockManager.trajectoriesPerFlock());
+        auto iter = m_parameters.find("logger");
+        if (iter != m_parameters.end())
+            m_logger.reset(ComponentFactory<Logger>::getComponent(iter->second, {}));
     }
 
     virtual ~FlockProcessor() {}
@@ -45,5 +50,6 @@ protected:
     GridManager m_gridManager;
     DiskManager m_diskManager;
     std::vector<Flock> m_flocks;
+    std::shared_ptr<Logger> m_logger;
 };
 

@@ -97,6 +97,7 @@ set(PATTERNSNG_SOURCES
     ${COMMON_DIR}/launcher.cpp
     ${COMMON_DIR}/orchestrator.cpp
     ${COMMON_DIR}/utils.cpp
+    ${COMMON_DIR}/defaultlogger.cpp
     ${DATACONNECTORS_SRCS}
     ${DATADECODERS_SRCS}
     ${DATALISTENERS_SRCS}

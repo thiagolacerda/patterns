@@ -30,6 +30,10 @@ void FlockProcessor::processData(const ProcessorData& data)
     std::vector<Flock> flocks = m_flockManager.reportFlocks();
     m_flocks.insert(m_flocks.end(), flocks.begin(), flocks.end());
     m_flockUtils->clearCache();
+    if (m_logger)
+        m_logger->log(std::to_string(timestamp) + ";" + std::to_string(m_diskManager.size()) + ";" +
+            std::to_string(m_flockManager.size()));
+
     // Clear the grid, we don't need it anymore.
     m_gridManager.clear();
     m_diskManager.clear();
