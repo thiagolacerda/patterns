@@ -9,8 +9,6 @@
 #include "gridmanager.h"
 #include "logger.h"
 
-class GPSPointBuffererListenerData;
-
 class FlockProcessor : public DataProcessor {
 public:
     FlockProcessor(const std::unordered_map<std::string, std::string>& parameters)

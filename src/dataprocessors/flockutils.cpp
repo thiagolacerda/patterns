@@ -145,7 +145,7 @@ void FlockUtils::clusterPointsIntoDisks(const std::shared_ptr<Disk>& disk1, cons
 {
     for (const auto& point : points) {
         const uint32_t id = point->trajectoryId();
-        if (!m_pointPresenceCache.at(id))
+        if (!m_pointPresenceCache.empty() && !m_pointPresenceCache.at(id))
             continue;
 
         const double x = point->longitudeMeters();

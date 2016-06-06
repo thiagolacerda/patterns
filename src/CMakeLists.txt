@@ -83,6 +83,7 @@ set(DATADECODERS_SRCS
 
 set(DATALISTENERS_SRCS
     ${DATALISTENERS_DIR}/gpspointbuffererlistener.cpp
+    ${DATALISTENERS_DIR}/gpspointlistener.cpp
 )
 
 set(DATAPROCESSORS_SRCS

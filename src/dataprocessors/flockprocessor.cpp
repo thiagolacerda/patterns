@@ -4,22 +4,27 @@
 #include "componentfactory.h"
 #include "disk.h"
 #include "gpspoint.h"
-#include "gpspointbuffererlistenerdata.h"
+#include "gpspointlistenerdata.h"
 #include "utils.h"
 
 void FlockProcessor::processData(const ProcessorData& data)
 {
-    const GPSPointBuffererListenerData& gpsData = static_cast<const GPSPointBuffererListenerData&>(data);
+    const GPSPointListenerData& gpsData = static_cast<const GPSPointListenerData&>(data);
     const auto& points = gpsData.m_points;
     if (points.size() < m_flockManager.trajectoriesPerFlock())
         return;
 
+    const auto& extraData = gpsData.m_extra;
     const uint64_t& timestamp = gpsData.m_timestamp;
-    m_flockUtils->setFutureBufferSize(gpsData.m_extent);
+    if (extraData)
+        m_flockUtils->setFutureBufferSize(extraData->m_extent);
+
     m_flockUtils->setCurrentTimeslot(timestamp);
+
     for (const auto& pointMapVectorEntry : points) {
         const auto& pointEntries = pointMapVectorEntry.second;
-        m_flockUtils->cachePointPresence(pointMapVectorEntry.first, gpsData.m_presenceMap.at(pointMapVectorEntry.first));
+        if (extraData)
+            m_flockUtils->cachePointPresence(pointMapVectorEntry.first, extraData->m_presenceMap.at(pointMapVectorEntry.first));
         for (const auto& point : pointEntries)
             m_gridManager.addPointToGrid(point);
     }
