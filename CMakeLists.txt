@@ -23,12 +23,17 @@ elseif(APPLE)
     add_compile_options("-pthread")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL Debug)
+string(TOLOWER "${CMAKE_BUILD_TYPE}" BuildTypeLower)
+if(${BuildTypeLower} STREQUAL debug)
     string(REPLACE "-g" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3")
-else(CMAKE_BUILD_TYPE STREQUAL Debug)
+    set(BuildType Debug)
+else(${BuildTypeLower} STREQUAL debug)
     set(CMAKE_BUILD_TYPE Release)
-endif(CMAKE_BUILD_TYPE STREQUAL Debug)
+    set(BuildType Release)
+endif(${BuildTypeLower} STREQUAL debug)
+
+message(STATUS "Build type: " ${BuildType})
 
 set(PROJECT_SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 
