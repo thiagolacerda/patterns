@@ -13,6 +13,19 @@ using OnDiskReadyFunc = std::function<void(const std::shared_ptr<Disk>&)>;
 
 class FlockUtils {
 public:
+    FlockUtils()
+        : m_radius(0)
+        , m_gridSize(0)
+        , m_currentTimeSlot(0)
+        , m_pastBufferSize(0)
+        , m_futureBufferSize(0)
+        , m_mask(0)
+        , m_currentMask(0)
+        , m_flockLength(0)
+        , m_trajectoriesPerFlock(0)
+    {
+    }
+
     void setPastBufferSize(uint32_t pastBufferSize);
     void setFutureBufferSize(uint32_t futureBufferSize);
     void setFlockLength(uint32_t flockLength);
