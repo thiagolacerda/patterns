@@ -24,7 +24,7 @@ public:
         m_flockUtils->setTrajectoriesPerFlock(m_flockManager.trajectoriesPerFlock());
         auto iter = m_parameters.find("logger");
         if (iter != m_parameters.end())
-            m_logger.reset(ComponentFactory<Logger>::getComponent(iter->second, {}));
+            m_logger.reset(ComponentFactory<Logger>::instance().getComponent(iter->second, {}));
     }
 
     ~FlockProcessor() override {}

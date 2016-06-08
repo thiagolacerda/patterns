@@ -41,10 +41,10 @@ void Orchestrator::registerComponents(const std::unordered_map<std::string, std:
 bool Orchestrator::loadConfigFromMapAndRegisterComponents(const std::unordered_map<std::string, std::string>& configMap)
 {
     reset();
-    const auto& connector = ComponentFactory<DataConnector>::getFullName(configMap.at("connector"));
-    const auto& decoder = ComponentFactory<DataDecoder>::getFullName(configMap.at("decoder"));
-    const auto& listener = ComponentFactory<DataListener>::getFullName(configMap.at("listener"));
-    const auto& processor = ComponentFactory<DataProcessor>::getFullName(configMap.at("processor"));
+    const auto& connector = ComponentFactory<DataConnector>::instance().getFullName(configMap.at("connector"));
+    const auto& decoder = ComponentFactory<DataDecoder>::instance().getFullName(configMap.at("decoder"));
+    const auto& listener = ComponentFactory<DataListener>::instance().getFullName(configMap.at("listener"));
+    const auto& processor = ComponentFactory<DataProcessor>::instance().getFullName(configMap.at("processor"));
 
     std::string confString = "dataconnectors=" + connector + "\n";
     confString += "datadecoders=" + decoder + "\n";
@@ -153,7 +153,7 @@ std::unordered_map<std::string, std::shared_ptr<T>> Orchestrator::getComponents(
     std::unordered_map<std::string, std::shared_ptr<T>> components;
 
     for (const auto& key : componentNames) {
-        T* component = ComponentFactory<T>::getComponent(key, m_parser.getSectionConfig(key));
+        T* component = ComponentFactory<T>::instance().getComponent(key, m_parser.getSectionConfig(key));
         if (component)
             components.emplace(std::make_pair(key, std::shared_ptr<T>(component)));
     }
