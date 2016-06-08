@@ -37,7 +37,8 @@ void assertFlocks(unsigned n, unsigned l, double g, unsigned flocks)
 
     std::regex flocksRegex("Flocks found: (\\d+)");
     std::smatch flockMatch;
-    std::regex_search(strCout.str(), flockMatch, flocksRegex);
+    std::string result = strCout.str();
+    std::regex_search(result, flockMatch, flocksRegex);
 
     ASSERT_EQ(flocks, std::stoul(flockMatch[1].str()));
 }
